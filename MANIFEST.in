@@ -1,0 +1,4 @@
+include README.md LICENSE
+recursive-include graphene_django_cruddals/templates *
+recursive-include graphene_django_cruddals/static *
+
