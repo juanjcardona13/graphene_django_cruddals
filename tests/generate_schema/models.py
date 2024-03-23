@@ -1,0 +1,42 @@
+# -*- coding: utf-8 -*-
+from django.db import models
+
+
+class ModelTestGenerateSchemaA(models.Model):
+
+    binary_field = models.BinaryField()
+    boolean_field = models.BooleanField()
+    boolean_field_nullable = models.BooleanField(null=True, blank=True)
+    # null_boolean_field = models.NullBooleanField()
+    char_field = models.CharField(max_length=100)
+    char_field_unique = models.CharField(max_length=100, unique=True)
+    char_field_nullable = models.CharField(max_length=100, null=True, blank=True)
+    date_field = models.DateField()
+    datetime_field = models.DateTimeField()
+    time_field = models.TimeField()
+    decimal_field = models.DecimalField(max_digits=10, decimal_places=2)
+    duration_field = models.DurationField()
+    email_field = models.EmailField()
+    float_field = models.FloatField()
+    integer_field = models.IntegerField()
+    integer_field_unique = models.IntegerField(unique=True)
+    small_integer_field = models.SmallIntegerField()
+    small_integer_field_unique = models.SmallIntegerField(unique=True)
+    positive_integer_field = models.PositiveIntegerField()
+    positive_integer_field_unique = models.PositiveIntegerField(unique=True)
+    # positive_big_integer_field = models.PositiveBigIntegerField()
+    # positive_big_integer_field_unique = models.PositiveBigIntegerField(unique=True)
+    # positive_small_integer_field = models.PositiveSmallIntegerField()
+    # positive_small_integer_field_unique = models.PositiveSmallIntegerField(unique=True)
+    slug_field = models.SlugField()
+    slug_field_unique = models.SlugField(unique=True)
+    text_field = models.TextField()
+    text_field_nullable = models.TextField(null=True, blank=True)
+    url_field = models.URLField()
+    url_field_unique = models.URLField(unique=True)
+    uuid_field = models.UUIDField()
+    uuid_field_unique = models.UUIDField(unique=True)
+
+
+
+
