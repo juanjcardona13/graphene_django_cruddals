@@ -3,7 +3,6 @@ from typing import Literal, Type, Union
 
 from django.db import models
 from django.db.models import Model as DjangoModel
-from django.db.models.fields import NOT_PROVIDED
 from django.db.models.fields import Field as DjangoField
 from django.utils.functional import Promise
 from graphene import (
@@ -29,7 +28,7 @@ import graphene
 from graphql.pyutils import register_description
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, GenericRel
 
-from graphene_django_cruddals.converters.for_fields.utils import get_django_field_description
+from graphene_django_cruddals.converters.for_fields.utils import get_django_field_description, is_required
 from graphene_django_cruddals.types import TypesMutation, TypesMutationEnum
 from graphene_django_cruddals.registry_global import RegistryGlobal
 from graphene_django_cruddals.scalars_type import (
@@ -46,28 +45,6 @@ from graphene_django_cruddals.scalars_type import (
 
 from .compat import HStoreField, JSONField, PGJSONField
 from graphene.types.generic import GenericScalar
-
-
-def is_required(field):
-    try:
-        blank = getattr(field, "blank", getattr(field, "field", None))
-        default = getattr(field, "default", getattr(field, "field", None))
-        #  null = getattr(field, "null", getattr(field, "field", None))
-
-        if blank is None:
-            blank = True
-        elif not isinstance(blank, bool):
-            blank = getattr(blank, "blank", True)
-
-        if default is None:
-            default = NOT_PROVIDED
-        elif default != NOT_PROVIDED:
-            default = getattr(default, "default", default)
-
-    except AttributeError:
-        return False
-
-    return not blank and default == NOT_PROVIDED
 
 
 @singledispatch

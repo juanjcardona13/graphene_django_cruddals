@@ -2,8 +2,8 @@
 from django.apps import AppConfig
 
 
-class GDCTestConfig(AppConfig):
-    label = "gdc_test"
+class AppTestConfig(AppConfig):
+    label = "app_test"
     name = "tests"
 
     def ready(self):

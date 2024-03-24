@@ -12,6 +12,7 @@ from text_unidecode import unidecode
 from graphene_django_cruddals.registry_global import RegistryGlobal
 from graphene_django.settings import graphene_settings
 from django.db.models import Field as DjangoField
+from django.db.models.fields import NOT_PROVIDED
 
 from graphene_django_cruddals.types import TypeRegistryForField
 
@@ -115,11 +116,23 @@ def convert_choice_field_to_graphene_enum(field, name=None):
         name = generate_enum_name(field.model._meta, field)
     choices = field.choices
     EnumCls = convert_choices_to_named_enum_with_descriptions(name, choices)
-    required = not (field.blank or field.null)
-    return EnumCls( description=get_django_field_description(field), required=required ).mount_as(BlankValueField)
+    return EnumCls( description=get_django_field_description(field), required=is_required(field) ).mount_as(BlankValueField)
 
 
 # endregion
+
+
+def is_required(field:DjangoField):
+    try:
+        blank = getattr(field, "blank", False)
+        default = getattr(field, "default", None)
+        # null = getattr(field, "null", False)
+        if default is None:
+            default = NOT_PROVIDED
+    except AttributeError:
+        return False
+
+    return not blank and default == NOT_PROVIDED
 
 
 def exists_conversion_for_field( field:DjangoField, registry: RegistryGlobal, type_of_registry: TypeRegistryForField ) -> bool:

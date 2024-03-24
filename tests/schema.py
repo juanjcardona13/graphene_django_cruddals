@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 import graphene
 
-from .generate_schema.schema import (
-    Query as generateSchemaQuery,
-    Mutation as generateSchemaMutation,
+from .cruddals_model.schema import (
+    Query as cruddalsModelQuery,
+    Mutation as cruddalsModelMutation,
 )
 
 class Query(
-    generateSchemaQuery,
+    cruddalsModelQuery,
     graphene.ObjectType,
 ):
     pass
 
 
 class Mutation(
-    generateSchemaMutation,
+    cruddalsModelMutation,
     graphene.ObjectType,
 ):
     pass

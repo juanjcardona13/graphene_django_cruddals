@@ -28,42 +28,51 @@ class VerifyResponseAssertionMixins:
 class SchemaTestCase(GraphQLTestCase):
 
     QUERY_GET_TYPE = """
-        fragment type on __Type {
-          kind
-          name
-          ofType{
+        fragment ofType on __Type {
             kind
             name
-          }
+            ofType {
+                kind
+                name
+            }
         }
-        
-        fragment inputValue on __InputValue {
-          name
-          type {
-            ...type
-          }
-        }
-        
-        fragment field on __Field {
-          name
-          type {
-            ...type
-          }
-          args {
-            ...inputValue
-          }
-        }
-        
-        query ($name: String!) {
-          __type(name: $name) {
+
+        fragment type on __Type {
+            kind
             name
-            fields {
-              ...field
+            ofType {
+                ...ofType
             }
-            inputFields {
-              ...inputValue
+        }
+
+        fragment inputValue on __InputValue {
+            name
+            type {
+                ...type
             }
-          }
+        }
+
+        fragment field on __Field {
+            name
+            description
+            type {
+                ...type
+            }
+            args {
+                ...inputValue
+            }
+        }
+
+        query ($name: String!) {
+            __type(name: $name) {
+                name
+                fields {
+                ...field
+                }
+                inputFields {
+                ...inputValue
+                }
+            }
         }
     """
 
@@ -81,13 +90,11 @@ class SchemaTestCase(GraphQLTestCase):
         field = self.get_field_by_name(gql_type, field_name, input_field=input_type)
         self.assertDictEqual(field, field_meta)
 
-    def runtest_fields_of_type(self, type_name, fields_to_test, input_type=False):
+    def run_test_fields_of_type(self, type_name, fields_to_test, input_type=False):
         gql_type = self.get_type(type_name)
         for ref_field in fields_to_test:
             with self.subTest(field=ref_field):
-                field = self.get_field_by_name(
-                    gql_type, ref_field["name"], input_field=input_type
-                )
+                field = self.get_field_by_name( gql_type, ref_field["name"], input_field=input_type )
                 self.assertDictEqual(field, ref_field)
 
     def assertTypeIsComposeOfFields(self, type_name, field_names, input_type=False):

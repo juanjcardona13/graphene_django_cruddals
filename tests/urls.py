@@ -9,12 +9,8 @@ if django.VERSION >= (2, 0):
     from django.urls import path
 
     urlpatterns = [
-        path(
-            "graphql", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql"
-        ),
-        path(
-            "graphql_no_camelcase", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema_no_camelcase)), name="graphql_no_camelcase"
-        ),
+        path( "graphql", csrf_exempt(GraphQLView.as_view(graphiql=True)), name="graphql" ),
+        path( "graphql_no_camelcase", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema_no_camelcase)), name="graphql_no_camelcase" ),
     ]
 else:
     from django.conf.urls import url
