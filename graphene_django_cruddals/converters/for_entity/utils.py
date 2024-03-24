@@ -167,12 +167,7 @@ def get_output_fields( model: DjangoModel, registry: RegistryGlobal, meta_attrs:
 
 def get_input_fields_for_create_update( model: DjangoModel, registry: RegistryGlobal, type_mutation: TypesMutation = TypesMutationEnum.CREATE_UPDATE.value, meta_attrs: Dict = {}, ):
     input_fields = OrderedDict()
-    model_fields = get_model_fields(
-        model=model,
-        for_mutation=True,
-        only_fields=meta_attrs.get( "only_fields", meta_attrs.get("only", meta_attrs.get("fields", "__all__")) ),
-        exclude_fields=meta_attrs.get("exclude_fields", meta_attrs.get("exclude", ())),
-    )
+    model_fields = get_model_fields( model=model, for_mutation=True, only_fields=meta_attrs.get( "only_fields", meta_attrs.get("only", meta_attrs.get("fields", "__all__")) ), exclude_fields=meta_attrs.get("exclude_fields", meta_attrs.get("exclude", ())), )
     field_pk = model._meta.pk
     if not field_pk:
         raise Exception("The model does not have a primary key")
@@ -188,23 +183,12 @@ def get_input_fields_for_create_update( model: DjangoModel, registry: RegistryGl
             input_fields[field_pk.name] = graphene.InputField(type_=graphene.ID, required=False)
 
     for name, field in model_fields:
-        
         converted_field = convert_django_field_with_choices_to_create_update_input(
             field=field,
             registry=registry,
             convert_choices_to_enum=True,
             type_mutation=type_mutation,
         )
-
-        if ( type_mutation == TypesMutationEnum.UPDATE.value or type_mutation == TypesMutationEnum.CREATE_UPDATE.value ):
-            if isinstance(converted_field, graphene.InputField) and isinstance(converted_field.type, graphene.NonNull):
-                converted_field = graphene.InputField(
-                    type_=converted_field.type.of_type,
-                    required=False,
-                    description=converted_field.description,
-                    default_value=converted_field.default_value,
-                )
-        
         input_fields[name] = converted_field
     return input_fields
 

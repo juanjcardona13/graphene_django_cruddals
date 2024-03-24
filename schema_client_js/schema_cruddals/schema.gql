@@ -1,3 +1,232 @@
+input ModelAInput {
+  id: ID
+  binaryFieldRequired: Binary
+  binaryFieldNullable: Binary
+  binaryFieldWithDefault: Binary
+
+  """binary_field_with_description"""
+  binaryFieldWithDescription: Binary
+  booleanFieldRequired: Boolean
+  booleanFieldNullable: Boolean
+  booleanFieldWithDefault: Boolean
+
+  """boolean_field_with_description"""
+  booleanFieldWithDescription: Boolean
+  charFieldRequired: String
+  charFieldNullable: String
+  charFieldWithDefault: String
+
+  """char_field_with_description"""
+  charFieldWithDescription: String
+  choiceFieldRequired: MenuModelAChoiceFieldRequiredChoices
+  choiceFieldNullable: MenuModelAChoiceFieldNullableChoices
+  choiceFieldWithDefault: MenuModelAChoiceFieldWithDefaultChoices
+
+  """choice_field_with_description"""
+  choiceFieldWithDescription: MenuModelAChoiceFieldWithDescriptionChoices
+  dateFieldRequired: Date
+  dateFieldNullable: Date
+
+  """date_field_with_description"""
+  dateFieldWithDescription: Date
+  dateTimeFieldRequired: DateTime
+  dateTimeFieldNullable: DateTime
+
+  """date_time_field_with_description"""
+  dateTimeFieldWithDescription: DateTime
+  timeFieldRequired: Time
+  timeFieldNullable: Time
+
+  """time_field_with_description"""
+  timeFieldWithDescription: Time
+  decimalFieldRequired: Decimal
+  decimalFieldNullable: Decimal
+  decimalFieldWithDefault: Decimal
+
+  """decimal_field_with_description"""
+  decimalFieldWithDescription: Decimal
+  durationFieldRequired: Duration
+  durationFieldNullable: Duration
+  durationFieldWithDefault: Duration
+
+  """duration_field_with_description"""
+  durationFieldWithDescription: Duration
+  emailFieldRequired: Email
+  emailFieldNullable: Email
+  emailFieldWithDefault: Email
+
+  """email_field_with_description"""
+  emailFieldWithDescription: Email
+  floatFieldRequired: Float
+  floatFieldNullable: Float
+  floatFieldWithDefault: Float
+
+  """float_field_with_description"""
+  floatFieldWithDescription: Float
+  integerFieldRequired: Int
+  integerFieldNullable: Int
+  integerFieldWithDefault: Int
+
+  """integer_field_with_description"""
+  integerFieldWithDescription: Int
+  smallIntegerFieldRequired: Int
+  smallIntegerFieldNullable: Int
+  smallIntegerFieldWithDefault: Int
+
+  """small_integer_field_with_description"""
+  smallIntegerFieldWithDescription: Int
+  positiveIntegerFieldRequired: PositiveInt
+  positiveIntegerFieldNullable: PositiveInt
+  positiveIntegerFieldWithDefault: PositiveInt
+
+  """positive_integer_field_with_description"""
+  positiveIntegerFieldWithDescription: PositiveInt
+  slugFieldRequired: Slug
+  slugFieldNullable: Slug
+  slugFieldWithDefault: Slug
+
+  """slug_field_with_description"""
+  slugFieldWithDescription: Slug
+  textFieldRequired: String
+  textFieldNullable: String
+  textFieldWithDefault: String
+
+  """text_field_with_description"""
+  textFieldWithDescription: String
+  urlFieldRequired: URL
+  urlFieldNullable: URL
+  urlFieldWithDefault: URL
+
+  """url_field_with_description"""
+  urlFieldWithDescription: URL
+  uuidFieldRequired: UUID
+  uuidFieldNullable: UUID
+  uuidFieldWithDefault: UUID
+
+  """uuid_field_with_description"""
+  uuidFieldWithDescription: UUID
+  foreignKeyFieldRequired: ID
+  foreignKeyFieldNullable: ID
+
+  """foreign_key_field_with_description"""
+  foreignKeyFieldWithDescription: ID
+  foreignKeyFieldWithoutRelatedName: ID
+  oneToOneFieldRequired: ID
+  oneToOneFieldNullable: ID
+
+  """one_to_one_field_with_description"""
+  oneToOneFieldWithDescription: ID
+  oneToOneFieldWithoutRelatedName: ID
+
+  """The content type"""
+  contentType: ID
+
+  """The object id"""
+  objectId: PositiveInt
+  manyToManyFieldRequired: [ID]
+  manyToManyFieldNullable: [ID]
+
+  """many_to_many_field_with_description"""
+  manyToManyFieldWithDescription: [ID]
+  manyToManyFieldWithoutRelatedName: [ID]
+}
+
+"""BinaryArray is used to convert a Django BinaryField to the string form"""
+scalar Binary
+
+"""An enumeration."""
+enum MenuModelAChoiceFieldRequiredChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+"""An enumeration."""
+enum MenuModelAChoiceFieldNullableChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+"""An enumeration."""
+enum MenuModelAChoiceFieldWithDefaultChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+"""An enumeration."""
+enum MenuModelAChoiceFieldWithDescriptionChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+"""
+The `Date` scalar type represents a Date
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Date
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
+
+"""
+The `Time` scalar type represents a Time value as
+specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Time
+
+"""The `Decimal` scalar type represents a python Decimal."""
+scalar Decimal
+
+"""
+Duration fields in Django are stored as timedelta in Python,
+and as a duration in the Database. We will represent them as
+a total number of seconds in GraphQL.
+"""
+scalar Duration
+
+"""
+A field whose value conforms to the standard
+internet email address format as specified in
+HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+"""
+scalar Email
+
+"""Integers that will have a value of 0 or more."""
+scalar PositiveInt
+
+"""
+Slug is a newspaper term. A slug is a short label for something, containing only letters, numbers, underscores or hyphens. They’re generally used in URLs.
+"""
+scalar Slug
+
+"""
+A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
+"""
+scalar URL
+
+"""
+Leverages the internal Python implementation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
+scalar UUID
+
 type Query {
   readModelF(where: ModelFFilterInput!): ModelFType
   searchModelFs(where: ModelFFilterInput, orderBy: ModelFOrderByInput, paginated: PaginatedInput): ModelFPaginatedType
@@ -434,18 +663,6 @@ type ModelAType {
   paginatedManyToManyBRelated(where: ModelBFilterInput, orderBy: ModelBOrderByInput, paginated: PaginatedInput): ModelBPaginatedType
 }
 
-"""BinaryArray is used to convert a Django BinaryField to the string form"""
-scalar Binary
-
-"""An enumeration."""
-enum MenuModelAChoiceFieldRequiredChoices {
-  """A"""
-  A
-
-  """B"""
-  B
-}
-
 """An enumeration."""
 enum MenuModelAChoiceFieldNotEditableChoices {
   """A"""
@@ -454,90 +671,6 @@ enum MenuModelAChoiceFieldNotEditableChoices {
   """B"""
   B
 }
-
-"""An enumeration."""
-enum MenuModelAChoiceFieldNullableChoices {
-  """A"""
-  A
-
-  """B"""
-  B
-}
-
-"""An enumeration."""
-enum MenuModelAChoiceFieldWithDefaultChoices {
-  """A"""
-  A
-
-  """B"""
-  B
-}
-
-"""An enumeration."""
-enum MenuModelAChoiceFieldWithDescriptionChoices {
-  """A"""
-  A
-
-  """B"""
-  B
-}
-
-"""
-The `Date` scalar type represents a Date
-value as specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar Date
-
-"""
-The `DateTime` scalar type represents a DateTime
-value as specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar DateTime
-
-"""
-The `Time` scalar type represents a Time value as
-specified by
-[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
-"""
-scalar Time
-
-"""The `Decimal` scalar type represents a python Decimal."""
-scalar Decimal
-
-"""
-Duration fields in Django are stored as timedelta in Python,
-and as a duration in the Database. We will represent them as
-a total number of seconds in GraphQL.
-"""
-scalar Duration
-
-"""
-A field whose value conforms to the standard
-internet email address format as specified in
-HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
-"""
-scalar Email
-
-"""Integers that will have a value of 0 or more."""
-scalar PositiveInt
-
-"""
-Slug is a newspaper term. A slug is a short label for something, containing only letters, numbers, underscores or hyphens. They’re generally used in URLs.
-"""
-scalar Slug
-
-"""
-A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
-"""
-scalar URL
-
-"""
-Leverages the internal Python implementation of UUID (uuid.UUID) to provide native UUID objects
-in fields, resolvers and input.
-"""
-scalar UUID
 
 type ModelAPaginatedType implements PaginationInterface {
   total: Int
@@ -1349,21 +1482,27 @@ type CreateModelAsPayload {
 }
 
 input CreateModelAInput {
+  binaryFieldRequired: Binary!
+  binaryFieldNullable: Binary
+  binaryFieldWithDefault: Binary = "YmluYXJ5X2ZpZWxkX3dpdGhfZGVmYXVsdA=="
+
+  """binary_field_with_description"""
+  binaryFieldWithDescription: Binary!
   booleanFieldRequired: Boolean!
   booleanFieldNullable: Boolean
-  booleanFieldWithDefault: Boolean
+  booleanFieldWithDefault: Boolean = true
 
   """boolean_field_with_description"""
   booleanFieldWithDescription: Boolean!
   charFieldRequired: String!
   charFieldNullable: String
-  charFieldWithDefault: String
+  charFieldWithDefault: String = "char_field_with_default"
 
   """char_field_with_description"""
   charFieldWithDescription: String!
   choiceFieldRequired: MenuModelAChoiceFieldRequiredChoices!
-  choiceFieldNullable: MenuModelAChoiceFieldNullableChoices = null
-  choiceFieldWithDefault: MenuModelAChoiceFieldWithDefaultChoices = null
+  choiceFieldNullable: MenuModelAChoiceFieldNullableChoices
+  choiceFieldWithDefault: MenuModelAChoiceFieldWithDefaultChoices = A
 
   """choice_field_with_description"""
   choiceFieldWithDescription: MenuModelAChoiceFieldWithDescriptionChoices!
@@ -1384,7 +1523,7 @@ input CreateModelAInput {
   timeFieldWithDescription: Time!
   decimalFieldRequired: Decimal!
   decimalFieldNullable: Decimal
-  decimalFieldWithDefault: Decimal
+  decimalFieldWithDefault: Decimal = "0"
 
   """decimal_field_with_description"""
   decimalFieldWithDescription: Decimal!
@@ -1396,49 +1535,49 @@ input CreateModelAInput {
   durationFieldWithDescription: Duration!
   emailFieldRequired: Email!
   emailFieldNullable: Email
-  emailFieldWithDefault: Email
+  emailFieldWithDefault: Email = "emailField@withDefault.com"
 
   """email_field_with_description"""
   emailFieldWithDescription: Email!
   floatFieldRequired: Float!
   floatFieldNullable: Float
-  floatFieldWithDefault: Float
+  floatFieldWithDefault: Float = 0
 
   """float_field_with_description"""
   floatFieldWithDescription: Float!
   integerFieldRequired: Int!
   integerFieldNullable: Int
-  integerFieldWithDefault: Int
+  integerFieldWithDefault: Int = 0
 
   """integer_field_with_description"""
   integerFieldWithDescription: Int!
   smallIntegerFieldRequired: Int!
   smallIntegerFieldNullable: Int
-  smallIntegerFieldWithDefault: Int
+  smallIntegerFieldWithDefault: Int = 0
 
   """small_integer_field_with_description"""
   smallIntegerFieldWithDescription: Int!
   positiveIntegerFieldRequired: PositiveInt!
   positiveIntegerFieldNullable: PositiveInt
-  positiveIntegerFieldWithDefault: PositiveInt
+  positiveIntegerFieldWithDefault: PositiveInt = 0
 
   """positive_integer_field_with_description"""
   positiveIntegerFieldWithDescription: PositiveInt!
   slugFieldRequired: Slug!
   slugFieldNullable: Slug
-  slugFieldWithDefault: Slug
+  slugFieldWithDefault: Slug = "slug_field_with_default"
 
   """slug_field_with_description"""
   slugFieldWithDescription: Slug!
   textFieldRequired: String!
   textFieldNullable: String
-  textFieldWithDefault: String
+  textFieldWithDefault: String = "text_field_with_default"
 
   """text_field_with_description"""
   textFieldWithDescription: String!
   urlFieldRequired: URL!
   urlFieldNullable: URL
-  urlFieldWithDefault: URL
+  urlFieldWithDefault: URL = "https://url_field_with_default.com"
 
   """url_field_with_description"""
   urlFieldWithDescription: URL!
@@ -1481,6 +1620,12 @@ type UpdateModelAsPayload {
 
 input UpdateModelAInput {
   id: ID!
+  binaryFieldRequired: Binary
+  binaryFieldNullable: Binary
+  binaryFieldWithDefault: Binary
+
+  """binary_field_with_description"""
+  binaryFieldWithDescription: Binary
   booleanFieldRequired: Boolean
   booleanFieldNullable: Boolean
   booleanFieldWithDefault: Boolean
@@ -1493,12 +1638,12 @@ input UpdateModelAInput {
 
   """char_field_with_description"""
   charFieldWithDescription: String
-  choiceFieldRequired: MenuModelAChoiceFieldRequiredChoices!
-  choiceFieldNullable: MenuModelAChoiceFieldNullableChoices = null
-  choiceFieldWithDefault: MenuModelAChoiceFieldWithDefaultChoices = null
+  choiceFieldRequired: MenuModelAChoiceFieldRequiredChoices
+  choiceFieldNullable: MenuModelAChoiceFieldNullableChoices
+  choiceFieldWithDefault: MenuModelAChoiceFieldWithDefaultChoices
 
   """choice_field_with_description"""
-  choiceFieldWithDescription: MenuModelAChoiceFieldWithDescriptionChoices!
+  choiceFieldWithDescription: MenuModelAChoiceFieldWithDescriptionChoices
   dateFieldRequired: Date
   dateFieldNullable: Date
 

@@ -47,6 +47,8 @@ class SchemaTestCase(GraphQLTestCase):
 
         fragment inputValue on __InputValue {
             name
+            description
+            defaultValue
             type {
                 ...type
             }

@@ -109,6 +109,1125 @@
         {
           "description": null,
           "enumValues": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "id",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "binaryFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "binaryFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "binaryFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "binary_field_with_description",
+              "name": "binaryFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "booleanFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "booleanFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "booleanFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "boolean_field_with_description",
+              "name": "booleanFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "charFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "charFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "charFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "char_field_with_description",
+              "name": "charFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "choiceFieldRequired",
+              "type": {
+                "kind": "ENUM",
+                "name": "MenuModelAChoiceFieldRequiredChoices",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "choiceFieldNullable",
+              "type": {
+                "kind": "ENUM",
+                "name": "MenuModelAChoiceFieldNullableChoices",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "choiceFieldWithDefault",
+              "type": {
+                "kind": "ENUM",
+                "name": "MenuModelAChoiceFieldWithDefaultChoices",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "choice_field_with_description",
+              "name": "choiceFieldWithDescription",
+              "type": {
+                "kind": "ENUM",
+                "name": "MenuModelAChoiceFieldWithDescriptionChoices",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "dateFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "dateFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "date_field_with_description",
+              "name": "dateFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "dateTimeFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "dateTimeFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "date_time_field_with_description",
+              "name": "dateTimeFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "timeFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Time",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "timeFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Time",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "time_field_with_description",
+              "name": "timeFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Time",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "decimalFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Decimal",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "decimalFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Decimal",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "decimalFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Decimal",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "decimal_field_with_description",
+              "name": "decimalFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Decimal",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "durationFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Duration",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "durationFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Duration",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "durationFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Duration",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "duration_field_with_description",
+              "name": "durationFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Duration",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "emailFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Email",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "emailFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Email",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "emailFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Email",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "email_field_with_description",
+              "name": "emailFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Email",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "floatFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "floatFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "floatFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "float_field_with_description",
+              "name": "floatFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "integerFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "integerFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "integerFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "integer_field_with_description",
+              "name": "integerFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "smallIntegerFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "smallIntegerFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "smallIntegerFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "small_integer_field_with_description",
+              "name": "smallIntegerFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "positiveIntegerFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "PositiveInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "positiveIntegerFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "PositiveInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "positiveIntegerFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "PositiveInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "positive_integer_field_with_description",
+              "name": "positiveIntegerFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "PositiveInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "slugFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Slug",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "slugFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Slug",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "slugFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Slug",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "slug_field_with_description",
+              "name": "slugFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Slug",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "textFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "textFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "textFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "text_field_with_description",
+              "name": "textFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "urlFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "URL",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "urlFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "URL",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "urlFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "URL",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "url_field_with_description",
+              "name": "urlFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "URL",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "uuidFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "uuidFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "uuidFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "uuid_field_with_description",
+              "name": "uuidFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "foreignKeyFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "foreignKeyFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "foreign_key_field_with_description",
+              "name": "foreignKeyFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "foreignKeyFieldWithoutRelatedName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "oneToOneFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "oneToOneFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "one_to_one_field_with_description",
+              "name": "oneToOneFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "oneToOneFieldWithoutRelatedName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The content type",
+              "name": "contentType",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "The object id",
+              "name": "objectId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "PositiveInt",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "manyToManyFieldRequired",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "manyToManyFieldNullable",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "many_to_many_field_with_description",
+              "name": "manyToManyFieldWithDescription",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "manyToManyFieldWithoutRelatedName",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "ID",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "interfaces": null,
+          "kind": "INPUT_OBJECT",
+          "name": "ModelAInput",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "ID",
+          "possibleTypes": null
+        },
+        {
+          "description": "BinaryArray is used to convert a Django BinaryField to the string form",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Binary",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `Boolean` scalar type represents `true` or `false`.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Boolean",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "String",
+          "possibleTypes": null
+        },
+        {
+          "description": "An enumeration.",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": "A",
+              "isDeprecated": false,
+              "name": "A"
+            },
+            {
+              "deprecationReason": null,
+              "description": "B",
+              "isDeprecated": false,
+              "name": "B"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MenuModelAChoiceFieldRequiredChoices",
+          "possibleTypes": null
+        },
+        {
+          "description": "An enumeration.",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": "A",
+              "isDeprecated": false,
+              "name": "A"
+            },
+            {
+              "deprecationReason": null,
+              "description": "B",
+              "isDeprecated": false,
+              "name": "B"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MenuModelAChoiceFieldNullableChoices",
+          "possibleTypes": null
+        },
+        {
+          "description": "An enumeration.",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": "A",
+              "isDeprecated": false,
+              "name": "A"
+            },
+            {
+              "deprecationReason": null,
+              "description": "B",
+              "isDeprecated": false,
+              "name": "B"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MenuModelAChoiceFieldWithDefaultChoices",
+          "possibleTypes": null
+        },
+        {
+          "description": "An enumeration.",
+          "enumValues": [
+            {
+              "deprecationReason": null,
+              "description": "A",
+              "isDeprecated": false,
+              "name": "A"
+            },
+            {
+              "deprecationReason": null,
+              "description": "B",
+              "isDeprecated": false,
+              "name": "B"
+            }
+          ],
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "ENUM",
+          "name": "MenuModelAChoiceFieldWithDescriptionChoices",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `Date` scalar type represents a Date\nvalue as specified by\n[iso8601](https://en.wikipedia.org/wiki/ISO_8601).",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Date",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `DateTime` scalar type represents a DateTime\nvalue as specified by\n[iso8601](https://en.wikipedia.org/wiki/ISO_8601).",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "DateTime",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `Time` scalar type represents a Time value as\nspecified by\n[iso8601](https://en.wikipedia.org/wiki/ISO_8601).",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Time",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `Decimal` scalar type represents a python Decimal.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Decimal",
+          "possibleTypes": null
+        },
+        {
+          "description": "Duration fields in Django are stored as timedelta in Python,\nand as a duration in the Database. We will represent them as\na total number of seconds in GraphQL.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Duration",
+          "possibleTypes": null
+        },
+        {
+          "description": "A field whose value conforms to the standard\ninternet email address format as specified in\nHTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Email",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Float",
+          "possibleTypes": null
+        },
+        {
+          "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Int",
+          "possibleTypes": null
+        },
+        {
+          "description": "Integers that will have a value of 0 or more.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "PositiveInt",
+          "possibleTypes": null
+        },
+        {
+          "description": "Slug is a newspaper term. A slug is a short label for something, containing only letters, numbers, underscores or hyphens. They\u2019re generally used in URLs.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "Slug",
+          "possibleTypes": null
+        },
+        {
+          "description": "A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "URL",
+          "possibleTypes": null
+        },
+        {
+          "description": "Leverages the internal Python implementation of UUID (uuid.UUID) to provide native UUID objects\nin fields, resolvers and input.",
+          "enumValues": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "kind": "SCALAR",
+          "name": "UUID",
+          "possibleTypes": null
+        },
+        {
+          "description": null,
+          "enumValues": null,
           "fields": [
             {
               "args": [
@@ -799,26 +1918,6 @@
           "possibleTypes": null
         },
         {
-          "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "ID",
-          "possibleTypes": null
-        },
-        {
-          "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "String",
-          "possibleTypes": null
-        },
-        {
           "description": null,
           "enumValues": null,
           "fields": [
@@ -1064,26 +2163,6 @@
               "ofType": null
             }
           ]
-        },
-        {
-          "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Int",
-          "possibleTypes": null
-        },
-        {
-          "description": "The `Boolean` scalar type represents `true` or `false`.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Boolean",
-          "possibleTypes": null
         },
         {
           "description": null,
@@ -5242,39 +6321,6 @@
           "possibleTypes": null
         },
         {
-          "description": "BinaryArray is used to convert a Django BinaryField to the string form",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Binary",
-          "possibleTypes": null
-        },
-        {
-          "description": "An enumeration.",
-          "enumValues": [
-            {
-              "deprecationReason": null,
-              "description": "A",
-              "isDeprecated": false,
-              "name": "A"
-            },
-            {
-              "deprecationReason": null,
-              "description": "B",
-              "isDeprecated": false,
-              "name": "B"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "MenuModelAChoiceFieldRequiredChoices",
-          "possibleTypes": null
-        },
-        {
           "description": "An enumeration.",
           "enumValues": [
             {
@@ -5295,185 +6341,6 @@
           "interfaces": null,
           "kind": "ENUM",
           "name": "MenuModelAChoiceFieldNotEditableChoices",
-          "possibleTypes": null
-        },
-        {
-          "description": "An enumeration.",
-          "enumValues": [
-            {
-              "deprecationReason": null,
-              "description": "A",
-              "isDeprecated": false,
-              "name": "A"
-            },
-            {
-              "deprecationReason": null,
-              "description": "B",
-              "isDeprecated": false,
-              "name": "B"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "MenuModelAChoiceFieldNullableChoices",
-          "possibleTypes": null
-        },
-        {
-          "description": "An enumeration.",
-          "enumValues": [
-            {
-              "deprecationReason": null,
-              "description": "A",
-              "isDeprecated": false,
-              "name": "A"
-            },
-            {
-              "deprecationReason": null,
-              "description": "B",
-              "isDeprecated": false,
-              "name": "B"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "MenuModelAChoiceFieldWithDefaultChoices",
-          "possibleTypes": null
-        },
-        {
-          "description": "An enumeration.",
-          "enumValues": [
-            {
-              "deprecationReason": null,
-              "description": "A",
-              "isDeprecated": false,
-              "name": "A"
-            },
-            {
-              "deprecationReason": null,
-              "description": "B",
-              "isDeprecated": false,
-              "name": "B"
-            }
-          ],
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "ENUM",
-          "name": "MenuModelAChoiceFieldWithDescriptionChoices",
-          "possibleTypes": null
-        },
-        {
-          "description": "The `Date` scalar type represents a Date\nvalue as specified by\n[iso8601](https://en.wikipedia.org/wiki/ISO_8601).",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Date",
-          "possibleTypes": null
-        },
-        {
-          "description": "The `DateTime` scalar type represents a DateTime\nvalue as specified by\n[iso8601](https://en.wikipedia.org/wiki/ISO_8601).",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "DateTime",
-          "possibleTypes": null
-        },
-        {
-          "description": "The `Time` scalar type represents a Time value as\nspecified by\n[iso8601](https://en.wikipedia.org/wiki/ISO_8601).",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Time",
-          "possibleTypes": null
-        },
-        {
-          "description": "The `Decimal` scalar type represents a python Decimal.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Decimal",
-          "possibleTypes": null
-        },
-        {
-          "description": "Duration fields in Django are stored as timedelta in Python,\nand as a duration in the Database. We will represent them as\na total number of seconds in GraphQL.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Duration",
-          "possibleTypes": null
-        },
-        {
-          "description": "A field whose value conforms to the standard\ninternet email address format as specified in\nHTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Email",
-          "possibleTypes": null
-        },
-        {
-          "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Float",
-          "possibleTypes": null
-        },
-        {
-          "description": "Integers that will have a value of 0 or more.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "PositiveInt",
-          "possibleTypes": null
-        },
-        {
-          "description": "Slug is a newspaper term. A slug is a short label for something, containing only letters, numbers, underscores or hyphens. They\u2019re generally used in URLs.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "Slug",
-          "possibleTypes": null
-        },
-        {
-          "description": "A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "URL",
-          "possibleTypes": null
-        },
-        {
-          "description": "Leverages the internal Python implementation of UUID (uuid.UUID) to provide native UUID objects\nin fields, resolvers and input.",
-          "enumValues": null,
-          "fields": null,
-          "inputFields": null,
-          "interfaces": null,
-          "kind": "SCALAR",
-          "name": "UUID",
           "possibleTypes": null
         },
         {
@@ -13609,6 +14476,54 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "binaryFieldRequired",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Binary",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "binaryFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": "\"YmluYXJ5X2ZpZWxkX3dpdGhfZGVmYXVsdA==\"",
+              "description": null,
+              "name": "binaryFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "binary_field_with_description",
+              "name": "binaryFieldWithDescription",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "Binary",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "booleanFieldRequired",
               "type": {
                 "kind": "NON_NULL",
@@ -13631,7 +14546,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "true",
               "description": null,
               "name": "booleanFieldWithDefault",
               "type": {
@@ -13679,7 +14594,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "\"char_field_with_default\"",
               "description": null,
               "name": "charFieldWithDefault",
               "type": {
@@ -13717,7 +14632,7 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "description": null,
               "name": "choiceFieldNullable",
               "type": {
@@ -13727,7 +14642,7 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": "A",
               "description": null,
               "name": "choiceFieldWithDefault",
               "type": {
@@ -13889,7 +14804,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "\"0\"",
               "description": null,
               "name": "decimalFieldWithDefault",
               "type": {
@@ -13985,7 +14900,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "\"emailField@withDefault.com\"",
               "description": null,
               "name": "emailFieldWithDefault",
               "type": {
@@ -14033,7 +14948,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "0",
               "description": null,
               "name": "floatFieldWithDefault",
               "type": {
@@ -14081,7 +14996,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "0",
               "description": null,
               "name": "integerFieldWithDefault",
               "type": {
@@ -14129,7 +15044,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "0",
               "description": null,
               "name": "smallIntegerFieldWithDefault",
               "type": {
@@ -14177,7 +15092,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "0",
               "description": null,
               "name": "positiveIntegerFieldWithDefault",
               "type": {
@@ -14225,7 +15140,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "\"slug_field_with_default\"",
               "description": null,
               "name": "slugFieldWithDefault",
               "type": {
@@ -14273,7 +15188,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "\"text_field_with_default\"",
               "description": null,
               "name": "textFieldWithDefault",
               "type": {
@@ -14321,7 +15236,7 @@
               }
             },
             {
-              "defaultValue": null,
+              "defaultValue": "\"https://url_field_with_default.com\"",
               "description": null,
               "name": "urlFieldWithDefault",
               "type": {
@@ -14655,6 +15570,46 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "binaryFieldRequired",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "binaryFieldNullable",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "binaryFieldWithDefault",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": "binary_field_with_description",
+              "name": "binaryFieldWithDescription",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Binary",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "booleanFieldRequired",
               "type": {
                 "kind": "SCALAR",
@@ -14737,17 +15692,13 @@
               "description": null,
               "name": "choiceFieldRequired",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "MenuModelAChoiceFieldRequiredChoices",
-                  "ofType": null
-                }
+                "kind": "ENUM",
+                "name": "MenuModelAChoiceFieldRequiredChoices",
+                "ofType": null
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "description": null,
               "name": "choiceFieldNullable",
               "type": {
@@ -14757,7 +15708,7 @@
               }
             },
             {
-              "defaultValue": "null",
+              "defaultValue": null,
               "description": null,
               "name": "choiceFieldWithDefault",
               "type": {
@@ -14771,13 +15722,9 @@
               "description": "choice_field_with_description",
               "name": "choiceFieldWithDescription",
               "type": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "MenuModelAChoiceFieldWithDescriptionChoices",
-                  "ofType": null
-                }
+                "kind": "ENUM",
+                "name": "MenuModelAChoiceFieldWithDescriptionChoices",
+                "ofType": null
               }
             },
             {

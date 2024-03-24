@@ -10,7 +10,7 @@ from graphene import (
 import graphene
 from graphql.pyutils import register_description
 
-from graphene_django_cruddals.converters.for_fields.utils import get_django_field_description, is_required
+from graphene_django_cruddals.converters.for_fields.utils import get_django_field_description, django_field_is_required
 
 from graphene_django_cruddals.registry_global import RegistryGlobal
 from graphene_django_cruddals.scalars_type import (
@@ -89,7 +89,7 @@ def convert_django_field_to_output(field, registry: RegistryGlobal) -> Union[gra
 @convert_django_field_to_output.register(models.AutoField)
 @convert_django_field_to_output.register(models.SmallAutoField)
 def convert_field_to_id(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.ID, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.ID, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.CharField)
@@ -98,102 +98,102 @@ def convert_field_to_id(field, registry: RegistryGlobal):
 @convert_django_field_to_output.register(models.FileField)
 @convert_django_field_to_output.register(models.ImageField)
 def convert_field_to_string(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.String, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.String, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.PositiveSmallIntegerField)
 @convert_django_field_to_output.register(models.SmallIntegerField)
 @convert_django_field_to_output.register(models.IntegerField)
 def convert_field_to_int(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.Int, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.Int, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 # @convert_django_field_to_output.register(models.NullBooleanField)
 @convert_django_field_to_output.register(models.BooleanField)
 def convert_field_to_boolean(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.Boolean, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.Boolean, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.BigIntegerField)
 def convert_field_to_big_int(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.BigInt, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.BigInt, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.DateField)
 def convert_field_to_date(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.Date, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.Date, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.TimeField)
 def convert_field_to_time(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.Time, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.Time, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.DateTimeField)
 def convert_field_to_datetime(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.DateTime, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.DateTime, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.DecimalField)
 def convert_field_to_decimal(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.Decimal, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.Decimal, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.FloatField)
 def convert_field_to_float(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.Float, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.Float, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.DurationField)
 def convert_field_to_duration(field, registry: RegistryGlobal):
-    return graphene.Field(type_=Duration, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=Duration, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.BinaryField)
 def convert_field_to_binary(field, registry: RegistryGlobal):
-    return graphene.Field(type_=Binary, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=Binary, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(HStoreField)
 @convert_django_field_to_output.register(PGJSONField)
 @convert_django_field_to_output.register(JSONField)
 def convert_pg_and_json_field_to_json_string(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.JSONString, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.JSONString, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.UUIDField)
 def convert_field_to_uuid(field, registry: RegistryGlobal):
-    return graphene.Field(type_=graphene.UUID, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=graphene.UUID, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.EmailField)
 def convert_field_to_email(field, registry: RegistryGlobal):
-    return graphene.Field(type_=Email, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=Email, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.GenericIPAddressField)
 def convert_field_to_ipv4(field, registry: RegistryGlobal):
-    return graphene.Field(type_=IPv4, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=IPv4, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.IPAddressField)
 def convert_field_to_ip(field, registry: RegistryGlobal):
-    return graphene.Field(type_=IP, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=IP, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.PositiveIntegerField)
 def convert_field_to_positive_int(field, registry: RegistryGlobal):
-    return graphene.Field(type_=PositiveInt, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=PositiveInt, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.SlugField)
 def convert_field_to_slug(field, registry: RegistryGlobal):
-    return graphene.Field(type_=Slug, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=Slug, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.URLField)
 def convert_field_to_url(field, registry: RegistryGlobal):
-    return graphene.Field(type_=URL, description=get_django_field_description(field), required=is_required(field))
+    return graphene.Field(type_=URL, description=get_django_field_description(field), required=django_field_is_required(field))
 
 
 @convert_django_field_to_output.register(models.OneToOneRel)
@@ -231,7 +231,7 @@ def convert_onetoone_field_to_djangomodel(field, registry: RegistryGlobal):
                 direct_type, f"resolve_{field.name}", field.name
             )
 
-        return graphene.Field(related_type, required=is_required(field), resolver=default_resolver)
+        return graphene.Field(related_type, required=django_field_is_required(field), resolver=default_resolver)
 
     return Dynamic(dynamic_type)
 
@@ -269,7 +269,7 @@ def convert_field_to_djangomodel(field, registry: RegistryGlobal):
         return graphene.Field(
             related_type,
             description=get_django_field_description(field),
-            required=is_required(field),
+            required=django_field_is_required(field),
             resolver=default_resolver,
         )
 
@@ -349,7 +349,7 @@ def convert_postgres_array_to_list(field, registry: RegistryGlobal):
     return graphene.List(
         inner_type,
         description=get_django_field_description(field),
-        required=is_required(field),
+        required=django_field_is_required(field),
     )
 
 
@@ -365,7 +365,7 @@ def convert_postgres_range_to_string(field, registry: RegistryGlobal):
     return graphene.List(
         inner_type,
         description=get_django_field_description(field),
-        required=is_required(field),
+        required=django_field_is_required(field),
     )
 
 

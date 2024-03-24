@@ -9,11 +9,11 @@ from decimal import Decimal
 
 class ModelA(models.Model):
 
-    binary_field_required = models.BinaryField()
-    binary_field_not_editable = models.BinaryField(editable=False)
-    binary_field_nullable = models.BinaryField(null=True, blank=True)
-    binary_field_with_default = models.BinaryField(default=b"binary_field_with_default")
-    binary_field_with_description = models.BinaryField(help_text="binary_field_with_description")
+    binary_field_required = models.BinaryField(editable=True)
+    binary_field_not_editable = models.BinaryField() #editable=False is default
+    binary_field_nullable = models.BinaryField(null=True, blank=True, editable=True)
+    binary_field_with_default = models.BinaryField(default=b"binary_field_with_default", editable=True)
+    binary_field_with_description = models.BinaryField(help_text="binary_field_with_description", editable=True)
 
     boolean_field_required = models.BooleanField()
     boolean_field_not_editable = models.BooleanField(editable=False)
@@ -66,7 +66,7 @@ class ModelA(models.Model):
     email_field_required = models.EmailField()
     email_field_not_editable = models.EmailField(editable=False)
     email_field_nullable = models.EmailField(null=True, blank=True)
-    email_field_with_default = models.EmailField(default="email_field_with_default")
+    email_field_with_default = models.EmailField(default="emailField@withDefault.com")
     email_field_with_description = models.EmailField(help_text="email_field_with_description")
 
     float_field_required = models.FloatField()
@@ -108,7 +108,7 @@ class ModelA(models.Model):
     url_field_required = models.URLField()
     url_field_not_editable = models.URLField(editable=False)
     url_field_nullable = models.URLField(null=True, blank=True)
-    url_field_with_default = models.URLField(default="url_field_with_default")
+    url_field_with_default = models.URLField(default="https://url_field_with_default.com")
     url_field_with_description = models.URLField(help_text="url_field_with_description")
     
     uuid_field_required = models.UUIDField()

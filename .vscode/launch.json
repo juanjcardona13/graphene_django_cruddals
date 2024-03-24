@@ -15,6 +15,13 @@
       "django": true,
       "justMyCode": false,
       "autoStartBrowser": false
+    },
+    {
+      "name": "Python Debugger: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal"
     }
   ]
 }

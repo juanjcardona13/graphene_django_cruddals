@@ -26,7 +26,7 @@ def convert_django_field_with_choices_to_output( field: DjangoField, registry: R
     if converted:
         return converted
     if getattr(field, "choices", None) and convert_choices_to_enum:
-        converted = convert_choice_field_to_graphene_enum(field)
+        converted = convert_choice_field_to_graphene_enum(field, None, None)
     else:
         converted = convert_django_field_to_output(field, registry)
     registry.register_field(field, TypeRegistryForFieldEnum.OUTPUT.value, converted)
@@ -46,9 +46,9 @@ def convert_django_field_with_choices_to_create_update_input( field: DjangoField
     if converted:
         return converted
     if getattr(field, "choices", None) and convert_choices_to_enum:
-        converted = converted = convert_choice_field_to_graphene_enum(field)
+        converted = converted = convert_choice_field_to_graphene_enum(field, None, type_mutation)
     else:
-        converted = convert_django_field_to_input(field, registry)
+        converted = convert_django_field_to_input(field, registry, type_mutation)
     registry.register_field(field, type_of_registry, converted)
     return converted
 
