@@ -65,7 +65,7 @@ def build_schema(schema):
     if schema is not None:
         with open(f"{PATH_CLIENT}/schema.json", "w") as outfile:
             schema_dict = {"data": schema.introspect()}
-            json.dump(schema_dict, outfile, indent=2, sort_keys=True)
+            json.dump(schema_dict, outfile, indent=2) #, sort_keys=True
         with open(f"{PATH_CLIENT}/schema.gql", "w") as outfile:
             outfile.write(print_schema(schema.graphql_schema))
         with open(f"{PATH_CLIENT}/schema-introspect.gql", "w") as outfile:

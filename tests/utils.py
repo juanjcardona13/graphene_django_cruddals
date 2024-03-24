@@ -1,5 +1,6 @@
 from tests.client import Client
 from graphene_django.utils.testing import GraphQLTestCase
+from graphql import get_introspection_query
 
 class VerifyResponseAssertionMixins:
     def verify_response(self, response, expected_response):
@@ -78,6 +79,12 @@ class SchemaTestCase(GraphQLTestCase):
         }
     """
 
+    INTROSPECTION_QUERY = get_introspection_query()
+
+    def get_schema(self):
+        client = Client()
+        return client.query(self.INTROSPECTION_QUERY).json()
+    
     def get_type(self, name):
         client = Client()
         response = client.query(self.QUERY_GET_TYPE, variables={"name": name}).json()
