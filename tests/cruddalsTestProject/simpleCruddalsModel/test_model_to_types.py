@@ -103,31 +103,31 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             {
                 "name": "choiceFieldRequired",
                 "description": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldRequiredChoices", "ofType": None } },
+                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldRequiredChoices", "ofType": None } },
                 "args": []
             },
             {
                 "name": "choiceFieldNotEditable",
                 "description": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldNotEditableChoices", "ofType": None } },
+                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldNotEditableChoices", "ofType": None } },
                 "args": []
             },
             {
                 "name": "choiceFieldNullable",
                 "description": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldNullableChoices", "ofType": None },
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldNullableChoices", "ofType": None },
                 "args": []
             },
             {
                 "name": "choiceFieldWithDefault",
                 "description": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices", "ofType": None },
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldWithDefaultChoices", "ofType": None },
                 "args": []
             },
             {
                 "name": "choiceFieldWithDescription",
                 "description": "choice_field_with_description",
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices", "ofType": None } },
+                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldWithDescriptionChoices", "ofType": None } },
                 "args": []
             },
             {
@@ -1046,25 +1046,25 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": "choiceFieldRequired",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldRequiredChoices", "ofType": None } }
+                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldRequiredChoices", "ofType": None } }
             },
             {
                 "name": "choiceFieldNullable",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldNullableChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldNullableChoices", "ofType": None }
             },
             {
                 "name": "choiceFieldWithDefault",
                 "description": None,
                 "defaultValue": "A",
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldWithDefaultChoices", "ofType": None }
             },
             {
                 "name": "choiceFieldWithDescription",
                 "description": "choice_field_with_description",
                 "defaultValue": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices", "ofType": None } }
+                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldWithDescriptionChoices", "ofType": None } }
             },
             {
                 "name": "dateFieldRequired",
@@ -1556,25 +1556,25 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": "choiceFieldRequired",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldRequiredChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldRequiredChoices", "ofType": None }
             },
             {
                 "name": "choiceFieldNullable",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldNullableChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldNullableChoices", "ofType": None }
             },
             {
                 "name": "choiceFieldWithDefault",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldWithDefaultChoices", "ofType": None }
             },
             {
                 "name": "choiceFieldWithDescription",
                 "description": "choice_field_with_description",
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldWithDescriptionChoices", "ofType": None }
             },
             {
                 "name": "dateFieldRequired",
@@ -2066,25 +2066,25 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": "choiceFieldRequired",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldRequiredChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldRequiredChoices", "ofType": None }
             },
             {
                 "name": "choiceFieldNullable",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldNullableChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldNullableChoices", "ofType": None }
             },
             {
                 "name": "choiceFieldWithDefault",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldWithDefaultChoices", "ofType": None }
             },
             {
                 "name": "choiceFieldWithDescription",
                 "description": "choice_field_with_description",
                 "defaultValue": None,
-                "type": { "kind": "ENUM", "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices", "ofType": None }
+                "type": { "kind": "ENUM", "name": "SimplecruddalsmodelModelAChoiceFieldWithDescriptionChoices", "ofType": None }
             },
             {
                 "name": "dateFieldRequired",

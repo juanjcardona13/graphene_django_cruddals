@@ -1,5 +1,5 @@
 """
-WSGI config for simpleCruddalsModel project.
+WSGI config for cruddalsTestProject project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'simpleCruddalsModel.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cruddalsTestProject.settings')
 
 application = get_wsgi_application()
