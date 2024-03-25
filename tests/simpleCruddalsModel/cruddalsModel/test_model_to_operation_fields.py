@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from tests.utils import SchemaTestCase
+
+from utils.main import SchemaTestCase
+
 
 class CruddalsModelSchemaTest(SchemaTestCase):
     def test_model_operations_for_query(self):
@@ -819,7 +821,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": None,
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldRequiredChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldRequiredChoices",
                             "ofType": None
                         },
                         "defaultValue": None
@@ -829,7 +831,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": None,
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldNullableChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldNullableChoices",
                             "ofType": None
                         },
                         "defaultValue": None
@@ -839,7 +841,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": None,
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldWithDefaultChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices",
                             "ofType": None
                         },
                         "defaultValue": None
@@ -849,7 +851,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": "choice_field_with_description",
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldWithDescriptionChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices",
                             "ofType": None
                         },
                         "defaultValue": None
@@ -1587,7 +1589,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     },
                     {
                     "kind": "ENUM",
-                    "name": "AppTestModelAChoiceFieldRequiredChoices",
+                    "name": "CruddalsmodelModelAChoiceFieldRequiredChoices",
                     "description": "An enumeration.",
                     "fields": None,
                     "inputFields": None,
@@ -1610,7 +1612,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     },
                     {
                     "kind": "ENUM",
-                    "name": "AppTestModelAChoiceFieldNullableChoices",
+                    "name": "CruddalsmodelModelAChoiceFieldNullableChoices",
                     "description": "An enumeration.",
                     "fields": None,
                     "inputFields": None,
@@ -1633,7 +1635,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     },
                     {
                     "kind": "ENUM",
-                    "name": "AppTestModelAChoiceFieldWithDefaultChoices",
+                    "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices",
                     "description": "An enumeration.",
                     "fields": None,
                     "inputFields": None,
@@ -1656,7 +1658,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     },
                     {
                     "kind": "ENUM",
-                    "name": "AppTestModelAChoiceFieldWithDescriptionChoices",
+                    "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices",
                     "description": "An enumeration.",
                     "fields": None,
                     "inputFields": None,
@@ -5032,7 +5034,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "name": None,
                             "ofType": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldRequiredChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldRequiredChoices",
                             "ofType": None
                             }
                         },
@@ -5048,7 +5050,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "name": None,
                             "ofType": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldNotEditableChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldNotEditableChoices",
                             "ofType": None
                             }
                         },
@@ -5061,7 +5063,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "args": [],
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldNullableChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldNullableChoices",
                             "ofType": None
                         },
                         "isDeprecated": False,
@@ -5073,7 +5075,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "args": [],
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldWithDefaultChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices",
                             "ofType": None
                         },
                         "isDeprecated": False,
@@ -5088,7 +5090,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "name": None,
                             "ofType": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldWithDescriptionChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices",
                             "ofType": None
                             }
                         },
@@ -6894,7 +6896,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     },
                     {
                     "kind": "ENUM",
-                    "name": "AppTestModelAChoiceFieldNotEditableChoices",
+                    "name": "CruddalsmodelModelAChoiceFieldNotEditableChoices",
                     "description": "An enumeration.",
                     "fields": None,
                     "inputFields": None,
@@ -11972,7 +11974,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "possibleTypes": [
                         {
                         "kind": "OBJECT",
-                        "name": "AppTestType",
+                        "name": "CruddalsmodelType",
                         "ofType": None
                         },
                         {
@@ -12009,7 +12011,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     },
                     {
                     "kind": "OBJECT",
-                    "name": "AppTestType",
+                    "name": "CruddalsmodelType",
                     "description": None,
                     "fields": [
                         {
@@ -15198,7 +15200,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "name": None,
                             "ofType": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldRequiredChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldRequiredChoices",
                             "ofType": None
                             }
                         },
@@ -15209,7 +15211,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": None,
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldNullableChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldNullableChoices",
                             "ofType": None
                         },
                         "defaultValue": None
@@ -15219,7 +15221,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": None,
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldWithDefaultChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices",
                             "ofType": None
                         },
                         "defaultValue": "A"
@@ -15232,7 +15234,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "name": None,
                             "ofType": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldWithDescriptionChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices",
                             "ofType": None
                             }
                         },
@@ -16265,7 +16267,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": None,
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldRequiredChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldRequiredChoices",
                             "ofType": None
                         },
                         "defaultValue": None
@@ -16275,7 +16277,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": None,
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldNullableChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldNullableChoices",
                             "ofType": None
                         },
                         "defaultValue": None
@@ -16285,7 +16287,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": None,
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldWithDefaultChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldWithDefaultChoices",
                             "ofType": None
                         },
                         "defaultValue": None
@@ -16295,7 +16297,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                         "description": "choice_field_with_description",
                         "type": {
                             "kind": "ENUM",
-                            "name": "AppTestModelAChoiceFieldWithDescriptionChoices",
+                            "name": "CruddalsmodelModelAChoiceFieldWithDescriptionChoices",
                             "ofType": None
                         },
                         "defaultValue": None

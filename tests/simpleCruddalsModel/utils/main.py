@@ -1,29 +1,46 @@
-from tests.client import Client
+from utils.client import Client
 from graphene_django.utils.testing import GraphQLTestCase
 from graphql import get_introspection_query
 
-class VerifyResponseAssertionMixins:
-    def verify_response(self, response, expected_response):
-        if isinstance(expected_response, dict):
-            self.assertIsInstance(response, dict)
-            iterator = expected_response.items()
-        elif isinstance(expected_response, list):
-            self.assertIsInstance(response, list)
-            self.assertEqual(len(expected_response), len(response), msg="len(list) didn't match")
-            iterator = enumerate(expected_response)
-        else:
-            self.assertEqual(expected_response, response, msg=(
-                "values didn't match :" + str(expected_response) + " == " + str(response)
-            ))
-            return
 
-        for key, value in iterator:
-            if isinstance(value, (dict, list)):
-                self.verify_response(response[key], value)
-            else:
-                self.assertEqual(value, response[key], msg=(
-                    "values didn't match :" + str(value) + " == " + str(response[key])
-                ))
+# class VerifyResponseAssertionMixins:
+#     def verify_response(self, response, expected_response):
+#         if isinstance(expected_response, dict):
+#             self.assertIsInstance(response, dict)
+#             iterator = expected_response.items()
+#         elif isinstance(expected_response, list):
+#             self.assertIsInstance(response, list)
+#             self.assertEqual(
+#                 len(expected_response), len(response), msg="len(list) didn't match"
+#             )
+#             iterator = enumerate(expected_response)
+#         else:
+#             self.assertEqual(
+#                 expected_response,
+#                 response,
+#                 msg=(
+#                     "values didn't match :"
+#                     + str(expected_response)
+#                     + " == "
+#                     + str(response)
+#                 ),
+#             )
+#             return
+
+#         for key, value in iterator:
+#             if isinstance(value, (dict, list)):
+#                 self.verify_response(response[key], value)
+#             else:
+#                 self.assertEqual(
+#                     value,
+#                     response[key],
+#                     msg=(
+#                         "values didn't match :"
+#                         + str(value)
+#                         + " == "
+#                         + str(response[key])
+#                     ),
+#                 )
 
 
 class SchemaTestCase(GraphQLTestCase):
@@ -84,7 +101,7 @@ class SchemaTestCase(GraphQLTestCase):
     def get_schema(self):
         client = Client()
         return client.query(self.INTROSPECTION_QUERY).json()
-    
+
     def get_type(self, name):
         client = Client()
         response = client.query(self.QUERY_GET_TYPE, variables={"name": name}).json()
@@ -103,15 +120,14 @@ class SchemaTestCase(GraphQLTestCase):
         gql_type = self.get_type(type_name)
         for ref_field in fields_to_test:
             with self.subTest(field=ref_field):
-                field = self.get_field_by_name( gql_type, ref_field["name"], input_field=input_type )
+                field = self.get_field_by_name(
+                    gql_type, ref_field["name"], input_field=input_type
+                )
                 self.assertDictEqual(field, ref_field)
 
     def assertTypeIsComposeOfFields(self, type_name, field_names, input_type=False):
         fields_key = "inputFields" if input_type else "fields"
         gql_type = self.get_type(type_name)
-        self.assertEqual(len(field_names),len(gql_type[fields_key]))
+        self.assertEqual(len(field_names), len(gql_type[fields_key]))
         for field in gql_type[fields_key]:
             self.assertIn(field["name"], field_names)
-
-
-
