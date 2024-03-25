@@ -267,6 +267,7 @@ type ModelCType {
   jsonField: JSONString
   fileField: String
   oneToOneField: ModelDType
+  isActive: Boolean
   paginatedManyToManyField(where: ModelDFilterInput, orderBy: ModelDOrderByInput, paginated: PaginatedInput): ModelDPaginatedType
   paginatedForeignKeyDRelated(where: ModelDFilterInput, orderBy: ModelDOrderByInput, paginated: PaginatedInput): ModelDPaginatedType
 }
@@ -340,6 +341,7 @@ input ModelCFilterInput {
   jsonField: JSONStringFilter
   fileField: StringFilter
   oneToOneField: ModelDFilterInput
+  isActive: BooleanFilter
   manyToManyField: ModelDFilterInput
   foreignKeyDRelated: ModelDFilterInput
   AND: [ModelCFilterInput]
@@ -491,6 +493,7 @@ input ModelCOrderByInput {
   dateTimeField: OrderEnum
   fileField: OrderEnum
   oneToOneField: ModelDOrderByInput
+  isActive: OrderEnum
 }
 
 enum OrderStringEnum {
@@ -1305,6 +1308,7 @@ input CreateModelCInput {
   jsonField: JSONString
   fileField: Upload
   oneToOneField: ID
+  isActive: Boolean = true
   manyToManyField: [ID]
 }
 
@@ -1328,6 +1332,7 @@ input UpdateModelCInput {
   jsonField: JSONString
   fileField: Upload
   oneToOneField: ID
+  isActive: Boolean
   manyToManyField: [ID]
 }
 

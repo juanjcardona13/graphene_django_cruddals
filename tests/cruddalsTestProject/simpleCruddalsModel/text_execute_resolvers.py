@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from utils.client import Client
 from utils.main import SchemaTestCase
 
 model_c_fragment = """
@@ -348,6 +349,81 @@ search_model_e_query = (
 """
 )
 
+objs_to_create_type_c = [
+    {
+        "charField": "AAA",
+        "integerField": 1,
+        "booleanField": True,
+        "dateTimeField": "2021-01-01T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "BBB",
+        "integerField": 2,
+        "booleanField": False,
+        "dateTimeField": "2021-02-02T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "CCC",
+        "integerField": 3,
+        "booleanField": True,
+        "dateTimeField": "2021-03-03T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "DDD",
+        "integerField": 4,
+        "booleanField": False,
+        "dateTimeField": "2021-04-04T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "EEE",
+        "integerField": 5,
+        "booleanField": True,
+        "dateTimeField": "2021-05-05T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "aaa",
+        "integerField": 1,
+        "booleanField": True,
+        "dateTimeField": "2021-01-01T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "bbb",
+        "integerField": 2,
+        "booleanField": False,
+        "dateTimeField": "2021-02-02T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "ccc",
+        "integerField": 3,
+        "booleanField": True,
+        "dateTimeField": "2021-03-03T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "ddd",
+        "integerField": 4,
+        "booleanField": False,
+        "dateTimeField": "2021-04-04T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+    {
+        "charField": "eee",
+        "integerField": 5,
+        "booleanField": True,
+        "dateTimeField": "2021-05-05T00:00:00Z",
+        "jsonField": {"key": "value"},
+    },
+]
+
 
 class CruddalsModelSchemaTest(SchemaTestCase):
-    pass
+    def test_create_model_c(self):
+        client = Client()
+        objs = objs_to_create_type_c

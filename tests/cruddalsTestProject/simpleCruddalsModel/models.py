@@ -284,6 +284,7 @@ class ModelC(models.Model):
     many_to_many_field = models.ManyToManyField(
         "ModelD", related_name="many_to_many_C_related", blank=True
     )
+    is_active = models.BooleanField(default=True)
 
 
 class ModelD(models.Model):
