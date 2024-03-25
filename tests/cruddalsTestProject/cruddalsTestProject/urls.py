@@ -19,12 +19,17 @@ from django.urls import path
 from graphene_django.views import GraphQLView
 from django.views.decorators.csrf import csrf_exempt
 from .schema import schema
+from graphene_django_cruddals.views.cruddals_views import CRUDDALSView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(
         "graphql/",
-        csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema)),
+        csrf_exempt(
+            CRUDDALSView.as_view(
+                graphiql=True, schema=schema, generate_cruddals_files_client=True
+            )
+        ),
         name="graphql",
     ),
 ]

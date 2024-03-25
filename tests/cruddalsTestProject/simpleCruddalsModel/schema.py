@@ -29,9 +29,9 @@ class CruddalsModelE(CruddalsModel):
         model = ModelE
 
 
-class CruddalsModelF(CruddalsModel):
-    class Meta:
-        model = ModelF
+# class CruddalsModelF(CruddalsModel):
+#     class Meta:
+#         model = ModelF
 
 
 class Query(
@@ -40,7 +40,7 @@ class Query(
     CruddalsModelC.Query,
     CruddalsModelD.Query,
     CruddalsModelE.Query,
-    CruddalsModelF.Query,
+    # CruddalsModelF.Query,
     graphene.ObjectType,
 ):
     pass
@@ -52,7 +52,7 @@ class Mutation(
     CruddalsModelC.Mutation,
     CruddalsModelD.Mutation,
     CruddalsModelE.Mutation,
-    CruddalsModelF.Mutation,
+    # CruddalsModelF.Mutation,
     graphene.ObjectType,
 ):
     pass

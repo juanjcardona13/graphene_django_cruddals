@@ -268,35 +268,39 @@ class ModelB(models.Model):
 
 
 class ModelC(models.Model):
-    create_update_only = models.CharField(max_length=5)
-    create_only = models.CharField(max_length=5)
-    update_only = models.CharField(max_length=5)
-    where_only = models.CharField(max_length=5)
-    order_by_only = models.CharField(max_length=5)
-    all_input = models.CharField(max_length=5)
-    all_exclude = models.CharField(max_length=5)
+    char_field = models.CharField(max_length=100)
+    integer_field = models.IntegerField(default=1, null=True, blank=True)
+    boolean_field = models.BooleanField(null=True, blank=True)
+    date_time_field = models.DateTimeField(null=True, blank=True)
+    json_field = models.JSONField(null=True, blank=True)
+    file_field = models.FileField(null=True, blank=True)
+    one_to_one_field = models.OneToOneField(
+        "ModelD",
+        on_delete=models.CASCADE,
+        related_name="one_to_one_C_related",
+        null=True,
+        blank=True,
+    )
+    many_to_many_field = models.ManyToManyField(
+        "ModelD", related_name="many_to_many_C_related", blank=True
+    )
 
 
 class ModelD(models.Model):
-    create_update_only = models.CharField(max_length=5)
-    create_only = models.CharField(max_length=5)
-    update_only = models.CharField(max_length=5)
-    where_only = models.CharField(max_length=5)
-    order_by_only = models.CharField(max_length=5)
-    all_input = models.CharField(max_length=5)
-    all_exclude = models.CharField(max_length=5)
+    foreign_key_field = models.ForeignKey(
+        "ModelC",
+        on_delete=models.CASCADE,
+        related_name="foreign_key_D_related",
+        null=True,
+        blank=True,
+    )
 
 
 class ModelE(models.Model):
-    fk_f = models.ForeignKey(
-        "ModelF", on_delete=models.CASCADE, related_name="fk_f_related"
+    foreign_key_field_deep = models.ForeignKey(
+        "ModelD",
+        on_delete=models.CASCADE,
+        related_name="foreign_key_E_related",
+        null=True,
+        blank=True,
     )
-    oto_f = models.OneToOneField(
-        "ModelF", on_delete=models.CASCADE, related_name="oto_f_related"
-    )
-    mtm_f = models.ManyToManyField("ModelF", related_name="mtm_f_related")
-    text = models.CharField(max_length=50)
-
-
-class ModelF(models.Model):
-    text = models.CharField(max_length=50)
