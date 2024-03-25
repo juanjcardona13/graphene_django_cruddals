@@ -27,7 +27,7 @@ def get_apps_name():
     def validate_apps(apps_name):
         [django_apps.get_app_config(app_name) for app_name in apps_name]
 
-    apps = "__all__" #TODO
+    apps = "__all__"  # TODO
     apps_name = []
     if apps == "__all__":
         apps_name = django_apps.app_configs.keys()
@@ -65,7 +65,7 @@ def build_schema(schema):
     if schema is not None:
         with open(f"{PATH_CLIENT}/schema.json", "w") as outfile:
             schema_dict = {"data": schema.introspect()}
-            json.dump(schema_dict, outfile, indent=2) #, sort_keys=True
+            json.dump(schema_dict, outfile, indent=2)  # , sort_keys=True
         with open(f"{PATH_CLIENT}/schema.gql", "w") as outfile:
             outfile.write(print_schema(schema.graphql_schema))
         with open(f"{PATH_CLIENT}/schema-introspect.gql", "w") as outfile:
