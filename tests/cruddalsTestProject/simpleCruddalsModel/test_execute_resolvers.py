@@ -154,13 +154,14 @@ list_model_c_query = (
 )
 
 search_model_c_query = (
-    model_c_fragment
-    + pagination_fragment
+    pagination_fragment
     + """
     query searchModelCs($where: ModelCFilterInput $orderBy: ModelCOrderByInput $paginated: PaginatedInput) {
         searchModelCs(where: $where orderBy: $orderBy paginated: $paginated) {
             ...paginationType
-            objects { ...modelCType }
+            objects {
+                id
+            }
         }
     }
 """
@@ -829,10 +830,210 @@ class CruddalsModelSchemaTest(SchemaTestCase):
         self.verify_response(response, expected_response)
         #endregion
 
+        #region SEARCH
+        #region Test search with no filters
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 9,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 9,
+                    "objects": [
+                        { "id": "2" },
+                        { "id": "3" },
+                        { "id": "4" },
+                        { "id": "5" },
+                        { "id": "6" },
+                        { "id": "7" },
+                        { "id": "8" },
+                        { "id": "9" },
+                        { "id": "10" },
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query).json()
+        self.verify_response(response, expected_response)
+        #endregion
+
+        #region Test search with pagination
+        variables = {"paginated": {"page": 1, "pageSize": 2}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 9,
+                    "page": 1,
+                    "pages": 5,
+                    "hasNext": True,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { "id": "2", },
+                        { "id": "3", },
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query, variables=variables).json()
+        self.verify_response(response, expected_response)
+
+        variables = {"paginated": {"page": 2, "pageSize": 2}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 9,
+                    "page": 2,
+                    "pages": 5,
+                    "hasNext": True,
+                    "hasPrev": True,
+                    "indexStartObj": 3,
+                    "indexEndObj": 4,
+                    "objects": [
+                        { "id": "4", },
+                        { "id": "5", },
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query, variables=variables).json()
+        self.verify_response(response, expected_response)
+
+        variables = {"paginated": {"page": 5, "pageSize": 2}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 9,
+                    "page": 5,
+                    "pages": 5,
+                    "hasNext": False,
+                    "hasPrev": True,
+                    "indexStartObj": 9,
+                    "indexEndObj": 9,
+                    "objects": [
+                        { "id": "10", }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query, variables=variables).json()
+        self.verify_response(response, expected_response)
+        #endregion
+        
+        #region Test search with order by
+        variables = {"orderBy": {"charField": "DESC"}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 9,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 9,
+                    "objects": [
+                        {
+                            "id": "10",
+                            "charField": "eee",
+                        },
+                        {
+                            "id": "9",
+                            "charField": "ddd",
+                        },
+                        {
+                            "id": "8",
+                            "charField": "ccc",
+                        },
+                        {
+                            "id": "7",
+                            "charField": "bbb",
+                        },
+                        {
+                            "id": "6",
+                            "charField": "aaa",
+                        },
+                        {
+                            "id": "5",
+                            "charField": "EEE",
+                        },
+                        {
+                            "id": "4",
+                            "charField": "DDD",
+                        },
+                        {
+                            "id": "3",
+                            "charField": "CCC",
+                        },
+                        {
+                            "id": "2",
+                            "charField": "BBB",
+                        },
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response)
+
+        variables = {"orderBy": {"charField": "IDESC"}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 9,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 9,
+                    "objects": [
+                        {
+                            "id": "5",
+                            "charField": "EEE",
+                        },
+                        {
+                            "id": "10",
+                            "charField": "eee",
+                        },
+                        {
+                            "id": "4",
+                            "charField": "DDD",
+                        },
+                        {
+                            "id": "9",
+                            "charField": "ddd",
+                        },
+                        {
+                            "id": "3",
+                            "charField": "CCC",
+                        },
+                        {
+                            "id": "8",
+                            "charField": "ccc",
+                        },
+                        {
+                            "id": "2",
+                            "charField": "BBB",
+                        },
+                        {
+                            "id": "7",
+                            "charField": "bbb",
+                        },
+                        {
+                            "id": "6",
+                            "charField": "aaa",
+                        },
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response)
 
         
-
-
-
-
-
+        #endregion
