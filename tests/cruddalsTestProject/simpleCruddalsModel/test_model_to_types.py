@@ -625,7 +625,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -650,7 +650,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -675,7 +675,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -700,7 +700,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -731,7 +731,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -756,7 +756,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -781,7 +781,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -806,7 +806,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -849,7 +849,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -874,7 +874,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -899,7 +899,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -930,7 +930,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             },
@@ -961,7 +961,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "paginated",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "PaginatedInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "PaginationConfigInput", "ofType": None }
                 }
                 ]
             }

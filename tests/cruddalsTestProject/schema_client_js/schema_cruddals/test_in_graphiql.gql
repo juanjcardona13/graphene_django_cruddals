@@ -23,7 +23,7 @@ query listModelAs() {
     }
 }
 
-query searchModelAs($where: ModelAFilterInput $orderBy: ModelAOrderByInput $paginated: PaginatedInput ) {
+query searchModelAs($where: ModelAFilterInput $orderBy: ModelAOrderByInput $paginated: PaginationConfigInput ) {
     searchModelAs(where: $where orderBy: $orderBy paginated: $paginated ) {
         total
         page
@@ -140,7 +140,7 @@ query listModelBs() {
     }
 }
 
-query searchModelBs($where: ModelBFilterInput $orderBy: ModelBOrderByInput $paginated: PaginatedInput ) {
+query searchModelBs($where: ModelBFilterInput $orderBy: ModelBOrderByInput $paginated: PaginationConfigInput ) {
     searchModelBs(where: $where orderBy: $orderBy paginated: $paginated ) {
         total
         page
@@ -257,7 +257,7 @@ query listModelCs() {
     }
 }
 
-query searchModelCs($where: ModelCFilterInput $orderBy: ModelCOrderByInput $paginated: PaginatedInput ) {
+query searchModelCs($where: ModelCFilterInput $orderBy: ModelCOrderByInput $paginated: PaginationConfigInput ) {
     searchModelCs(where: $where orderBy: $orderBy paginated: $paginated ) {
         total
         page
@@ -374,7 +374,7 @@ query listModelDs() {
     }
 }
 
-query searchModelDs($where: ModelDFilterInput $orderBy: ModelDOrderByInput $paginated: PaginatedInput ) {
+query searchModelDs($where: ModelDFilterInput $orderBy: ModelDOrderByInput $paginated: PaginationConfigInput ) {
     searchModelDs(where: $where orderBy: $orderBy paginated: $paginated ) {
         total
         page
@@ -491,7 +491,7 @@ query listModelEs() {
     }
 }
 
-query searchModelEs($where: ModelEFilterInput $orderBy: ModelEOrderByInput $paginated: PaginatedInput ) {
+query searchModelEs($where: ModelEFilterInput $orderBy: ModelEOrderByInput $paginated: PaginationConfigInput ) {
     searchModelEs(where: $where orderBy: $orderBy paginated: $paginated ) {
         total
         page

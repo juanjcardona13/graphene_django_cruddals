@@ -235,7 +235,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
               "defaultValue": None,
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "PaginatedInput",
+                "name": "PaginationConfigInput",
                 "ofType": None
               }
             }

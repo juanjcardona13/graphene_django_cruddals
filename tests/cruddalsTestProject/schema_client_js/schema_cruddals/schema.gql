@@ -229,19 +229,19 @@ scalar UUID
 
 type Query {
   readModelE(where: ModelEFilterInput!): ModelEType
-  searchModelEs(where: ModelEFilterInput, orderBy: ModelEOrderByInput, paginated: PaginatedInput): ModelEPaginatedType
+  searchModelEs(where: ModelEFilterInput, orderBy: ModelEOrderByInput, paginated: PaginationConfigInput): ModelEPaginatedType
   listModelEs: [ModelEType!]
   readModelD(where: ModelDFilterInput!): ModelDType
-  searchModelDs(where: ModelDFilterInput, orderBy: ModelDOrderByInput, paginated: PaginatedInput): ModelDPaginatedType
+  searchModelDs(where: ModelDFilterInput, orderBy: ModelDOrderByInput, paginated: PaginationConfigInput): ModelDPaginatedType
   listModelDs: [ModelDType!]
   readModelC(where: ModelCFilterInput!): ModelCType
-  searchModelCs(where: ModelCFilterInput, orderBy: ModelCOrderByInput, paginated: PaginatedInput): ModelCPaginatedType
+  searchModelCs(where: ModelCFilterInput, orderBy: ModelCOrderByInput, paginated: PaginationConfigInput): ModelCPaginatedType
   listModelCs: [ModelCType!]
   readModelB(where: ModelBFilterInput!): ModelBType
-  searchModelBs(where: ModelBFilterInput, orderBy: ModelBOrderByInput, paginated: PaginatedInput): ModelBPaginatedType
+  searchModelBs(where: ModelBFilterInput, orderBy: ModelBOrderByInput, paginated: PaginationConfigInput): ModelBPaginatedType
   listModelBs: [ModelBType!]
   readModelA(where: ModelAFilterInput!): ModelAType
-  searchModelAs(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
+  searchModelAs(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
   listModelAs: [ModelAType!]
 }
 
@@ -254,8 +254,8 @@ type ModelDType {
   id: ID
   foreignKeyField: ModelCType
   oneToOneCRelated: ModelCType!
-  paginatedManyToManyCRelated(where: ModelCFilterInput, orderBy: ModelCOrderByInput, paginated: PaginatedInput): ModelCPaginatedType
-  paginatedForeignKeyERelated(where: ModelEFilterInput, orderBy: ModelEOrderByInput, paginated: PaginatedInput): ModelEPaginatedType
+  paginatedManyToManyCRelated(where: ModelCFilterInput, orderBy: ModelCOrderByInput, paginated: PaginationConfigInput): ModelCPaginatedType
+  paginatedForeignKeyERelated(where: ModelEFilterInput, orderBy: ModelEOrderByInput, paginated: PaginationConfigInput): ModelEPaginatedType
 }
 
 type ModelCType {
@@ -268,8 +268,8 @@ type ModelCType {
   fileField: String
   oneToOneField: ModelDType
   isActive: Boolean
-  paginatedManyToManyField(where: ModelDFilterInput, orderBy: ModelDOrderByInput, paginated: PaginatedInput): ModelDPaginatedType
-  paginatedForeignKeyDRelated(where: ModelDFilterInput, orderBy: ModelDOrderByInput, paginated: PaginatedInput): ModelDPaginatedType
+  paginatedManyToManyField(where: ModelDFilterInput, orderBy: ModelDOrderByInput, paginated: PaginationConfigInput): ModelDPaginatedType
+  paginatedForeignKeyDRelated(where: ModelDFilterInput, orderBy: ModelDOrderByInput, paginated: PaginationConfigInput): ModelDPaginatedType
 }
 
 """
@@ -503,9 +503,9 @@ enum OrderStringEnum {
   IDESC
 }
 
-input PaginatedInput {
+input PaginationConfigInput {
   page: Int = 1
-  pageSize: IntOrAll = "All"
+  itemsPerPage: IntOrAll = "All"
 }
 
 """The page size can be int or 'All'"""
@@ -542,7 +542,7 @@ type ModelBType {
   id: ID
   foreignKeyField: ModelAType!
   oneToOneField: ModelAType!
-  paginatedManyToManyField(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
+  paginatedManyToManyField(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
 }
 
 type ModelAType {
@@ -688,31 +688,31 @@ type ModelAType {
 
   """The object id"""
   objectId: PositiveInt
-  paginatedManyToManyFieldRequired(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
-  paginatedManyToManyFieldNullable(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
+  paginatedManyToManyFieldRequired(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
+  paginatedManyToManyFieldNullable(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
 
   """many_to_many_field_with_description"""
-  paginatedManyToManyFieldWithDescription(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
-  paginatedManyToManyFieldWithoutRelatedName(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
+  paginatedManyToManyFieldWithDescription(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
+  paginatedManyToManyFieldWithoutRelatedName(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
   genericForeignKeyField: ModelAGenericForeignKeyFieldUnionType
-  paginatedGenericRelationField(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
-  paginatedForeignKeyRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
-  paginatedForeignKeyNullableRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
+  paginatedGenericRelationField(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
+  paginatedForeignKeyRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
+  paginatedForeignKeyNullableRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
 
   """foreign_key_field_with_description"""
-  paginatedForeignKeyWithDescriptionRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
+  paginatedForeignKeyWithDescriptionRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
   oneToOneRelated: ModelAType!
   oneToOneNullableRelated: ModelAType!
   oneToOneWithDescriptionRelated: ModelAType!
-  paginatedManyToManyRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
-  paginatedManyToManyNullableRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
+  paginatedManyToManyRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
+  paginatedManyToManyNullableRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
 
   """many_to_many_field_with_description"""
-  paginatedManyToManyWithDescriptionRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginatedInput): ModelAPaginatedType
+  paginatedManyToManyWithDescriptionRelated(where: ModelAFilterInput, orderBy: ModelAOrderByInput, paginated: PaginationConfigInput): ModelAPaginatedType
   genericRelationRelated: ModelAType!
-  paginatedForeignKeyBRelated(where: ModelBFilterInput, orderBy: ModelBOrderByInput, paginated: PaginatedInput): ModelBPaginatedType
+  paginatedForeignKeyBRelated(where: ModelBFilterInput, orderBy: ModelBOrderByInput, paginated: PaginationConfigInput): ModelBPaginatedType
   oneToOneBRelated: ModelBType!
-  paginatedManyToManyBRelated(where: ModelBFilterInput, orderBy: ModelBOrderByInput, paginated: PaginatedInput): ModelBPaginatedType
+  paginatedManyToManyBRelated(where: ModelBFilterInput, orderBy: ModelBOrderByInput, paginated: PaginationConfigInput): ModelBPaginatedType
 }
 
 """An enumeration."""

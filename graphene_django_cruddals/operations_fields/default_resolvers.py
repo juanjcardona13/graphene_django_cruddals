@@ -202,4 +202,4 @@ def default_search_field_resolver( paginated_object_type, django_object_type, re
 
     if isinstance(queryset, QuerySet):
         queryset = maybe_queryset(django_object_type.get_queryset(queryset, info))
-    return paginate_queryset( queryset, paginated_object_type, paginated.get("page_size", "All"), paginated.get("page", 1) )
+    return paginate_queryset( queryset, paginated_object_type, paginated.get("items_per_page", "All"), paginated.get("page", 1) )

@@ -78,14 +78,14 @@ def toggle_active_status(option:Union[Literal['ACTIVATE', 'DEACTIVATE'], Literal
     return data
 
 
-def paginate_queryset(qs:DjangoQuerySet, paginated_type:Type[graphene.ObjectType], page_size:Union[int, Literal['All']]="All", page:int=1, **kwargs) -> graphene.ObjectType :
+def paginate_queryset(qs:DjangoQuerySet, paginated_type:Type[graphene.ObjectType], items_per_page:Union[int, Literal['All']]="All", page:int=1, **kwargs) -> graphene.ObjectType :
     """
     Paginate a queryset based on the specified parameters.
 
     Args:
         qs (QuerySet): The queryset to paginate.
         paginated_type (Type[graphene.ObjectType]): The pagination type to return. By default, it is None.
-        page_size (Union[int, Literal['All']], optional): The number of items per page. By default, it is 'All'.
+        items_per_page (Union[int, Literal['All']], optional): The number of items per page. By default, it is 'All'.
         page (int, optional): The current page number. By default, it is 1.
         **kwargs: Additional keyword arguments for the paginated_type.
     
@@ -93,22 +93,22 @@ def paginate_queryset(qs:DjangoQuerySet, paginated_type:Type[graphene.ObjectType
         Type: An instance of paginated_type with pagination information and objects.
     """
 
-    if page_size == "All":
-        page_size = qs.count()
+    if items_per_page == "All":
+        items_per_page = qs.count()
 
     try:
         page = int(page)
-        page_size = int(page_size)
+        items_per_page = int(items_per_page)
     except:
         page = 1
-        page_size = 1
+        items_per_page = 1
 
     if page == 0:
         page = 1
-    if page_size == 0:
-        page_size = 1
+    if items_per_page == 0:
+        items_per_page = 1
 
-    p = Paginator(qs, page_size)
+    p = Paginator(qs, items_per_page)
 
     try:
         page_obj = p.page(page)

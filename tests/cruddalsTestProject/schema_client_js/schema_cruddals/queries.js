@@ -50,7 +50,7 @@ export function searchModelAs(fields, extraArgs=[]) {
     const selectedFields = fields ? fields : defaultFields;
 
     const query = gql`
-        query searchModelAs($where: ModelAFilterInput $orderBy: ModelAOrderByInput $paginated: PaginatedInput  ${varsStr}) {
+        query searchModelAs($where: ModelAFilterInput $orderBy: ModelAOrderByInput $paginated: PaginationConfigInput  ${varsStr}) {
             searchModelAs(where: $where orderBy: $orderBy paginated: $paginated ) {
                 ${PaginatedType}
                 objects {
@@ -110,7 +110,7 @@ export function searchModelBs(fields, extraArgs=[]) {
     const selectedFields = fields ? fields : defaultFields;
 
     const query = gql`
-        query searchModelBs($where: ModelBFilterInput $orderBy: ModelBOrderByInput $paginated: PaginatedInput  ${varsStr}) {
+        query searchModelBs($where: ModelBFilterInput $orderBy: ModelBOrderByInput $paginated: PaginationConfigInput  ${varsStr}) {
             searchModelBs(where: $where orderBy: $orderBy paginated: $paginated ) {
                 ${PaginatedType}
                 objects {
@@ -170,7 +170,7 @@ export function searchModelCs(fields, extraArgs=[]) {
     const selectedFields = fields ? fields : defaultFields;
 
     const query = gql`
-        query searchModelCs($where: ModelCFilterInput $orderBy: ModelCOrderByInput $paginated: PaginatedInput  ${varsStr}) {
+        query searchModelCs($where: ModelCFilterInput $orderBy: ModelCOrderByInput $paginated: PaginationConfigInput  ${varsStr}) {
             searchModelCs(where: $where orderBy: $orderBy paginated: $paginated ) {
                 ${PaginatedType}
                 objects {
@@ -230,7 +230,7 @@ export function searchModelDs(fields, extraArgs=[]) {
     const selectedFields = fields ? fields : defaultFields;
 
     const query = gql`
-        query searchModelDs($where: ModelDFilterInput $orderBy: ModelDOrderByInput $paginated: PaginatedInput  ${varsStr}) {
+        query searchModelDs($where: ModelDFilterInput $orderBy: ModelDOrderByInput $paginated: PaginationConfigInput  ${varsStr}) {
             searchModelDs(where: $where orderBy: $orderBy paginated: $paginated ) {
                 ${PaginatedType}
                 objects {
@@ -290,7 +290,7 @@ export function searchModelEs(fields, extraArgs=[]) {
     const selectedFields = fields ? fields : defaultFields;
 
     const query = gql`
-        query searchModelEs($where: ModelEFilterInput $orderBy: ModelEOrderByInput $paginated: PaginatedInput  ${varsStr}) {
+        query searchModelEs($where: ModelEFilterInput $orderBy: ModelEOrderByInput $paginated: PaginationConfigInput  ${varsStr}) {
             searchModelEs(where: $where orderBy: $orderBy paginated: $paginated ) {
                 ${PaginatedType}
                 objects {

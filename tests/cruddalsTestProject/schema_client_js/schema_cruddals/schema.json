@@ -1189,7 +1189,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1279,7 +1279,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1369,7 +1369,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1459,7 +1459,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1549,7 +1549,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1698,7 +1698,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1741,7 +1741,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1907,7 +1907,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -1950,7 +1950,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -4021,7 +4021,7 @@
         },
         {
           "kind": "INPUT_OBJECT",
-          "name": "PaginatedInput",
+          "name": "PaginationConfigInput",
           "description": null,
           "fields": null,
           "inputFields": [
@@ -4036,7 +4036,7 @@
               "defaultValue": "1"
             },
             {
-              "name": "pageSize",
+              "name": "itemsPerPage",
               "description": null,
               "type": {
                 "kind": "SCALAR",
@@ -4411,7 +4411,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -5905,7 +5905,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -5948,7 +5948,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -5991,7 +5991,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6034,7 +6034,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6089,7 +6089,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6132,7 +6132,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6175,7 +6175,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6218,7 +6218,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6309,7 +6309,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6352,7 +6352,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6395,7 +6395,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6454,7 +6454,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null
@@ -6513,7 +6513,7 @@
                   "description": "",
                   "type": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PaginatedInput",
+                    "name": "PaginationConfigInput",
                     "ofType": null
                   },
                   "defaultValue": null

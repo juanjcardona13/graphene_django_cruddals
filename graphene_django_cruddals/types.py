@@ -237,7 +237,7 @@ class ActivateFieldStructure(Protocol):
 class ListFieldStructure(Protocol):
     class Meta:
         modify_order_by_argument: ModifyArgument
-        modify_paginated_argument: ModifyArgument
+        modify_pagination_config_argument: ModifyArgument
         extra_arguments: Dict[str, GRAPHENE_TYPE]
 
     def pre_resolve(self, info, *args, **kwargs) -> Tuple:
@@ -257,7 +257,7 @@ class SearchFieldStructure(Protocol):
     class Meta:
         modify_where_argument: ModifyArgument
         modify_order_by_argument: ModifyArgument
-        modify_paginated_argument: ModifyArgument
+        modify_pagination_config_argument: ModifyArgument
         extra_arguments: Dict[str, GRAPHENE_TYPE]
 
     def pre_resolve(self, info, *args, **kwargs) -> Tuple:

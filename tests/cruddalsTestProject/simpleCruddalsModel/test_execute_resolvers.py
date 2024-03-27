@@ -156,7 +156,7 @@ list_model_c_query = (
 search_model_c_query = (
     pagination_fragment
     + """
-    query searchModelCs($where: ModelCFilterInput $orderBy: ModelCOrderByInput $paginated: PaginatedInput) {
+    query searchModelCs($where: ModelCFilterInput $orderBy: ModelCOrderByInput $paginated: PaginationConfigInput) {
         searchModelCs(where: $where orderBy: $orderBy paginated: $paginated) {
             ...paginationType
             objects {
@@ -253,7 +253,7 @@ list_model_d_query = (
 search_model_d_query = (
     all_fragment
     + """
-    query searchModelDs($where: ModelDFilterInput $orderBy: ModelDOrderByInput $paginated: PaginatedInput) {
+    query searchModelDs($where: ModelDFilterInput $orderBy: ModelDOrderByInput $paginated: PaginationConfigInput) {
         searchModelDs(where: $where orderBy: $orderBy paginated: $paginated) {
             ...paginationType
             objects { ...modelDType }
@@ -348,7 +348,7 @@ list_model_e_query = (
 search_model_e_query = (
     all_fragment
     + """
-    query searchModelEs($where: ModelEFilterInput $orderBy: ModelEOrderByInput $paginated: PaginatedInput) {
+    query searchModelEs($where: ModelEFilterInput $orderBy: ModelEOrderByInput $paginated: PaginationConfigInput) {
         searchModelEs(where: $where orderBy: $orderBy paginated: $paginated) {
             ...paginationType
             objects { ...modelEType }
@@ -861,7 +861,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
         #endregion
 
         #region Test search with pagination
-        variables = {"paginated": {"page": 1, "pageSize": 2}}
+        variables = {"paginated": {"page": 1, "itemsPerPage": 2}}
         expected_response = {
             "data": {
                 "searchModelCs": {
@@ -882,7 +882,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
         response = client.query(search_model_c_query, variables=variables).json()
         self.verify_response(response, expected_response)
 
-        variables = {"paginated": {"page": 2, "pageSize": 2}}
+        variables = {"paginated": {"page": 2, "itemsPerPage": 2}}
         expected_response = {
             "data": {
                 "searchModelCs": {
@@ -903,7 +903,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
         response = client.query(search_model_c_query, variables=variables).json()
         self.verify_response(response, expected_response)
 
-        variables = {"paginated": {"page": 5, "pageSize": 2}}
+        variables = {"paginated": {"page": 5, "itemsPerPage": 2}}
         expected_response = {
             "data": {
                 "searchModelCs": {

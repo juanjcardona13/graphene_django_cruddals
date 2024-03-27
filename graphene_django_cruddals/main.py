@@ -668,9 +668,9 @@ class IntOrAll(GenericScalar):
     class Meta:
         description = "The page size can be int or 'All'"
 
-class PaginatedInput(graphene.InputObjectType):
+class PaginationConfigInput(graphene.InputObjectType):
     page = graphene.InputField(type_=graphene.Int, default_value=1)
-    page_size = graphene.InputField(type_=IntOrAll, default_value="All")
+    items_per_page = graphene.InputField(type_=IntOrAll, default_value="All")
 
 
 class BuilderSearch(BuilderQuery):
@@ -699,15 +699,15 @@ class BuilderSearch(BuilderQuery):
             return {"order_by": graphene.Argument(**default_values_for_order_by)}
 
     @staticmethod #TODO: Change to a class method
-    def get_paginated_arg(kw={}):
+    def get_pagination_config_arg(kw={}):
         default_values_for_paginated = {
-            "type_": PaginatedInput,
+            "type_": PaginationConfigInput,
             "name": "paginated",
             "required": False,
             "description": "",
         }
-        attrs_for_paginated_arg = kw.get("modify_paginated_argument", {})
-        attrs_for_paginated_arg = default_values_for_paginated | attrs_for_paginated_arg
+        attrs_for_pagination_config_arg = kw.get("modify_pagination_config_argument", {})
+        attrs_for_pagination_config_arg = default_values_for_paginated | attrs_for_pagination_config_arg
         if default_values_for_paginated.get("hidden", False):
             return {}
         else:
@@ -723,7 +723,7 @@ class BuilderSearch(BuilderQuery):
         order_by_arg = self.get_order_by_arg(
             self.model_as_order_by_input_object_type, kw=kwargs
         )
-        paginated_arg = self.get_paginated_arg(kw=kwargs)
+        pagination_config_arg = self.get_pagination_config_arg(kw=kwargs)
 
         name_function = "resolve"
         default_resolver = lambda root, info, **args: default_search_field_resolver(
@@ -741,7 +741,7 @@ class BuilderSearch(BuilderQuery):
 
         search_field = DjangoSearchField(
             _type=self.model_as_paginated_object_type,
-            args={**where_arg, **order_by_arg, **paginated_arg, **extra_arg_for_search},
+            args={**where_arg, **order_by_arg, **pagination_config_arg, **extra_arg_for_search},
             resolver=resolver,
             name=f"search{self.model_name_in_different_case['plural_camel_case']}",
         )
@@ -1697,7 +1697,7 @@ class ExampleModelInterface:
                 "description": "",
                 "hidden": False,
             }
-            modify_paginated_argument = {
+            modify_pagination_config_argument = {
                 "name": "paginated",
                 "required": False,
                 "description": "",
@@ -1731,7 +1731,7 @@ class ExampleModelInterface:
                 "description": "",
                 "hidden": False,
             }
-            modify_paginated_argument = {
+            modify_pagination_config_argument = {
                 "name": "paginated",
                 "required": False,
                 "description": "",
