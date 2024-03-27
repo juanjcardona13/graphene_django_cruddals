@@ -966,7 +966,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 ]
             }
         ]
-        self.run_test_fields_of_type("ModelAType", fields_to_test)
+        self.run_test_graphql_type("ModelAType", fields_to_test)
 
     def test_model_create_input_type(self):
         fields_to_test = [
@@ -1470,7 +1470,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         ]
 
-        self.run_test_fields_of_type("CreateModelAInput", fields_to_test, input_type=True)
+        self.run_test_graphql_type("CreateModelAInput", fields_to_test, input_type=True)
 
     def test_model_update_input_type(self):
         fields_to_test = [
@@ -1980,7 +1980,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         ]
 
-        self.run_test_fields_of_type("UpdateModelAInput", fields_to_test, input_type=True)
+        self.run_test_graphql_type("UpdateModelAInput", fields_to_test, input_type=True)
 
     def test_model_create_update_input_type(self):
         fields_to_test = [
@@ -2491,7 +2491,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
         ]
 
 
-        self.run_test_fields_of_type("ModelAInput", fields_to_test, input_type=True)
+        self.run_test_graphql_type("ModelAInput", fields_to_test, input_type=True)
 
     def test_model_where_input_type(self):
         fields_to_test = [
@@ -3163,7 +3163,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         ]
 
-        self.run_test_fields_of_type("ModelAFilterInput", fields_to_test, input_type=True)
+        self.run_test_graphql_type("ModelAFilterInput", fields_to_test, input_type=True)
 
     def test_model_order_by_input_type(self):
         fields_to_test = [
@@ -3738,5 +3738,5 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "type": { "kind": "INPUT_OBJECT", "name": "ModelBOrderByInput", "ofType": None }
             }
         ]
-        self.run_test_fields_of_type("ModelAOrderByInput", fields_to_test, input_type=True)
+        self.run_test_graphql_type("ModelAOrderByInput", fields_to_test, input_type=True)
 

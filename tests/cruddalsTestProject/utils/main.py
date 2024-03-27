@@ -107,6 +107,11 @@ class SchemaTestCase(GraphQLTestCase):
         response = client.query(self.QUERY_GET_TYPE, variables={"name": name}).json()
         return response["data"]["__type"]
 
+    def get_field(self, name):
+        client = Client()
+        response = client.query(self.QUERY_GET_TYPE, variables={"name": name}).json()
+        return response["data"]["__type"]
+
     def get_field_by_name(self, type, name, input_field=False):
         fields_key = "inputFields" if input_field else "fields"
         return next(filter(lambda field: field["name"] == name, type[fields_key]))
@@ -116,7 +121,7 @@ class SchemaTestCase(GraphQLTestCase):
         field = self.get_field_by_name(gql_type, field_name, input_field=input_type)
         self.assertDictEqual(field, field_meta)
 
-    def run_test_fields_of_type(self, type_name, fields_to_test, input_type=False):
+    def run_test_graphql_type(self, type_name, fields_to_test, input_type=False):
         gql_type = self.get_type(type_name)
         for ref_field in fields_to_test:
             with self.subTest(field=ref_field):
@@ -124,6 +129,11 @@ class SchemaTestCase(GraphQLTestCase):
                     gql_type, ref_field["name"], input_field=input_type
                 )
                 self.assertDictEqual(field, ref_field)
+
+    def run_test_graphql_field(self, field_name:str, target_type:str, field_meta:dict):
+        gql_type = self.get_type(target_type)
+        field = self.get_field_by_name(gql_type, field_name)
+        self.assertDictEqual(field, field_meta)
 
     def assertTypeIsComposeOfFields(self, type_name, field_names, input_type=False):
         fields_key = "inputFields" if input_type else "fields"
