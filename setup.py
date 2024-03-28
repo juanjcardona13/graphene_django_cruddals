@@ -40,10 +40,7 @@ setup(
     keywords="api graphql protocol relay crud graphene graphene-django",
     packages=find_packages(exclude=["tests", "examples", "examples.*"]),
     install_requires=[
-        "graphql-core==3.2.3",
-        # "graphene==3.2.2",
         "graphene-django>=3.0.0",
-        "Django>=2.2",
         "mypy==1.9.0"
     ],
     setup_requires=["pytest-runner"],
