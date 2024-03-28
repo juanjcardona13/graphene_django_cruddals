@@ -1,0 +1,18 @@
+site_name: Graphene Django CRUDDALS
+
+theme: readthedocs
+
+plugins:
+  - search
+  - mkdocstrings
+
+nav:
+  - Home: index.md
+  - About: about.md
+  
+
+
+
+
+
+
