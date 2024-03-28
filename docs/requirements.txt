@@ -6,8 +6,7 @@ Django==5.0.3
 ghp-import==2.1.0
 graphene==3.3
 graphene-django==3.2.0
-# Editable Git install with no remote (graphene-django-cruddals==1.0.0)
--e ../
+graphene-django-cruddals @ git+https://github.com/juanjcardona13/graphene_django_cruddals.git@main
 graphql-core==3.2.3
 graphql-relay==3.2.0
 griffe==0.42.1
