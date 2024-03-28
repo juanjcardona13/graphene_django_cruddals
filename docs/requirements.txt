@@ -7,7 +7,7 @@ ghp-import==2.1.0
 graphene==3.3
 graphene-django==3.2.0
 # Editable Git install with no remote (graphene-django-cruddals==1.0.0)
--e /home/juanjcardona13/Projects/Personal/CRUDDALS/Back/Python/graphene_django_cruddals
+-e ../
 graphql-core==3.2.3
 graphql-relay==3.2.0
 griffe==0.42.1
