@@ -19,8 +19,9 @@ setup(
     description="Framework for trivial code, Easy and Fast for learn, Easy and Fast for use",
     long_description=open("README.md", encoding="utf-8").read(),
     url="https://github.com/juanjcardona13",
-    author="Juan Guzmán",
+    author="Juan J Cardona",
     author_email="juanjcardona13@gmail.com",
+    license="MIT",
     classifiers=[
         "Development Status :: 1",
         "Intended Audience :: Developers",
