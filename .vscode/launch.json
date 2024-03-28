@@ -14,29 +14,33 @@
       ],
       "django": true,
       "justMyCode": false,
-      "autoStartBrowser": false
+      "autoStartBrowser": false,
+      "python": "${workspaceFolder}/examples/restaurantProject/venv/bin/python"
     },
     {
       "name": "Run Test Project - Python Debugger Django",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/test/cruddalsTestProject/manage.py",
+      "program": "${workspaceFolder}/tests/cruddalsTestProject/manage.py",
       "args": [
         "runserver"
       ],
       "django": true,
-      "autoStartBrowser": false
+      "autoStartBrowser": false,
+      "python": "${workspaceFolder}/tests/cruddalsTestProject/venv/bin/python"
     },
     {
       "name": "Run Tests - Python Debugger Django",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/test/cruddalsTestProject/manage.py",
+      "program": "${workspaceFolder}/tests/cruddalsTestProject/manage.py",
       "args": [
-        "test"
+        "test",
+        "tests/cruddalsTestProject/"     
       ],
       "django": true,
-      "autoStartBrowser": false
+      "autoStartBrowser": false,
+      "python": "${workspaceFolder}/tests/cruddalsTestProject/venv/bin/python"
     },
     {
       "name": "Run Current File - Python Debugger",
