@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Restaurant Project - Python Debugger Django",
+      "name": "Run Example Restaurant Project - Python Debugger Django",
       "type": "debugpy",
       "request": "launch",
       "program": "${workspaceFolder}/examples/restaurantProject/manage.py",
@@ -17,7 +17,29 @@
       "autoStartBrowser": false
     },
     {
-      "name": "Python Debugger: Current File",
+      "name": "Run Test Project - Python Debugger Django",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/test/cruddalsTestProject/manage.py",
+      "args": [
+        "runserver"
+      ],
+      "django": true,
+      "autoStartBrowser": false
+    },
+    {
+      "name": "Run Tests - Python Debugger Django",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/test/cruddalsTestProject/manage.py",
+      "args": [
+        "test"
+      ],
+      "django": true,
+      "autoStartBrowser": false
+    },
+    {
+      "name": "Run Current File - Python Debugger",
       "type": "debugpy",
       "request": "launch",
       "program": "${file}",
