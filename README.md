@@ -1,11 +1,10 @@
-
 # Quick start
 
 ## Installation
 
 For installing graphene_django_cruddals, just run this command in your shell
 
- > `pip install graphene_django_cruddals`
+> `pip install graphene_django_cruddals`
 
 ## Basic usage
 
@@ -13,7 +12,7 @@ To use it, simply create a new class that inherits "`CruddalsModel`"
 Suppose we have the following model.
 
 ```python
-class Restaurant(models.Model):
+  class Restaurant(models.Model):
     name = models.CharField(
         max_length=100,
         help_text='The name of the restaurant'
@@ -28,7 +27,7 @@ class Restaurant(models.Model):
     )
 ```
 
-Then we can create a complete CRUD+DALS with the following schema
+Then we can create a complete CRUD+DALS with the following code
 
 ```python
 class CruddalsRestaurant(CruddalsModel):
@@ -36,7 +35,7 @@ class CruddalsRestaurant(CruddalsModel):
         model = Restaurant
 ```
 
-Now you can use the `schema` that was generated for you, 
+Now you can use the `schema` that was generated for you,
 
 ```python
 schema = CruddalsRestaurant.Schema

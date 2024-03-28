@@ -18,12 +18,12 @@ setup(
     version=VERSION,
     description="Framework for trivial code, Easy and Fast for learn, Easy and Fast for use",
     long_description=open("README.md", encoding="utf-8").read(),
+    long_description_content_type="text/markdown",
     url="https://github.com/juanjcardona13",
     author="Juan J Cardona",
     author_email="juanjcardona13@gmail.com",
     license="MIT",
     classifiers=[
-        "Development Status :: 1",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries",
         "Programming Language :: Python :: 3",
