@@ -38,7 +38,7 @@ setup(
         "Framework :: Django :: 3.1",
         "Framework :: Django :: 3.2",
     ],
-    keywords="api graphql protocol relay crud graphene graphene-django",
+    keywords="api graphql crud graphene graphene-django",
     packages=find_packages(exclude=["tests", "examples", "examples.*"]),
     install_requires=[
         "graphene-django>=3.0.0",
