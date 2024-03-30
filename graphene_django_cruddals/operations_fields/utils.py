@@ -213,12 +213,12 @@ def add_mutate_errors(responses, object_counter, internal_arr_errors, transactio
     for name_related_field, obj in responses.items():
         for response in obj.values():
             if response:
-                if response["errors"]:
-                    for related_error in response["errors"]:
+                if response["errors_report"]:
+                    for related_error in response["errors_report"]:
                         setattr( related_error, "object_position", object_counter )
                         for internal_related_error in related_error.errors:
                             setattr( internal_related_error, "field", f"{to_camel_case(name_related_field)}.{internal_related_error.field}", )
-                    internal_arr_errors.extend(response["errors"])
+                    internal_arr_errors.extend(response["errors_report"])
                     if transaction is not None:
                         transaction.set_rollback(True)
 
@@ -585,7 +585,7 @@ def get_object_type_payload(model_object_type, name_for_output_type, include_suc
     output_fields = OrderedDict(
         {
             "objects": graphene.List(model_object_type),
-            "errors": graphene.List(ErrorCollectionType),
+            "errors_report": graphene.List(ErrorCollectionType),
         }
     )
     if include_success:

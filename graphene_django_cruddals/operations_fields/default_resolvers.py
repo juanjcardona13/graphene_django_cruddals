@@ -91,7 +91,7 @@ def default_create_update_resolver(model, model_form_class, registry, root, info
         if len(arr_errors) == 0:
             arr_errors = None
         
-        return dict(objects=arr_obj, errors=arr_errors)
+        return dict(objects=arr_obj, errors_report=arr_errors)
 
 
 def default_read_field_resolver( django_object_type, default_manager, root, info, **args ):

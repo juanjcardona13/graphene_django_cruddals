@@ -88,7 +88,7 @@ def build_create(app_name, model_name, model_name_plural, mutations):
                         objects {{
                             id
                         }}
-                        errors {{
+                        errorsReport {{
                             objectPosition
                             errors {{
                                 field
@@ -117,7 +117,7 @@ def build_create(app_name, model_name, model_name_plural, mutations):
                             objects {{
                                 ${{selectedFields}}
                             }}
-                            errors {{
+                            errorsReport {{
                                 ${{ErrorCollectionType}}
                             }}
                         }}
@@ -186,7 +186,7 @@ def build_update(app_name, model_name, model_name_plural, mutations):
                         objects {{
                             id
                         }}
-                        errors {{
+                        errorsReport {{
                             objectPosition
                             errors {{
                                 field
@@ -214,7 +214,7 @@ def build_update(app_name, model_name, model_name_plural, mutations):
                             objects {{
                                 ${{selectedFields}}
                             }}
-                            errors {{
+                            errorsReport {{
                                 ${{ErrorCollectionType}}
                             }}
                         }}
@@ -242,7 +242,7 @@ def build_delete(app_name, model_name, model_name_plural, mutations):
                         objects {{
                             id
                         }}
-                        errors {{
+                        errorsReport {{
                             objectPosition
                             errors {{
                                 field
@@ -271,7 +271,7 @@ def build_delete(app_name, model_name, model_name_plural, mutations):
                             objects {{
                                 ${{selectedFields}}
                             }}
-                            errors {{
+                            errorsReport {{
                                 ${{ErrorCollectionType}}
                             }}
                         }}
@@ -298,7 +298,7 @@ def build_deactivate(app_name, model_name, model_name_plural, mutations):
                         objects {{
                             id
                         }}
-                        errors {{
+                        errorsReport {{
                             objectPosition
                             errors {{
                                 field
@@ -326,7 +326,7 @@ def build_deactivate(app_name, model_name, model_name_plural, mutations):
                             objects {{
                                 ${{selectedFields}}
                             }}
-                            errors {{
+                            errorsReport {{
                                 ${{ErrorCollectionType}}
                             }}
                         }}
@@ -353,7 +353,7 @@ def build_activate(app_name, model_name, model_name_plural, mutations):
                         objects {{
                             id
                         }}
-                        errors {{
+                        errorsReport {{
                             objectPosition
                             errors {{
                                 field
@@ -381,7 +381,7 @@ def build_activate(app_name, model_name, model_name_plural, mutations):
                             objects {{
                                 ${{selectedFields}}
                             }}
-                            errors {{
+                            errorsReport {{
                                 ${{ErrorCollectionType}}
                             }}
                         }}

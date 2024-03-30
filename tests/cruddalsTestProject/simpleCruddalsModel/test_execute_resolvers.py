@@ -72,7 +72,7 @@ create_model_c_mutation = (
     mutation createModelCs($input: [CreateModelCInput!]) {
         createModelCs(input: $input) {
             objects { ...modelCType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -96,7 +96,7 @@ update_model_c_mutation = (
     mutation updateModelCs($input: [UpdateModelCInput!]) {
         updateModelCs(input: $input) {
             objects { ...modelCType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -110,7 +110,7 @@ delete_model_c_mutation = (
         deleteModelCs(where: $where) {
             success
             objects { ...modelCType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -123,7 +123,7 @@ deactivate_model_c_mutation = (
     mutation deactivateModelCs($where: ModelCFilterInput!) {
         deactivateModelCs(where: $where) {
             objects { ...modelCType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -136,7 +136,7 @@ activate_model_c_mutation = (
     mutation activateModelCs($where: ModelCFilterInput!) {
         activateModelCs(where: $where) {
             objects { ...modelCType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -173,7 +173,7 @@ create_model_d_mutation = (
     mutation createModelDs($input: [CreateModelDInput!]) {
         createModelDs(input: $input) {
             objects { ...modelDType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -196,7 +196,7 @@ update_model_d_mutation = (
     mutation updateModelDs($input: [UpdateModelDInput!]) {
         updateModelDs(input: $input) {
             objects { ...modelDType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -209,7 +209,7 @@ delete_model_d_mutation = (
         deleteModelDs(where: $where) {
             success
             objects { ...modelDType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -221,7 +221,7 @@ deactivate_model_d_mutation = (
     mutation deactivateModelDs($where: ModelDFilterInput) {
         deactivateModelDs(where: $where) {
             objects { ...modelDType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -233,7 +233,7 @@ activate_model_d_mutation = (
     mutation activateModelDs($where: ModelDFilterInput) {
         activateModelDs(where: $where) {
             objects { ...modelDType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -268,7 +268,7 @@ create_model_e_mutation = (
     mutation createModelEs($input: [CreateModelEInput!]) {
         createModelEs(input: $input) {
             objects { ...modelEType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -291,7 +291,7 @@ update_model_e_mutation = (
     mutation updateModelEs($input: [UpdateModelEInput!]) {
         updateModelEs(input: $input) {
             objects { ...modelEType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -304,7 +304,7 @@ delete_model_e_mutation = (
         deleteModelEs(where: $where) {
             success
             objects { ...modelEType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -316,7 +316,7 @@ deactivate_model_e_mutation = (
     mutation deactivateModelEs($where: ModelEFilterInput) {
         deactivateModelEs(where: $where) {
             objects { ...modelEType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -328,7 +328,7 @@ activate_model_e_mutation = (
     mutation activateModelEs($where: ModelEFilterInput) {
         activateModelEs(where: $where) {
             objects { ...modelEType }
-            errors { ...errorsType }
+            errorsReport { ...errorsType }
         }
     }
 """
@@ -572,7 +572,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "paginatedForeignKeyDRelated": {"objects": []},
                         },
                     ],
-                    "errors": None,
+                    "errorsReport": None,
                 }
             }
         }
@@ -623,7 +623,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "paginatedForeignKeyDRelated": {"objects": []},
                         }
                     ],
-                    "errors": None,
+                    "errorsReport": None,
                 }
             }
         }
@@ -651,7 +651,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "paginatedForeignKeyDRelated": {"objects": []},
                         }
                     ],
-                    "errors": None,
+                    "errorsReport": None,
                 }
             }
         }
@@ -679,7 +679,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                             "paginatedForeignKeyDRelated": {"objects": []},
                         }
                     ],
-                    "errors": None,
+                    "errorsReport": None,
                 }
             }
         }
@@ -694,7 +694,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "deleteModelCs": {
                     "success": True,
                     "objects": None,
-                    "errors": None,
+                    "errorsReport": None,
                 }
             }
         }
