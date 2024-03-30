@@ -67,6 +67,8 @@ def transform_string(s:Union[str, bytes], type: Literal["PascalCase", "camelCase
                 return s.title()
         elif type == "lowercase":
             return s.lower()
+        else:
+            return s
 
 
 def delete_keys(obj:dict, keys:list[str]) -> dict:
