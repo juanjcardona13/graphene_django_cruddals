@@ -13,7 +13,7 @@ from django.db.models import (
     ImageField,
 )
 from graphene_django_cruddals.operations_fields.utils import add_mutate_errors, create_relation_model_objects, maybe_queryset, order_by_input_to_args, update_dict_with_model_instance, where_input_to_Q, paginate_queryset, toggle_active_status
-from graphene_django_cruddals.converters.django_types import ErrorsType, ErrorType
+from graphene_django_cruddals.converters.django_types import ErrorCollectionType, ErrorType
 from graphene_django_cruddals.converters.for_fields.converter_input import GenericForeignKeyInput
 from django.contrib.contenttypes.models import ContentType
 
@@ -82,7 +82,7 @@ def default_create_update_resolver(model, model_form_class, registry, root, info
                     arr_obj.append(instance)
                 else:
                     errors = ErrorType.from_errors(form.errors)
-                    e = ErrorsType.from_errors(i, errors)
+                    e = ErrorCollectionType.from_errors(i, errors)
                     arr_errors.append(e)
                     transaction.set_rollback(True)
         

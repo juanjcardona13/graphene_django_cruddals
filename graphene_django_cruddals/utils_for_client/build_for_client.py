@@ -48,7 +48,7 @@ def get_apps_name():
 
 def part_of_import_js(file):
     file.write(
-        """import gql from "graphql-tag";\nimport {PaginatedType, ErrorsType} from "./general_types"\n\n"""
+        """import gql from "graphql-tag";\nimport {PaginatedType, ErrorCollectionType} from "./general_types"\n\n"""
     )
 
 
@@ -118,7 +118,7 @@ def build_create(app_name, model_name, model_name_plural, mutations):
                                 ${{selectedFields}}
                             }}
                             errors {{
-                                ${{ErrorsType}}
+                                ${{ErrorCollectionType}}
                             }}
                         }}
                     }}
@@ -215,7 +215,7 @@ def build_update(app_name, model_name, model_name_plural, mutations):
                                 ${{selectedFields}}
                             }}
                             errors {{
-                                ${{ErrorsType}}
+                                ${{ErrorCollectionType}}
                             }}
                         }}
                     }}
@@ -272,7 +272,7 @@ def build_delete(app_name, model_name, model_name_plural, mutations):
                                 ${{selectedFields}}
                             }}
                             errors {{
-                                ${{ErrorsType}}
+                                ${{ErrorCollectionType}}
                             }}
                         }}
                     }}
@@ -327,7 +327,7 @@ def build_deactivate(app_name, model_name, model_name_plural, mutations):
                                 ${{selectedFields}}
                             }}
                             errors {{
-                                ${{ErrorsType}}
+                                ${{ErrorCollectionType}}
                             }}
                         }}
                     }}
@@ -382,7 +382,7 @@ def build_activate(app_name, model_name, model_name_plural, mutations):
                                 ${{selectedFields}}
                             }}
                             errors {{
-                                ${{ErrorsType}}
+                                ${{ErrorCollectionType}}
                             }}
                         }}
                     }}
@@ -507,7 +507,7 @@ def build_file_general_types():
             "export const PaginatedType = `\n  total\n  page\n  pages\n  hasNext\n  hasPrev\n  indexStartObj\n  indexEndObj\n`;\n"
         )
         file.write(
-            "export const ErrorsType = `\n  objectPosition\n  errors {\n    field\n    messages\n }\n`;\n"
+            "export const ErrorCollectionType = `\n  objectPosition\n  errors {\n    field\n    messages\n }\n`;\n"
         )
 
 

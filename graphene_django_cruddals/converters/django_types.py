@@ -176,7 +176,7 @@ class ErrorType(ObjectType):
         return [cls(field=key, messages=value) for key, value in data.items()]
 
 
-class ErrorsType(graphene.ObjectType):
+class ErrorCollectionType(graphene.ObjectType):
     object_position = graphene.String()
     errors = graphene.List(ErrorType)
 

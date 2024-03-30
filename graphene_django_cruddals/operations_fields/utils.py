@@ -580,12 +580,12 @@ def create_relation_model_objects(
 
 
 def get_object_type_payload(model_object_type, name_for_output_type, include_success=False):
-    from graphene_django_cruddals.converters.django_types import ErrorsType
+    from graphene_django_cruddals.converters.django_types import ErrorCollectionType
 
     output_fields = OrderedDict(
         {
             "objects": graphene.List(model_object_type),
-            "errors": graphene.List(ErrorsType),
+            "errors": graphene.List(ErrorCollectionType),
         }
     )
     if include_success:

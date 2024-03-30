@@ -36,7 +36,7 @@ model_e_fragment = """
 """
 
 errors_fragment = """
-    fragment errorsType on ErrorsType {
+    fragment errorsType on ErrorCollectionType {
         objectPosition
         errors {
             field
