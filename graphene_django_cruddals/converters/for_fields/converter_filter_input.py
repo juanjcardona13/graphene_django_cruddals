@@ -52,6 +52,10 @@ def get_filter_input_object_type(django_field: DjangoField, type_of_field, name:
             )
         elif name_lookup == "isnull":
             input_fields[name_lookup] = graphene.InputField(type_=graphene.Boolean)
+        elif name_lookup == "range":
+            input_fields[name_lookup] = graphene.InputField(
+                type_=graphene.List(of_type=type_of_field)
+            )
         else:
             input_fields[name_lookup] = graphene.InputField(type_=type_of_field)
 
