@@ -132,16 +132,20 @@ def convert_choice_field_to_graphene_enum(field, name=None, type_mutation:Union[
 
 def django_field_is_required(field:DjangoField):
     try:
-        blank = getattr(field, "blank", False)
+        blank = getattr(field, "blank")
         default = getattr(field, "default", None)
-        # null = getattr(field, "null", False)
         if default is None:
             default = NOT_PROVIDED
+        return not blank and default == NOT_PROVIDED
     except AttributeError:
-        return False
-
-    return not blank and default == NOT_PROVIDED
-
+        try:
+            null = getattr(field, "null", False)
+            default = getattr(field, "default", None)
+            if default is None:
+                default = NOT_PROVIDED
+            return not null and default == NOT_PROVIDED
+        except AttributeError:
+            return False
 
 def django_field_get_default(field: DjangoField):
     if field.default == models.fields.NOT_PROVIDED:
