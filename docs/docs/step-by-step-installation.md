@@ -1,4 +1,4 @@
-# Basic Tutorial
+# Step-by-Step Installation
 
 ## Install Python
 

@@ -7,8 +7,8 @@ plugins:
   - mkdocstrings
 
 nav:
-  - Home: index.md
-  - Basic Tutorial: basic-tutorial.md
+  - Quick start: index.md
+  - Step-by-Step Installation: step-by-step-installation.md
   - What Can It Do?: what-can-do.md
   
 
