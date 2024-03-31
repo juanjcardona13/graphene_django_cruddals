@@ -14,7 +14,7 @@ class ModelA(models.Model):
     binary_field_not_editable = models.BinaryField()  # editable=False is default
     binary_field_nullable = models.BinaryField(null=True, blank=True, editable=True)
     binary_field_with_default = models.BinaryField(
-        default=b"binary_field_with_default", editable=True
+        default=b'\x08', editable=True
     )
     binary_field_with_description = models.BinaryField(
         help_text="binary_field_with_description", editable=True

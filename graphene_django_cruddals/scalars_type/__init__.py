@@ -315,7 +315,7 @@ class Duration(graphene.Scalar):
         if isinstance(node, graphene.IntValue):
             return timedelta(seconds=node.value)
         else:
-            raise Exception(f"Cannot represent {node} as timedelta.")
+            raise Exception(f"Cannot represent {node} as timedelta. Should be an integer.")
 
     @staticmethod
     def parse_value(value):

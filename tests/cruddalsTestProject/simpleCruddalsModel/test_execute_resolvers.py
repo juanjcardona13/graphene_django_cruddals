@@ -1371,8 +1371,8 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 }
             }
         }
-        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
-        self.verify_response(response, expected_response, message="SEARCH with filters isnull False ModelC")
+        response = client.query(search_model_c_query, variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters charfield isnull False ModelC")
 
         variables = {"where": {"charField": {"isnull": True}}}
         expected_response = {
@@ -1389,7 +1389,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 }
             }
         }
-        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        response = client.query(search_model_c_query, variables=variables).json()
         self.verify_response(response, expected_response, message="SEARCH with filters isnull True ModelC")
 
         # - charField.regex
@@ -1930,7 +1930,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(search_model_c_query, variables=variables).json()
-        self.verify_response(response, expected_response, message="SEARCH with filters isnull False ModelC")
+        self.verify_response(response, expected_response, message="SEARCH with filters integer isnull False ModelC")
 
         variables = {"where": {"integerField": {"isnull": True}}}
         expected_response = {

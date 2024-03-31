@@ -145,6 +145,7 @@ class SchemaTestCase(GraphQLTestCase):
     def verify_response(self, response, expected_response, message=""):
         if isinstance(expected_response, dict):
             self.assertIsInstance(response, dict, msg=f"response is not a dict + {message}")
+            self.assertEqual(len(expected_response), len(response), msg=f"len(dict) didn't match + {message}")
             iterator = expected_response.items()
         elif isinstance(expected_response, list):
             self.assertIsInstance(response, list, msg=f"response is not a list + {message}")

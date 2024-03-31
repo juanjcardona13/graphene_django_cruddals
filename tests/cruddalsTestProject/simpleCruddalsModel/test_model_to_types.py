@@ -985,7 +985,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             {
                 "name": "binaryFieldWithDefault",
                 "description": None,
-                "defaultValue": "\"YmluYXJ5X2ZpZWxkX3dpdGhfZGVmYXVsdA==\"",
+                "defaultValue": "\"CA==\"",
                 "type": { "kind": "SCALAR", "name": "Binary", "ofType": None }
             },
             {

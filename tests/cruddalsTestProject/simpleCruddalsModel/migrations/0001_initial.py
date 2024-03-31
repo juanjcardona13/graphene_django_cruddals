@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('binary_field_required', models.BinaryField(editable=True)),
                 ('binary_field_not_editable', models.BinaryField()),
                 ('binary_field_nullable', models.BinaryField(blank=True, editable=True, null=True)),
-                ('binary_field_with_default', models.BinaryField(default=b'binary_field_with_default', editable=True)),
+                ('binary_field_with_default', models.BinaryField(default=b'\x08', editable=True)),
                 ('binary_field_with_description', models.BinaryField(editable=True, help_text='binary_field_with_description')),
                 ('boolean_field_required', models.BooleanField()),
                 ('boolean_field_not_editable', models.BooleanField(editable=False)),
