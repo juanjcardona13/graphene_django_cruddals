@@ -142,24 +142,24 @@ class SchemaTestCase(GraphQLTestCase):
         for field in gql_type[fields_key]:
             self.assertIn(field["name"], field_names)
 
-    def verify_response(self, response, expected_response):
+    def verify_response(self, response, expected_response, message=""):
         if isinstance(expected_response, dict):
-            self.assertIsInstance(response, dict)
+            self.assertIsInstance(response, dict, msg=f"response is not a dict + {message}")
             iterator = expected_response.items()
         elif isinstance(expected_response, list):
-            self.assertIsInstance(response, list)
-            self.assertEqual(len(expected_response), len(response), msg="len(list) didn't match")
+            self.assertIsInstance(response, list, msg=f"response is not a list + {message}")
+            self.assertEqual(len(expected_response), len(response), msg=f"len(list) didn't match + {message}")
             iterator = enumerate(expected_response)
         else:
             self.assertEqual(expected_response, response, msg=(
-                "values didn't match :" + str(expected_response) + " == " + str(response)
+                "values didn't match :" + str(expected_response) + " == " + str(response) + " + " + message
             ))
             return
 
         for key, value in iterator:
             if isinstance(value, (dict, list)):
-                self.verify_response(response[key], value)
+                self.verify_response(response[key], value, message=message)
             else:
                 self.assertEqual(value, response[key], msg=(
-                    "values didn't match :" + str(value) + " == " + str(response[key])
+                    "values didn't match in key:" + str(key) + " :" + str(value) + " == " + str(response[key]) + " + " + message
                 ))

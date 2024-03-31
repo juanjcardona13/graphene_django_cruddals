@@ -7,7 +7,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 
-# Create your models here.
+#region For Test Fields
 class ModelA(models.Model):
 
     binary_field_required = models.BinaryField(editable=True)
@@ -265,8 +265,9 @@ class ModelB(models.Model):
     many_to_many_field = models.ManyToManyField(
         "ModelA", related_name="many_to_many_B_related"
     )
+#endregion
 
-
+#region For Test Operations
 class ModelC(models.Model):
     char_field = models.CharField(max_length=100)
     integer_field = models.IntegerField(default=1, null=True, blank=True)
@@ -305,3 +306,4 @@ class ModelE(models.Model):
         null=True,
         blank=True,
     )
+#endregion

@@ -813,19 +813,19 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             {
                 "name": "oneToOneRelated",
                 "description": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "OBJECT", "name": "ModelAType", "ofType": None } },
+                "type": { "kind": "OBJECT", "name": "ModelAType", "ofType": None },
                 "args": []
             },
             {
                 "name": "oneToOneNullableRelated",
                 "description": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "OBJECT", "name": "ModelAType", "ofType": None } },
+                "type": { "kind": "OBJECT", "name": "ModelAType", "ofType": None },
                 "args": []
             },
             {
                 "name": "oneToOneWithDescriptionRelated",
                 "description": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "OBJECT", "name": "ModelAType", "ofType": None } },
+                "type": { "kind": "OBJECT", "name": "ModelAType", "ofType": None },
                 "args": []
             },
             {
@@ -906,7 +906,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             {
                 "name": "genericRelationRelated",
                 "description": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "OBJECT", "name": "ModelAType", "ofType": None } },
+                "type": { "kind": "OBJECT", "name": "ModelAType", "ofType": None },
                 "args": []
             },
             {
@@ -937,7 +937,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             {
                 "name": "oneToOneBRelated",
                 "description": None,
-                "type": { "kind": "NON_NULL", "name": None, "ofType": { "kind": "OBJECT", "name": "ModelBType", "ofType": None } },
+                "type": { "kind": "OBJECT", "name": "ModelBType", "ofType": None },
                 "args": []
             },
             {

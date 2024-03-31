@@ -57,14 +57,8 @@ pagination_fragment = """
     }
 """
 
-all_fragment = (
-    model_c_fragment
-    + model_d_fragment
-    + model_e_fragment
-    + errors_fragment
-    + pagination_fragment
-)
 
+#region CRUDDALS ModelC
 create_model_c_mutation = (
     errors_fragment
     + model_c_fragment
@@ -166,9 +160,11 @@ search_model_c_query = (
     }
 """
 )
+#endregion
 
+#region CRUDDALS ModelD
 create_model_d_mutation = (
-    all_fragment
+    errors_fragment + model_d_fragment
     + """
     mutation createModelDs($input: [CreateModelDInput!]) {
         createModelDs(input: $input) {
@@ -180,7 +176,7 @@ create_model_d_mutation = (
 )
 
 read_model_d_query = (
-    all_fragment
+    model_d_fragment
     + """
     query readModelD($where: ModelDFilterInput!) {
         readModelD(where: $where) {
@@ -191,7 +187,7 @@ read_model_d_query = (
 )
 
 update_model_d_mutation = (
-    all_fragment
+    errors_fragment + model_d_fragment
     + """
     mutation updateModelDs($input: [UpdateModelDInput!]) {
         updateModelDs(input: $input) {
@@ -203,7 +199,7 @@ update_model_d_mutation = (
 )
 
 delete_model_d_mutation = (
-    all_fragment
+    errors_fragment + model_d_fragment
     + """
     mutation deleteModelDs($where: ModelDFilterInput) {
         deleteModelDs(where: $where) {
@@ -216,7 +212,7 @@ delete_model_d_mutation = (
 )
 
 deactivate_model_d_mutation = (
-    all_fragment
+    errors_fragment + model_d_fragment
     + """
     mutation deactivateModelDs($where: ModelDFilterInput) {
         deactivateModelDs(where: $where) {
@@ -228,7 +224,7 @@ deactivate_model_d_mutation = (
 )
 
 activate_model_d_mutation = (
-    all_fragment
+    errors_fragment + model_d_fragment
     + """
     mutation activateModelDs($where: ModelDFilterInput) {
         activateModelDs(where: $where) {
@@ -240,7 +236,7 @@ activate_model_d_mutation = (
 )
 
 list_model_d_query = (
-    all_fragment
+    model_d_fragment
     + """
     query listModelDs {
         listModelDs {
@@ -251,19 +247,23 @@ list_model_d_query = (
 )
 
 search_model_d_query = (
-    all_fragment
+    pagination_fragment
     + """
     query searchModelDs($where: ModelDFilterInput $orderBy: ModelDOrderByInput $paginated: PaginationConfigInput) {
         searchModelDs(where: $where orderBy: $orderBy paginated: $paginated) {
             ...paginationType
-            objects { ...modelDType }
+            objects {
+                id
+            }
         }
     }
 """
 )
+#endregion
 
+#region CRUDDALS ModelE
 create_model_e_mutation = (
-    all_fragment
+    model_e_fragment + errors_fragment
     + """
     mutation createModelEs($input: [CreateModelEInput!]) {
         createModelEs(input: $input) {
@@ -275,7 +275,7 @@ create_model_e_mutation = (
 )
 
 read_model_e_query = (
-    all_fragment
+    model_e_fragment
     + """
     query readModelE($where: ModelEFilterInput!) {
         readModelE(where: $where) {
@@ -286,7 +286,7 @@ read_model_e_query = (
 )
 
 update_model_e_mutation = (
-    all_fragment
+    model_e_fragment + errors_fragment
     + """
     mutation updateModelEs($input: [UpdateModelEInput!]) {
         updateModelEs(input: $input) {
@@ -298,7 +298,7 @@ update_model_e_mutation = (
 )
 
 delete_model_e_mutation = (
-    all_fragment
+    model_e_fragment + errors_fragment
     + """
     mutation deleteModelEs($where: ModelEFilterInput) {
         deleteModelEs(where: $where) {
@@ -311,7 +311,7 @@ delete_model_e_mutation = (
 )
 
 deactivate_model_e_mutation = (
-    all_fragment
+    model_e_fragment + errors_fragment
     + """
     mutation deactivateModelEs($where: ModelEFilterInput) {
         deactivateModelEs(where: $where) {
@@ -323,7 +323,7 @@ deactivate_model_e_mutation = (
 )
 
 activate_model_e_mutation = (
-    all_fragment
+    model_e_fragment + errors_fragment
     + """
     mutation activateModelEs($where: ModelEFilterInput) {
         activateModelEs(where: $where) {
@@ -335,7 +335,7 @@ activate_model_e_mutation = (
 )
 
 list_model_e_query = (
-    all_fragment
+    model_e_fragment
     + """
     query listModelEs {
         listModelEs {
@@ -346,7 +346,7 @@ list_model_e_query = (
 )
 
 search_model_e_query = (
-    all_fragment
+    pagination_fragment + model_e_fragment
     + """
     query searchModelEs($where: ModelEFilterInput $orderBy: ModelEOrderByInput $paginated: PaginationConfigInput) {
         searchModelEs(where: $where orderBy: $orderBy paginated: $paginated) {
@@ -356,6 +356,7 @@ search_model_e_query = (
     }
 """
 )
+#endregion
 
 objs_to_create_type_c = [
     {
@@ -430,12 +431,31 @@ objs_to_create_type_c = [
     },
 ]
 
+objs_to_create_type_d = [
+    {
+        "foreignKeyField": 2,
+    },
+    {
+        "foreignKeyField": 3,
+    },
+]
+
+objs_to_create_type_e = [
+    {
+        "foreignKeyFieldDeep": 1,
+    },
+    {
+        "foreignKeyFieldDeep": 2,
+    },
+]
+
 
 class CruddalsModelSchemaTest(SchemaTestCase):
+    
     def test_cruddals_model_c(self):
         client = Client()
         
-        #region CREATE
+        #region CREATE ModelC
         variables = {"input": objs_to_create_type_c}
         expected_response = {
             "data": {
@@ -577,10 +597,10 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(create_model_c_mutation, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="CREATE ModelC")
         #endregion
 
-        #region READ
+        #region READ ModelC
         variables = {"where": {"id": {"exact": "1"}}}
         expected_response = {
             "data": {
@@ -600,10 +620,10 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(read_model_c_query, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="READ ModelC")
         #endregion
 
-        #region UPDATE
+        #region UPDATE ModelC
         variables = {"input": [{"id": "1", "charField": "UPDATED"}]}
         expected_response = {
             "data": {
@@ -628,10 +648,10 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(update_model_c_mutation, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="UPDATE ModelC")
         #endregion
 
-        #region DEACTIVATE
+        #region DEACTIVATE ModelC
         variables = {"where": {"id": {"exact": "1"}}}
         expected_response = {
             "data": {
@@ -656,10 +676,10 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(deactivate_model_c_mutation, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="DEACTIVATE ModelC")
         #endregion
 
-        #region ACTIVATE
+        #region ACTIVATE ModelC
         variables = {"where": {"id": {"exact": "1"}}}
         expected_response = {
             "data": {
@@ -684,10 +704,10 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(activate_model_c_mutation, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="ACTIVATE ModelC")
         #endregion
 
-        #region DELETE
+        #region DELETE ModelC
         variables = {"where": {"id": {"exact": "1"}}}
         expected_response = {
             "data": {
@@ -699,10 +719,10 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(delete_model_c_mutation, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="DELETE ModelC")
         #endregion
 
-        #region LIST
+        #region LIST ModelC
         expected_response = {
             "data": {
                 "listModelCs": [
@@ -827,10 +847,10 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(list_model_c_query).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="LIST ModelC")
         #endregion
 
-        #region SEARCH
+        #region SEARCH ModelC
         #region Test search with no filters
         expected_response = {
             "data": {
@@ -857,7 +877,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(search_model_c_query).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="SEARCH with no filters ModelC")
         #endregion
 
         #region Test search with pagination
@@ -880,7 +900,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(search_model_c_query, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="SEARCH with pagination 1 ModelC")
 
         variables = {"paginated": {"page": 2, "itemsPerPage": 2}}
         expected_response = {
@@ -901,7 +921,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(search_model_c_query, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="SEARCH with pagination 2 ModelC")
 
         variables = {"paginated": {"page": 5, "itemsPerPage": 2}}
         expected_response = {
@@ -921,7 +941,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(search_model_c_query, variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="SEARCH with pagination 3 ModelC")
         #endregion
         
         #region Test search with order by
@@ -978,7 +998,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="SEARCH with order by DESC ModelC")
 
         variables = {"orderBy": {"charField": "IDESC"}}
         expected_response = {
@@ -1033,7 +1053,1181 @@ class CruddalsModelSchemaTest(SchemaTestCase):
             }
         }
         response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
-        self.verify_response(response, expected_response)
+        self.verify_response(response, expected_response, message="SEARCH with order by IDESC ModelC")
+        #endregion
 
+        #region Test search with filters
+
+        #region CharField
+        # - charField.exact
+        variables = {"where": {"charField": {"exact": "BBB"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 1,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 1,
+                    "objects": [
+                        { 
+                            "id": "2",
+                            "charField": "BBB",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters exact ModelC")
+
+        # - charField.iexact
+        variables = {"where": {"charField": {"iexact": "BBB"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "2",
+                            "charField": "BBB",
+                        },
+                        {
+                            "id": "7",
+                            "charField": "bbb",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters iexact ModelC")
+
+        # - charField.lte
+        # - charField.lt
+        # - charField.gte
+        # - charField.gt
+
+        # - charField.in
+        variables = {"where": {"charField": {"in": ["CCC", "EEE"]}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "charField": "CCC",
+                        },
+                        {
+                            "id": "5",
+                            "charField": "EEE",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters in ModelC")
+
+
+        #===> - charField.contains SQLite doesn’t support case-sensitive LIKE statements; contains acts like icontains for SQLite
+        variables = {"where": {"charField": {"contains": "B"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "2",
+                            "charField": "BBB",
+                        },
+                        {
+                            "id": "7",
+                            "charField": "bbb",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters contains ModelC")
+
+        # - charField.icontains
+        variables = {"where": {"charField": {"icontains": "b"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "2",
+                            "charField": "BBB",
+                        },
+                        {
+                            "id": "7",
+                            "charField": "bbb",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters icontains ModelC")
+
+        # - charField.startswith SQLite doesn’t support case-sensitive LIKE statements; startswith acts like istartswith for SQLite.
+        variables = {"where": {"charField": {"startswith": "C"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "charField": "CCC",
+                        },
+                        {
+                            "id": "8",
+                            "charField": "ccc",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters startswith ModelC")
+
+        # - charField.istartswith
+        variables = {"where": {"charField": {"istartswith": "c"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "charField": "CCC",
+                        },
+                        {
+                            "id": "8",
+                            "charField": "ccc",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters istartswith ModelC")
+
+        # - charField.endswith SQLite doesn’t support case-sensitive LIKE statements; endswith acts like iendswith for SQLite.
+        variables = {"where": {"charField": {"endswith": "E"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "5",
+                            "charField": "EEE",
+                        },
+                        {
+                            "id": "10",
+                            "charField": "eee",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters endswith ModelC")
+
+        # - charField.iendswith
+        variables = {"where": {"charField": {"iendswith": "E"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "5",
+                            "charField": "EEE",
+                        },
+                        {
+                            "id": "10",
+                            "charField": "eee",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters iendswith ModelC")
+
+        # - charField.range
+        variables = {"where": {"charField": {"range": ["CCC", "EEE"]}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 3,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 3,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "charField": "CCC",
+                        },
+                        {
+                            "id": "4",
+                            "charField": "DDD",
+                        },
+                        {
+                            "id": "5",
+                            "charField": "EEE",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters range ModelC")
+
+        # - charField.isnull
+        variables = {"where": {"charField": {"isnull": False}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 9,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 9,
+                    "objects": [
+                        { "id": "2" },
+                        { "id": "3" },
+                        { "id": "4" },
+                        { "id": "5" },
+                        { "id": "6" },
+                        { "id": "7" },
+                        { "id": "8" },
+                        { "id": "9" },
+                        { "id": "10" },
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters isnull False ModelC")
+
+        variables = {"where": {"charField": {"isnull": True}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 0,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 0,
+                    "indexEndObj": 0,
+                    "objects": []
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters isnull True ModelC")
+
+        # - charField.regex
+        variables = {"where": {"charField": {"regex": "^C"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 1,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 1,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "charField": "CCC",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters regex ModelC")
+
+        # - charField.iregex
+        variables = {"where": {"charField": {"iregex": "^c"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "charField": "CCC",
+                        },
+                        {
+                            "id": "8",
+                            "charField": "ccc",
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters iregex ModelC")
+
+        #endregion
+
+        #region IntegerField
+        # - integerField.exact
+        variables = {"where": {"integerField": {"exact": 2}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters exact ModelC")
+
+        # - integerField.iexact
+        variables = {"where": {"integerField": {"iexact": 2}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters iexact ModelC")
+
+        # - integerField.gt
+        variables = {"where": {"integerField": {"gt": 3}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 4,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 4,
+                    "objects": [
+                        { 
+                            "id": "4",
+                            "integerField": 4,
+                        },
+                        {
+                            "id": "5",
+                            "integerField": 5,
+                        },
+                        {
+                            "id": "9",
+                            "integerField": 4,
+                        },
+                        {
+                            "id": "10",
+                            "integerField": 5,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters gt ModelC")
+
+        # - integerField.gte
+        variables = {"where": {"integerField": {"gte": 3}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 6,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 6,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "4",
+                            "integerField": 4,
+                        },
+                        {
+                            "id": "5",
+                            "integerField": 5,
+                        },
+                        {
+                            "id": "8",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "9",
+                            "integerField": 4,
+                        },
+                        {
+                            "id": "10",
+                            "integerField": 5,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters gte ModelC")
+
+        # - integerField.lt
+        variables = {"where": {"integerField": {"lt": 3}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 3,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 3,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        { 
+                            "id": "6",
+                            "integerField": 1,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters lt ModelC")
+
+        # - integerField.lte
+        variables = {"where": {"integerField": {"lte": 3}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 5,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 5,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        { 
+                            "id": "3",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "6",
+                            "integerField": 1,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "8",
+                            "integerField": 3,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters lte ModelC")
+
+        # - integerField.in
+        variables = {"where": {"integerField": {"in": [3, 5]}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 4,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 4,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "5",
+                            "integerField": 5,
+                        },
+                        {
+                            "id": "8",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "10",
+                            "integerField": 5,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters in ModelC")
+
+        # - integerField.contains
+        variables = {"where": {"integerField": {"contains": 2}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters contains ModelC")
+
+        # - integerField.icontains
+        variables = {"where": {"integerField": {"icontains": 2}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters icontains ModelC")
+
+        # - integerField.startswith
+        variables = {"where": {"integerField": {"startswith": 2}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters startswith ModelC")
+
+        # - integerField.istartswith
+        variables = {"where": {"integerField": {"istartswith": 2}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters istartswith ModelC")
+
+        # - integerField.endswith
+        variables = {"where": {"integerField": {"endswith": 2}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters endswith ModelC")
+
+        # - integerField.iendswith
+        variables = {"where": {"integerField": {"iendswith": 2}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters iendswith ModelC")
+
+        # - integerField.range
+        variables = {"where": {"integerField": {"range": [3, 5]}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 6,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 6,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "4",
+                            "integerField": 4,
+                        },
+                        {
+                            "id": "5",
+                            "integerField": 5,
+                        },
+                        {
+                            "id": "8",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "9",
+                            "integerField": 4,
+                        },
+                        {
+                            "id": "10",
+                            "integerField": 5,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters range ModelC")
+
+        # - integerField.isnull
+        variables = {"where": {"integerField": {"isnull": False}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 9,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 9,
+                    "objects": [
+                        { "id": "2" },
+                        { "id": "3" },
+                        { "id": "4" },
+                        { "id": "5" },
+                        { "id": "6" },
+                        { "id": "7" },
+                        { "id": "8" },
+                        { "id": "9" },
+                        { "id": "10" },
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query, variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters isnull False ModelC")
+
+        variables = {"where": {"integerField": {"isnull": True}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 0,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 0,
+                    "indexEndObj": 0,
+                    "objects": []
+                }
+            }
+        }
+        response = client.query(search_model_c_query, variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters isnull True ModelC")
+
+        # - integerField.regex
+        variables = {"where": {"integerField": {"regex": "^3"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "8",
+                            "integerField": 3,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters regex ModelC")
+
+        # - integerField.iregex
+        variables = {"where": {"integerField": {"iregex": "^3"}}}
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        { 
+                            "id": "3",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "8",
+                            "integerField": 3,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with filters iregex ModelC")
+        #endregion
+        #endregion
         
+        #region Test search with more than one filter
+        variables = {
+            "where": {
+                "charField": {"icontains": "b"},
+                "integerField": {"exact": 3}
+            }
+        }
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 0,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 0,
+                    "indexEndObj": 0,
+                    "objects": []
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with more than one filter ModelC")
+
+        variables = {
+            "where": {
+                "charField": {"icontains": "b"},
+                "integerField": {"exact": 2}
+            }
+        }
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "charField": "BBB",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "7",
+                            "charField": "bbb",
+                            "integerField": 2,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with more than one filter ModelC")
+
+        #endregion
+
+        #region Test search with operator AND
+        variables = {
+            "where": {
+                "charField": {"icontains": "c"},
+                "AND": {
+                    "integerField": {"lte": 3}
+                }
+            }
+        }
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 2,
+                    "objects": [
+                        {
+                            "id": "3",
+                            "charField": "CCC",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "8",
+                            "charField": "ccc",
+                            "integerField": 3,
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with operator AND ModelC")
+        #endregion
+
+        #region Test search with operator OR
+        variables = {
+            "where": {
+                "charField": {"icontains": "c"},
+                "OR": {
+                    "integerField": {"lt": 3}
+                }
+            }
+        }
+        expected_response = {
+            "data": {
+                "searchModelCs": {
+                    "total": 5,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 5,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "charField": "BBB",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "3",
+                            "charField": "CCC",
+                            "integerField": 3,
+                        },
+                        {
+                            "id": "6",
+                            "charField": "aaa",
+                            "integerField": 1,
+                        },
+                        {
+                            "id": "7",
+                            "charField": "bbb",
+                            "integerField": 2,
+                        },
+                        {
+                            "id": "8",
+                            "charField": "ccc",
+                            "integerField": 3,
+                        },
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_c_query.replace("id", "id charField integerField"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with operator OR ModelC")
+
+        #endregion
+        #endregion
+        
+        #region CREATE ModelD
+        variables = {"input": objs_to_create_type_d}
+        expected_response = {
+            "data": {
+                "createModelDs": {
+                    "objects": [
+                        {
+                            "id": "1",
+                            "foreignKeyField": {
+                                "id": "2",
+                            },
+                            "oneToOneCRelated": None,
+                            "paginatedManyToManyCRelated": {
+                                "objects": []
+                            },
+                            "paginatedForeignKeyERelated": { 
+                                "objects": [] 
+                            }
+                        },
+                        {
+                            "id": "2",
+                            "foreignKeyField": {
+                                "id": "3",
+                            },
+                            "oneToOneCRelated": None,
+                            "paginatedManyToManyCRelated": {
+                                "objects": []
+                            },
+                            "paginatedForeignKeyERelated": { 
+                                "objects": [] 
+                            }
+                        }
+                    ],
+                    "errorsReport": None,
+                }
+            }
+        }
+        response = client.query(create_model_d_mutation, variables=variables).json()
+        self.verify_response(response, expected_response, message="CREATE ModelD")
+        #endregion
+
+        #region SEARCH ModelD
+        #region Test search with relation fields
+        variables = {"where": {"foreignKeyField": {"charField": {"exact": "BBB"}}}}
+        expected_response = {
+            "data": {
+                "searchModelDs": {
+                    "total": 1,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStartObj": 1,
+                    "indexEndObj": 1,
+                    "objects": [
+                        {
+                            "id": "1",
+                            "foreignKeyField": {
+                                "id": "2",
+                                "charField": "BBB",
+                            },
+                        }
+                    ]
+                }
+            }
+        }
+        response = client.query(search_model_d_query.replace("id", "id foreignKeyField{id charField}"), variables=variables).json()
+        self.verify_response(response, expected_response, message="SEARCH with relation fields ModelD")
+        #endregion
         #endregion
