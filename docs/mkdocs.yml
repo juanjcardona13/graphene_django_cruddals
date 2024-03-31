@@ -8,7 +8,8 @@ plugins:
 
 nav:
   - Home: index.md
-  - About: about.md
+  - Basic Tutorial: basic-tutorial.md
+  - What Can It Do?: what-can-do.md
   
 
 
