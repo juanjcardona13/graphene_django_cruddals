@@ -21,11 +21,13 @@ To install or update Python on Ubuntu, follow these steps:
 - Install via Package Manager
 
   ```bash
+
     sudo apt-get install python3
 
     # or if you want to install a specific version
 
     sudo apt-get install python3.8 # change the version number to the version you want to install
+
   ```
 
 - Verify installation
@@ -96,10 +98,12 @@ To install Django, follow these steps:
   > This file is located in the `myproject` folder
 
   ```python
+
     INSTALLED_APPS = [
       ...
       'myapp.apps.MyappConfig',
     ]
+
   ```
 
 - Create a model in the models.py file of the app
@@ -107,11 +111,13 @@ To install Django, follow these steps:
   > This file is located in the `myapp` folder
 
   ```python
+
     from django.db import models
 
     class MyModel(models.Model):
       name = models.CharField(max_length=100)
       description = models.TextField()
+
   ```
 
 - Create a migration
@@ -147,16 +153,19 @@ To install Graphene Django, follow these steps:
 - Add `graphene_django` to the installed apps in the settings.py file of the project
 
   ```python
+
     INSTALLED_APPS = [
         ...
         'django.contrib.staticfiles', # Required for GraphiQL
         'graphene_django',
     ]
+
   ```
 
 - Create a schema.py file in the **app folder**
 
   ```python
+
     import graphene
     from graphene_django.types import DjangoObjectType
     from .models import MyModel
@@ -175,22 +184,26 @@ To install Graphene Django, follow these steps:
                 return MyModel.objects.get(pk=id)
 
             return None
+
   ```
 
 - Create the root schema in the **project folder**
 
   ```python
+
     from myapp.schema import Query as MyAppQuery
 
     class Query(MyAppQuery, graphene.ObjectType):
         pass
 
     schema = graphene.Schema(query=Query)
+
   ```
 
 - Add the graphene URL to the project's urls.py file
 
   ```python
+
     from django.urls import path
     from graphene_django.views import GraphQLView
     from .schema import schema
@@ -198,6 +211,7 @@ To install Graphene Django, follow these steps:
     urlpatterns = [
         path('graphql/', GraphQLView.as_view(graphiql=True, schema=schema)),
     ]
+
   ```
 
 - Run the server
@@ -222,17 +236,20 @@ To install Graphene Django CRUDDALS, follow these steps:
 - In the schema.py file of the app, replace all content, import the CruddalsModel class, and create a class that 
 inherits from it
   ```python
+
     from graphene_django_cruddals import CruddalsModel
     from .models import MyModel
 
     class CruddalsMyModel(CruddalsModel):
         class Meta:
             model = MyModel
+
   ```
 
 - In the root schema, import the class created in the previous step and add it to the Query class, and the 
 mutations for your model also was added, so you now can create the Mutation class
   ```python
+
     from myapp.schema import CruddalsMyModel
 
     class Query(CruddalsMyModel.Query, graphene.ObjectType):
@@ -242,6 +259,7 @@ mutations for your model also was added, so you now can create the Mutation clas
         pass
     
     schema = graphene.Schema(query=Query, mutation=Mutation)
+
   ```
 
 - Run the server
