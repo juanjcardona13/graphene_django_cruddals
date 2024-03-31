@@ -999,9 +999,9 @@ class CruddalsModel(SubclassWithMeta):
         Query (Type[graphene.ObjectType]): The GraphQL Query object for the model.
         Mutation (Union[Type[graphene.ObjectType], None]): The GraphQL Mutation object for the model.
         schema (graphene.Schema): The GraphQL schema for the model.
-        query_operation_fields (Dict[str, Union[graphene.Field, DjangoReadField, DjangoListField, DjangoSearchField]]):
+        operation_fields_for_queries (Dict[str, Union[graphene.Field, DjangoReadField, DjangoListField, DjangoSearchField]]):
             The query operation fields for the model.
-        mutation_operation_fields (Union[Dict[str, Union[graphene.Field, DjangoCreateUpdateField, DjangoDeleteField,
+        operation_fields_for_mutations (Union[Dict[str, Union[graphene.Field, DjangoCreateUpdateField, DjangoDeleteField,
             DjangoDeactivateField, DjangoActivateField]], None]): The mutation operation fields for the model.
         meta (BuilderCruddalsModel): An instance of BuilderCruddalsModel containing metadata about the model.
 
@@ -1017,8 +1017,8 @@ class CruddalsModel(SubclassWithMeta):
     Query:Type[graphene.ObjectType]
     Mutation:Union[Type[graphene.ObjectType], None] = None
     schema:graphene.Schema
-    query_operation_fields:Dict[str, graphene.Field | DjangoReadField | DjangoListField | DjangoSearchField]
-    mutation_operation_fields:Union[Dict[str, graphene.Field | DjangoCreateUpdateField | DjangoDeleteField | DjangoDeactivateField | DjangoActivateField ], None] = None
+    operation_fields_for_queries:Dict[str, graphene.Field | DjangoReadField | DjangoListField | DjangoSearchField]
+    operation_fields_for_mutations:Union[Dict[str, graphene.Field | DjangoCreateUpdateField | DjangoDeleteField | DjangoDeactivateField | DjangoActivateField ], None] = None
     meta:BuilderCruddalsModel
 
     @classmethod
@@ -1068,7 +1068,7 @@ class CruddalsModel(SubclassWithMeta):
         """
         Initialize attributes to None for the child class.
         """
-        attrs_for_child = [ "Query", "Mutation", "schema", "query_operation_fields", "mutation_operation_fields", "meta", ]
+        attrs_for_child = [ "Query", "Mutation", "schema", "operation_fields_for_queries", "operation_fields_for_mutations", "meta", ]
         [setattr(cls, attr, None) for attr in attrs_for_child]
 
     @classmethod
@@ -1113,8 +1113,8 @@ class CruddalsModel(SubclassWithMeta):
         )
         final_functions = ( functions if functions else tuple( set(functions_type_query + functions_type_mutation) - set(exclude_functions) ) )
 
-        cls.query_operation_fields = {}
-        cls.mutation_operation_fields = {}
+        cls.operation_fields_for_queries = {}
+        cls.operation_fields_for_mutations = {}
 
         for function in final_functions:
             key = f"{function}_{cls.meta.model_name_in_different_case['plural_snake_case']}"
@@ -1122,12 +1122,12 @@ class CruddalsModel(SubclassWithMeta):
                 key = f"{function}_{cls.meta.model_name_in_different_case['snake_case']}"
             attr_field:Dict[str, graphene.Field] = {key: getattr(cls.meta, f"{function}_field")}
             if function in functions_type_query:
-                cls.query_operation_fields.update(attr_field)
+                cls.operation_fields_for_queries.update(attr_field)
             elif function in functions_type_mutation:
-                cls.mutation_operation_fields.update(attr_field)
+                cls.operation_fields_for_mutations.update(attr_field)
 
-        if not cls.query_operation_fields:
-            cls.query_operation_fields.update(
+        if not cls.operation_fields_for_queries:
+            cls.operation_fields_for_queries.update(
                 {
                     f"read_{cls.meta.model_name_in_different_case['snake_case']}": getattr(
                         cls.meta, "read_field"
@@ -1142,9 +1142,9 @@ class CruddalsModel(SubclassWithMeta):
         """
         cls.schema, cls.Query, cls.Mutation = get_schema_query_mutation( 
             (), 
-            cls.query_operation_fields, 
+            cls.operation_fields_for_queries, 
             (), 
-            cls.mutation_operation_fields 
+            cls.operation_fields_for_mutations 
         )
 
 
