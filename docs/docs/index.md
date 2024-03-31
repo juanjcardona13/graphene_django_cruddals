@@ -64,7 +64,3 @@ schema = graphene.Schema( query=Query, mutation=Mutation, )
 ```
 
 and this is it, now you can go to Graphiql and see the new queries and mutations that graphene django cruddals made for you
-
-## Documentation
-
-Coming soon!

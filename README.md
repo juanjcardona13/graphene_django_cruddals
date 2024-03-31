@@ -67,4 +67,4 @@ and this is it, now you can go to Graphiql and see the new queries and mutations
 
 ## Documentation
 
-Coming soon!
+For more information, please check the [documentation](https://graphene-django-cruddals.readthedocs.io/en/latest/)
