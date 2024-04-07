@@ -3,11 +3,9 @@
 <h1 align="center">Graphene-Django-CRUDDALS</h1>
 <div align="center">
 
-🚂🚃🚃🚃
-
-**Framework for trivial code, easy and fast to learn and use.**
-
-Turn your Django-models into a complete GraphQL API with all CRUD operations
+🚂🚃🚃🚃  
+**Framework for trivial code, easy and fast to learn and use.**  
+Turn your Django-models into a complete GraphQL API with all CRUD operations  
 
 [![PyPI](https://img.shields.io/pypi/v/graphene-django-cruddals?style=flat-&color=00559c&label=pypi&logo=python&logoColor=black)](https://pypi.org/project/graphene-django-cruddals/)
 [![GitHub License](https://img.shields.io/github/license/juanjcardona13/graphene_django_cruddals?style=flat&color=4c1)](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE)
@@ -15,7 +13,7 @@ Turn your Django-models into a complete GraphQL API with all CRUD operations
 
 [Docs](https://graphene-django-cruddals.readthedocs.io/en/latest/) |...|...|
 
-<small>Built with 🖤 by [Juan J Cardona](https:github.com/juanjcardona13) and [contributors](https://github.com/juanjcardona13/graphene_django_cruddals/graphs/contributors) 
+<small>Built with ❤︎ by [Juan J Cardona](https:github.com/juanjcardona13) and [contributors](https://github.com/juanjcardona13/graphene_django_cruddals/graphs/contributors) 
 </small>
 </div>
 
