@@ -19,15 +19,15 @@ Turn your Django-models into a complete GraphQL API with all CRUD operations
 
 ## 📋 Table of Contents
 
-1. 🚀 [Getting started](#getting-started)
-2. 👩‍💻 [Usage](#basic-usage)
-3. 📚 [Documentation](#documentation)
-4. 📜 [License](#license)
-5. ❤️ [Contributing](#contributing)
-6. 📞 [Contact](#contact)
-7. 🙏 [Acknowledgements](#acknowledgements)
-8.  🎁 [Features](#features)
-9. 🗺️ [Roadmap](#roadmap)
+1. 🚀 [Getting started](#🚀-getting-started)
+2. 👩‍💻 [Usage](#👩‍💻-usage)
+3. 🎁 [Features](#🎁-features)
+4. 📚 [Documentation](#📚-documentation)
+5. 📜 [License](#📜-license)
+6. ❤️ [Contributing](#❤️-contributing)
+7. 📞 [Contact](#📞-contact)
+8. 🙏 [Acknowledgements](#🙏-acknowledgements)
+9. 🗺️ [Roadmap](#🗺️-roadmap)
 
 
 ## 🚀 Getting started
@@ -321,36 +321,7 @@ enum OrderStringEnum {
 
 </details>  
 
-🎉🥳 Now you can use and test in Graphiql 🚀🚀🚀
-
-
-## 📚 Documentation
-
-You can find the full documentation [here](https://graphene-django-cruddals.readthedocs.io/en/latest/), please keep in mind that this is a work in progress.
-
-## 📜 License
-
-Distributed under the MIT License. See [LICENSE](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE) for more information.
-
-## ❤️ Contributing
-
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. For more information, please read the [CONTRIBUTING.md]()
-
-## 📞 Contact
-
-- [Email](mailto:juanjcardona13@gmail.com)
-- [LinkedIn](https://www.linkedin.com/in/juanjcardona13/)
-- [GitHub](https://github.com/juanjcardona13)
-
-## 🙏 Acknowledgements
-
-- [Python](https://www.python.org/)
-- [Django](https://www.djangoproject.com/)
-- [Graphene Django](https://docs.graphene-python.org/projects/django/en/latest/)
-- [Graphene Django CRUD](https://github.com/djipidi/graphene_django_crud)
-- [Readme Template 1](https://www.makeareadme.com)
-- [Readme Template 2](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-
+🎉🥳 Now you can use and test in Graphiql 🚀🚀🚀  
 
 ## 🎁 Features
 
@@ -428,9 +399,32 @@ Contributions are what make the open-source community such an amazing place to l
 
 
 
+## 📚 Documentation
 
+You can find the full documentation [here](https://graphene-django-cruddals.readthedocs.io/en/latest/), please keep in mind that this is a work in progress.
 
+## 📜 License
 
+Distributed under the MIT License. See [LICENSE](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE) for more information.
+
+## ❤️ Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. For more information, please read the [CONTRIBUTING.md]()
+
+## 📞 Contact
+
+- [Email](mailto:juanjcardona13@gmail.com)
+- [LinkedIn](https://www.linkedin.com/in/juanjcardona13/)
+- [GitHub](https://github.com/juanjcardona13)
+
+## 🙏 Acknowledgements
+
+- [Python](https://www.python.org/)
+- [Django](https://www.djangoproject.com/)
+- [Graphene Django](https://docs.graphene-python.org/projects/django/en/latest/)
+- [Graphene Django CRUD](https://github.com/djipidi/graphene_django_crud)
+- [Readme Template 1](https://www.makeareadme.com)
+- [Readme Template 2](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
 
 ## 🗺️ Roadmap
 
@@ -448,10 +442,4 @@ Contributions are what make the open-source community such an amazing place to l
 - [ ] Add collaboration
 - [ ] Add communication
 - [ ] Add networking
-
-
-
-
-
-
 
