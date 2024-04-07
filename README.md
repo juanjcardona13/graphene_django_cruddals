@@ -414,7 +414,7 @@ Contributions are what make the open-source community such an amazing place to l
 ## <a name="contact">📞 Contact</a>
 
 - [Email](mailto:juanjcardona13@gmail.com)
-- [LinkedIn](https://www.linkedin.com/in/juanjcardona13/)
+- [LinkedIn](https://www.linkedin.com/in/juanjcardona/)
 - [GitHub](https://github.com/juanjcardona13)
 
 ## <a name="acknowledgements">🙏 Acknowledgements</a>
@@ -425,6 +425,7 @@ Contributions are what make the open-source community such an amazing place to l
 - [Graphene Django CRUD](https://github.com/djipidi/graphene_django_crud)
 - [Readme Template 1](https://www.makeareadme.com)
 - [Readme Template 2](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
+- and many others  
 
 ## <a name="roadmap">🗺️ Roadmap</a>
 
