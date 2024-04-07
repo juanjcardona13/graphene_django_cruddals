@@ -613,13 +613,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -638,13 +638,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -663,13 +663,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -688,13 +688,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -719,13 +719,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -744,13 +744,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -769,13 +769,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -794,13 +794,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -837,13 +837,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -862,13 +862,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -887,13 +887,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -918,13 +918,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelBFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelBInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelBOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelBInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -949,13 +949,13 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                     "name": "where",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelBFilterInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "FilterModelBInput", "ofType": None }
                 },
                 {
                     "name": "orderBy",
                     "description": "",
                     "defaultValue": None,
-                    "type": { "kind": "INPUT_OBJECT", "name": "ModelBOrderByInput", "ofType": None }
+                    "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelBInput", "ofType": None }
                 },
                 {
                     "name": "paginated",
@@ -3015,25 +3015,25 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": "foreignKeyFieldRequired",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyFieldNullable",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyFieldWithDescription",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyFieldWithoutRelatedName",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "objectId",
@@ -3045,125 +3045,125 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": "manyToManyFieldRequired",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "manyToManyFieldNullable",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "manyToManyFieldWithDescription",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "manyToManyFieldWithoutRelatedName",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "genericRelationField",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyNullableRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyWithDescriptionRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "oneToOneRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "oneToOneNullableRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "oneToOneWithDescriptionRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "manyToManyRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "manyToManyNullableRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "manyToManyWithDescriptionRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyBRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelBFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelBInput", "ofType": None }
             },
             {
                 "name": "oneToOneBRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelBFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelBInput", "ofType": None }
             },
             {
                 "name": "manyToManyBRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelBFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelBInput", "ofType": None }
             },
             {
                 "name": "AND",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "LIST", "name": None, "ofType": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None } }
+                "type": { "kind": "LIST", "name": None, "ofType": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None } }
             },
             {
                 "name": "OR",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "LIST", "name": None, "ofType": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None } }
+                "type": { "kind": "LIST", "name": None, "ofType": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None } }
             },
             {
                 "name": "NOT",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAFilterInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "FilterModelAInput", "ofType": None }
             }
         ]
 
-        self.run_test_graphql_type("ModelAFilterInput", fields_to_test, input_type=True)
+        self.run_test_graphql_type("FilterModelAInput", fields_to_test, input_type=True)
 
     def test_model_order_by_input_type(self):
         fields_to_test = [
@@ -3687,25 +3687,25 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": "foreignKeyFieldRequired",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyFieldNullable",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyFieldWithDescription",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
             },
             {
                 "name": "foreignKeyFieldWithoutRelatedName",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
             },
             {
                 "name": "objectId",
@@ -3717,26 +3717,26 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": "oneToOneRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
             },
             {
                 "name": "oneToOneNullableRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
             },
             {
                 "name": "oneToOneWithDescriptionRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelAOrderByInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelAInput", "ofType": None }
             },
             {
                 "name": "oneToOneBRelated",
                 "description": None,
                 "defaultValue": None,
-                "type": { "kind": "INPUT_OBJECT", "name": "ModelBOrderByInput", "ofType": None }
+                "type": { "kind": "INPUT_OBJECT", "name": "OrderByModelBInput", "ofType": None }
             }
         ]
-        self.run_test_graphql_type("ModelAOrderByInput", fields_to_test, input_type=True)
+        self.run_test_graphql_type("OrderByModelAInput", fields_to_test, input_type=True)
 

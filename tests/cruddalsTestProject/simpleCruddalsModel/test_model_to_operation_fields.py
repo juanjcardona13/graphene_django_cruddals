@@ -55,7 +55,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": None,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ModelCFilterInput",
+                  "name": "FilterModelCInput",
                   "ofType": None
                 }
               }
@@ -114,7 +114,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": None,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ModelCFilterInput",
+                  "name": "FilterModelCInput",
                   "ofType": None
                 }
               }
@@ -142,7 +142,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": None,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ModelCFilterInput",
+                  "name": "FilterModelCInput",
                   "ofType": None
                 }
               }
@@ -170,7 +170,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
                 "name": None,
                 "ofType": {
                   "kind": "INPUT_OBJECT",
-                  "name": "ModelCFilterInput",
+                  "name": "FilterModelCInput",
                   "ofType": None
                 }
               }
@@ -215,7 +215,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
               "defaultValue": None,
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "ModelCFilterInput",
+                "name": "FilterModelCInput",
                 "ofType": None
               }
             },
@@ -225,7 +225,7 @@ class CruddalsModelSchemaTest(SchemaTestCase):
               "defaultValue": None,
               "type": {
                 "kind": "INPUT_OBJECT",
-                "name": "ModelCOrderByInput",
+                "name": "OrderByModelCInput",
                 "ofType": None
               }
             },

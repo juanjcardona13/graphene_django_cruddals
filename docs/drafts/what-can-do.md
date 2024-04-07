@@ -1,6 +1,6 @@
-Que puede hacer Graphene django graphene django CRUDDALS por usted?
+Que puede hacer Graphene django CRUDDALS por usted?
 
-Graphene Django graphene django CRUDDALS es una herramienta que le permite construir una API Graphql completa a partir de un modelo de Django en cuestión de segundos.
+Graphene Django CRUDDALS es una herramienta que le permite construir una API Graphql completa a partir de un modelo de Django en cuestión de segundos.
 
 
 - graphene django CRUDDALS genera automáticamente un schema completo de GraphQL a partir de un modelo de Django.
