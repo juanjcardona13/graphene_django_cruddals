@@ -118,7 +118,7 @@ def convert_django_model_to_filter_input_object_type( model: DjangoModel, regist
         return get_converted_model(model, registry, TypeRegistryForModelEnum.INPUT_OBJECT_TYPE_FOR_SEARCH.value)
     attr_input_fields = get_input_fields_for_filter( model, registry, meta_attrs=meta_attrs )
     attr_input_fields.update( { "AND": graphene.Dynamic( lambda: graphene.InputField( graphene.List( convert_django_model_to_filter_input_object_type( model, registry ) ) ) ), "OR": graphene.Dynamic( lambda: graphene.InputField( graphene.List( convert_django_model_to_filter_input_object_type( model, registry ) ) ) ), "NOT": graphene.Dynamic( lambda: graphene.InputField( convert_django_model_to_filter_input_object_type(model, registry) ) ), } )
-    ModelInputObjectType = build_class( name=f"{singular_camel_case_name}FilterInput", bases=(graphene.InputObjectType,), attrs={**attr_input_fields, **extra_attrs}, )
+    ModelInputObjectType = build_class( name=f"Filter{singular_camel_case_name}Input", bases=(graphene.InputObjectType,), attrs={**attr_input_fields, **extra_attrs}, )
     registry.register_model(model, TypeRegistryForModelEnum.INPUT_OBJECT_TYPE_FOR_SEARCH.value, ModelInputObjectType)
     return ModelInputObjectType
 
@@ -129,6 +129,6 @@ def convert_django_model_to_order_by_input_object_type( model: DjangoModel, regi
     if exists_conversion_for_model(model, registry, TypeRegistryForModelEnum.INPUT_OBJECT_TYPE_FOR_ORDER_BY.value):
         return get_converted_model(model, registry, TypeRegistryForModelEnum.INPUT_OBJECT_TYPE_FOR_ORDER_BY.value)
     attr_input_fields = get_input_fields_for_order_by( model, registry, meta_attrs=meta_attrs )
-    ModelInputObjectType = build_class( name=f"{singular_camel_case_name}OrderByInput", bases=(graphene.InputObjectType,), attrs={**attr_input_fields, **extra_attrs}, )
+    ModelInputObjectType = build_class( name=f"OrderBy{singular_camel_case_name}Input", bases=(graphene.InputObjectType,), attrs={**attr_input_fields, **extra_attrs}, )
     registry.register_model( model, TypeRegistryForModelEnum.INPUT_OBJECT_TYPE_FOR_ORDER_BY.value, ModelInputObjectType )
     return ModelInputObjectType
