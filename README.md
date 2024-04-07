@@ -106,26 +106,25 @@ your schema will have the following queries and mutations
 <summary>Click to see the generated schema</summary>
 
 ```graphql
+# Queries
 type Query {
-  readQuestion(where: QuestionFilterInput!): QuestionType
-  searchQuestions(where: QuestionFilterInput, orderBy: QuestionOrderByInput, paginated: PaginationConfigInput): QuestionPaginatedType
+  readQuestion(where: FilterQuestionInput!): QuestionType
+  searchQuestions(where: FilterQuestionInput, orderBy: OrderByQuestionInput, paginated: PaginationConfigInput): QuestionPaginatedType
   listQuestions: [QuestionType!]
 }
 
+# Mutations
 type Mutation {
   createQuestions(input: [CreateQuestionInput!]): CreateQuestionsPayload
   updateQuestions(input: [UpdateQuestionInput!]): UpdateQuestionsPayload
-  activateQuestions(where: QuestionFilterInput!): ActivateQuestionsPayload
-  deactivateQuestions(where: QuestionFilterInput!): DeactivateQuestionsPayload
-  deleteQuestions(where: QuestionFilterInput!): DeleteQuestionsPayload
+  activateQuestions(where: FilterQuestionInput!): ActivateQuestionsPayload
+  deactivateQuestions(where: FilterQuestionInput!): DeactivateQuestionsPayload
+  deleteQuestions(where: FilterQuestionInput!): DeleteQuestionsPayload
 }
 
-# Input types
-input QuestionInput {
-  id: ID
-  questionText: String
-  pubDate: DateTime
-}
+
+# Inputs
+# - From the model: Question
 input CreateQuestionInput {
   questionText: String!
   pubDate: DateTime!
@@ -135,23 +134,104 @@ input UpdateQuestionInput {
   questionText: String
   pubDate: DateTime
 }
-input QuestionFilterInput {
+input FilterQuestionInput {
   id: IDFilter
   questionText: StringFilter
   pubDate: DateTimeFilter
-  AND: [QuestionFilterInput!]
-  OR: [QuestionFilterInput!]
-  NOT: QuestionFilterInput
+  AND: [FilterQuestionInput]
+  OR: [FilterQuestionInput]
+  NOT: FilterQuestionInput
 }
-input QuestionOrderByInput {
+input OrderByQuestionInput {
   id: OrderEnum
   questionText: OrderStringEnum
   pubDate: OrderEnum
 }
+# - Filters
+input IDFilter {
+  exact: ID
+  iexact: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  in: [ID]
+  contains: ID
+  icontains: ID
+  startswith: ID
+  istartswith: ID
+  endswith: ID
+  iendswith: ID
+  range: [ID]
+  isnull: Boolean
+  regex: String
+  iregex: String
+  containedBy: ID
+}
+input StringFilter {
+  exact: String
+  iexact: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  in: [String]
+  contains: String
+  icontains: String
+  startswith: String
+  istartswith: String
+  endswith: String
+  iendswith: String
+  range: [String]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+input DateTimeFilter {
+  exact: DateTime
+  iexact: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime]
+  contains: DateTime
+  icontains: DateTime
+  startswith: DateTime
+  istartswith: DateTime
+  endswith: DateTime
+  iendswith: DateTime
+  range: [DateTime]
+  isnull: Boolean
+  regex: String
+  iregex: String
+  year: DateTime
+  month: DateTime
+  day: DateTime
+  weekDay: DateTime
+  isoWeekDay: DateTime
+  week: DateTime
+  isoYear: DateTime
+  quarter: DateTime
+  containedBy: DateTime
+  hour: DateTime
+  minute: DateTime
+  second: DateTime
+  date: DateTime
+  time: DateTime
+}
+# - Pagination
+input PaginationConfigInput {
+  page: Int = 1
+  itemsPerPage: IntOrAll = "All"
+}
 
-# Output types
+
+
+# Types
+# - From the model: Question
 type QuestionType {
-  id: ID!
+  id: ID
   questionText: String!
   pubDate: DateTime!
 }
@@ -165,7 +245,78 @@ type QuestionPaginatedType implements PaginationInterface {
   indexEndObj: Int
   objects: [QuestionType!]
 }
-# ... and more
+# - Payload the mutations
+type CreateQuestionsPayload {
+  objects: [QuestionType]
+  errorsReport: [ErrorCollectionType]
+}
+type UpdateQuestionsPayload {
+  objects: [QuestionType]
+  errorsReport: [ErrorCollectionType]
+}
+type ActivateQuestionsPayload {
+  objects: [QuestionType]
+  errorsReport: [ErrorCollectionType]
+}
+type DeactivateQuestionsPayload {
+  objects: [QuestionType]
+  errorsReport: [ErrorCollectionType]
+}
+type DeleteQuestionsPayload {
+  objects: [QuestionType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+# - Error
+type ErrorCollectionType {
+  objectPosition: String
+  errors: [ErrorType]
+}
+type ErrorType {
+  field: String!
+  messages: [String!]!
+}
+
+
+
+# Interfaces
+
+interface PaginationInterface {
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStartObj: Int
+  indexEndObj: Int
+}
+
+
+# Scalars
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
+"""The page size can be int or 'All'"""
+scalar IntOrAll
+
+
+# Enums
+enum OrderEnum {
+  ASC
+  DESC
+}
+
+enum OrderStringEnum {
+  ASC
+  DESC
+  IASC
+  IDESC
+}
+
 ```
 
 </details>  
@@ -203,44 +354,104 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## 🎁 Features
 
-|                            |     Status        |     Comments     |
-| -------------------------- | :-----------------: | :---------------: |
-| Generate a complete GraphQL schema from a Django model           |         ✅         |        〰️        |
-| Generate the necessary ObjectTypes, InputObjectTypes, Fields, InputFields, Arguments, Mutations, Queries, and resolvers to interact with a Django model           |         ✅         |        〰️        |
-| Generate 8 CRUD (Create, Read, Update, Delete) + DALS (Deactivate, Activate, List, Search) operations for a Django model in seconds           |         ✅         |        〰️        |
-| Generate each of the Create, Update, Delete, Deactivate, Activate, List, and Search operations, all to be performed massively           |         ✅         |        〰️        |
-| Handle required and non-required fields of Django models based on the blank and null attributes           |         ✅         |        〰️        |
-| Handle editable and non-editable fields of Django models based on the editable attribute           |         ✅         |        〰️        |
-| Generate documentation for the fields of Django models based on the help_text attribute           |         ✅         |        〰️        |
-| Generate default values for Django model fields based on the default attribute           |         ✅         |        〰️        |
-| Generate enums for Django model fields based on the choices attribute           |         ✅         |        〰️        |
-| Handle one-to-many, many-to-one, one-to-one, and many-to-many relationships, both directly and inversely           |         ✅         |        〰️        |
-| Handle nested model relationships for mutations, allowing nested mutations           |         ✅         |        〰️        |
-| Handle nested model relationships for queries, allowing nested queries at any depth level, with all pagination, sorting, and advanced search features           |         ✅         |        〰️        |
-| Handle pagination of query results, both at the top level and for nested levels           |         ✅         |        〰️        |
-| Handle sorting of query results           |         ✅         |        〰️        |
-| Handle advanced search to perform complex and nested queries with model fields, related fields, and logical operators AND, OR, NOT           |         ✅         |        〰️        |
-| Handle (thanks to graphene-file-upload) File and ImageField types of Django           |         ✅         |        〰️        |
-| Handle JSONField types of Django to deliver them as a JSON string or as a JSON object           |         ✅         |        〰️        |
-| Have excellent data validation in mutations (thanks to DjangoForm), providing a friendly and comprehensive list of errors           |         ✅         |        〰️        |
-| Expose a function to use the ObjectTypes generated from the models           |         ✅         |        〰️        |
-| Handle polymorphic relationships, both one-to-many and many-to-one           |         ✅         |        〰️        |
-| Extend and/or customize each part of the GraphQL schema generated by Graphene Django CRUDDALS, such as ObjectTypes, InputObjectTypes, Fields, InputFields, Arguments, Mutations, Queries, and even resolvers           |         ✅         |        〰️        |
-| Generate CRUD+DALS operations at the model, app, or project level           |         ✅         |        〰️        |
-| Generate a folder with the necessary files for consuming the GraphQL API with any JavaScript client, following the best practices of DRY (Don't Repeat Yourself) and saving hours of work, messy code, and errors. Don't think about how to consume your GraphQL API, Graphene Django CRUDDALS does it for you. (Just consume it)           |         ✅         |        〰️        |
-| Generate a file with the queries and mutations created so that you can test your GraphQL API with GraphiQL           |         ✅         |        〰️        |
-| Generate a .gql and .json file with the entire GraphQL schema generated so that you can share it with your team or anyone interested, or you can also use it with other GraphQL tools for the frontend like those in the ecosystem https://the-guild.dev/#platform, Apollo, etc., or so you can migrate to another language or backend framework. The possibilities are endless           |         ✅         |        〰️        |
-| Handle transactions in mutations           |         ❌         |        〰️        |
-| Handle directives in queries and mutations           |         ❌         |        〰️        |
-| Handle subscriptions           |         ❌         |        〰️        |
-| Optimized queries and mutations           |         ❌         |        〰️        |
-| Generate Types for TypeScript           |         ❌         |        〰️        |
-| Generate validators in Zod, Yup, others           |         ❌         |        〰️        |
+| Status | Description |
+| :----: | ----------- |
+| ✅     | Done        |
+| 〰️     | In progress |
+| ❌     | Not started |
+
+
+
+|                        Feature                                         |     Status          |                 Comments              |
+| -----------------------------------------------------------------------| :-----------------: | :-----------------------------------: |
+| Generate `ObjectType` from Django model                                |         ✅          |        Pending for documentation      |
+| Generate `InputObjectType` from Django model                           |         ✅          |        Pending for documentation      |
+| Generate `Fields` from Django model                                    |         ✅          |        Pending for documentation      |
+| Generate `InputFields` from Django model                               |         ✅          |        Pending for documentation      |
+| Generate `Arguments` from Django model                                 |         ✅          |        Pending for documentation      |
+| Generate `Mutations` from Django model                                 |         ✅          |        Pending for documentation      |
+| Generate `Queries` from Django model                                   |         ✅          |        Pending for documentation      |
+| Generate `resolvers` from Django model                                 |         ✅          |        Pending for documentation      |
+| Generate `Create` operation for a Django model                         |         ✅          |        Pending for documentation      |
+| Generate `Read` operation for a Django model                           |         ✅          |        Pending for documentation      |
+| Generate `Update` operation for a Django model                         |         ✅          |        Pending for documentation      |
+| Generate `Delete` operation for a Django model                         |         ✅          |        Pending for documentation      |
+| Generate `Deactivate` operation for a Django model                     |         ✅          |        Pending for documentation      |
+| Generate `Activate` operation for a Django model                       |         ✅          |        Pending for documentation      |
+| Generate `List` operation for a Django model                           |         ✅          |        Pending for documentation      |
+| Generate `Search` operation for a Django model                         |         〰️          |        Pending for documentation      |
+| Generate each operation, all to be performed `massively`               |         〰️          |        Pending for documentation      |
+| Handle `null` and `blank` attribute of Django model                    |         〰️          |        Pending for documentation      |
+| Handle `editable` attribute of Django model                            |         〰️          |        Pending for documentation      |
+| Handle `help_text` attribute of Django model                           |         〰️          |        Pending for documentation      |
+| Handle `default` attribute of Django model                             |         〰️          |        Pending for documentation      |
+| Handle `choices` attribute of Django model                             |         〰️          |        Pending for documentation      |
+| Handle `OneToOneField` field of Django model                           |         〰️          |        Pending for documentation      |
+| Handle `OneToOneRel` field of Django model                             |         〰️          |        Pending for documentation      |
+| Handle `ManyToManyField` field of Django model                         |         〰️          |        Pending for documentation      |
+| Handle `ManyToManyRel` field of Django model                           |         〰️          |        Pending for documentation      |
+| Handle `ForeignKey` field of Django model                              |         〰️          |        Pending for documentation      |
+| Handle `ManyToOneRel` field of Django model                            |         〰️          |        Pending for documentation      |
+| Handle `GenericForeignKey` field of Django model                       |         〰️          |        Pending for documentation      |
+| Handle `GenericRel` field of Django model                              |         〰️          |        Pending for documentation      |
+| Handle `FileField` and `ImageField` fields of Django Model             |         〰️          |        Pending for documentation      |
+| Handle `JSONField` field of Django model                               |         〰️          |        Pending for documentation      |
+| Allowing nested mutations at any depth level                           |         〰️          |        Pending for documentation      |
+| Allowing nested queries at any depth level                             |         〰️          |        Pending for documentation      |
+| Handle pagination of query results                                     |         〰️          |        Pending for documentation      |
+| Handle sorting of query results                                        |         〰️          |        Pending for documentation      |
+| Handle advanced search                                                 |         〰️          |        Pending for documentation      |
+| Handle advanced search with `AND` operator                             |         〰️          |        Pending for documentation      |
+| Handle advanced search with `OR` operator                              |         〰️          |        Pending for documentation      |
+| Handle advanced search with `NOT` operator                             |         〰️          |        Pending for documentation      |
+| Handle advanced search with `relational fields` operator               |         〰️          |        Pending for documentation      |
+| Providing a friendly and comprehensive list of errors                  |         〰️          |        Pending for documentation      |
+| Allow use the ObjectTypes generated from the models                    |         〰️          |        Pending for documentation      |
+| Allow customizing the `ObjectType` generated by CRUDDALS               |         〰️          |        Pending for documentation      |
+| Allow customizing the `InputObjectType` generated by CRUDDALS          |         〰️          |        Pending for documentation      |
+| Allow customizing the `Fields` generated by CRUDDALS                   |         〰️          |        Pending for documentation      |
+| Allow customizing the `InputFields` generated by CRUDDALS              |         〰️          |        Pending for documentation      |
+| Allow customizing the `Arguments` generated by CRUDDALS                |         〰️          |        Pending for documentation      |
+| Allow customizing the `Mutations` generated by CRUDDALS                |         〰️          |        Pending for documentation      |
+| Allow customizing the `Queries` generated by CRUDDALS                  |         〰️          |        Pending for documentation      |
+| Allow customizing the `resolvers` generated by CRUDDALS                |         〰️          |        Pending for documentation      |
+| Generate all operations at the `model`, `app`, or `project` **level**  |         〰️          |        Pending for documentation      |
+| Files for consuming the GraphQL API with any JavaScript client         |         〰️          |        Pending for documentation      |
+| File with the queries and mutations for with GraphiQL                  |         〰️          |        Pending for documentation      |
+| File with the entire GraphQL schema generated                          |         〰️          |        Pending for documentation      |
+| Handle transactions in mutations                                       |         ❌          |        Pending for documentation      |
+| Handle directives in queries and mutations                             |         ❌          |        Pending for documentation      |
+| Handle subscriptions                                                   |         ❌          |        Pending for documentation      |
+| Optimized queries and mutations                                        |         ❌          |        Pending for documentation      |
+| Generate Types for TypeScript                                          |         ❌          |        Pending for documentation      |
+| Generate validators for Zod, Yup, others                               |         ❌          |        Pending for documentation      |
+
+
+
+
+
+
 
 ## 🗺️ Roadmap
 
-- [x] Create a complete CRUD+DALS
-- [x] Add support for custom fields
-- [ ] Add support for custom queries
-- [ ] Add support for custom mutations
-- [ ] Add support for custom resolvers
+- [ ] Finish documentation
+- [ ] Add more examples
+- [ ] Add more features
+- [ ] Add tests
+- [ ] Add localization
+- [ ] Add SEO
+- [ ] Add analytics
+- [ ] Make social marketing
+- [ ] Add monitoring
+- [ ] Add logging
+- [ ] Add CI/CD
+- [ ] Add collaboration
+- [ ] Add communication
+- [ ] Add networking
+
+
+
+
+
+
+
