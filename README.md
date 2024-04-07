@@ -44,7 +44,7 @@ You can install this package using pip:
 pip install graphene-django-cruddals
 ```
 
-## <a name="usage"></a> 👩‍💻 Usage
+## <a name="usage">👩‍💻 Usage</a> 
 
 To use it, simply create a new class that inherits "`CruddalsModel`"
 Suppose we have the following models.
@@ -323,7 +323,7 @@ enum OrderStringEnum {
 
 🎉🥳 Now you can use and test in Graphiql 🚀🚀🚀  
 
-## 🎁 Features
+## <a name="features">🎁 Features</a>
 
 | Status | Description |
 | :----: | ----------- |
@@ -399,25 +399,25 @@ enum OrderStringEnum {
 
 
 
-## 📚 Documentation
+## <a name="documentation">📚 Documentation</a>
 
 You can find the full documentation [here](https://graphene-django-cruddals.readthedocs.io/en/latest/), please keep in mind that this is a work in progress.
 
-## 📜 License
+## <a name="license">📜 License</a>
 
 Distributed under the MIT License. See [LICENSE](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE) for more information.
 
-## ❤️ Contributing
+## <a name="contributing">❤️ Contributing</a>
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. For more information, please read the [CONTRIBUTING.md]()
 
-## 📞 Contact
+## <a name="contact">📞 Contact</a>
 
 - [Email](mailto:juanjcardona13@gmail.com)
 - [LinkedIn](https://www.linkedin.com/in/juanjcardona13/)
 - [GitHub](https://github.com/juanjcardona13)
 
-## 🙏 Acknowledgements
+## <a name="acknowledgements">🙏 Acknowledgements</a>
 
 - [Python](https://www.python.org/)
 - [Django](https://www.djangoproject.com/)
@@ -426,7 +426,7 @@ Contributions are what make the open-source community such an amazing place to l
 - [Readme Template 1](https://www.makeareadme.com)
 - [Readme Template 2](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
 
-## 🗺️ Roadmap
+## <a name="roadmap">🗺️ Roadmap</a>
 
 - [ ] Finish documentation
 - [ ] Add more examples
