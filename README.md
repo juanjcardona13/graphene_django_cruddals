@@ -19,18 +19,18 @@ Turn your Django-models into a complete GraphQL API with all CRUD operations
 
 ## 📋 Table of Contents
 
-1. 🚀 [Getting started](#🚀-getting-started)
-2. 👩‍💻 [Usage](#👩‍💻-usage)
-3. 🎁 [Features](#🎁-features)
-4. 📚 [Documentation](#📚-documentation)
-5. 📜 [License](#📜-license)
-6. ❤️ [Contributing](#❤️-contributing)
-7. 📞 [Contact](#📞-contact)
-8. 🙏 [Acknowledgements](#🙏-acknowledgements)
-9. 🗺️ [Roadmap](#🗺️-roadmap)
+1. 🚀 [Getting started](#getting-started)
+2. 👩‍💻 [Usage](#usage)
+3. 🎁 [Features](#features)
+4. 📚 [Documentation](#documentation)
+5. 📜 [License](#license)
+6. ❤️ [Contributing](#contributing)
+7. 📞 [Contact](#contact)
+8. 🙏 [Acknowledgements](#acknowledgements)
+9. 🗺️ [Roadmap](#roadmap)
 
 
-## 🚀 Getting started
+## <a name="getting-started">🚀 Getting started</a>
 
 ### Prerequisites
 
@@ -44,7 +44,7 @@ You can install this package using pip:
 pip install graphene-django-cruddals
 ```
 
-## 👩‍💻 Usage
+## <a name="usage"></a> 👩‍💻 Usage
 
 To use it, simply create a new class that inherits "`CruddalsModel`"
 Suppose we have the following models.
