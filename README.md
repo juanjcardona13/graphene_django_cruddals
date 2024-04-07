@@ -13,7 +13,7 @@ Turn your Django-models into a complete GraphQL API with all CRUD operations
 
 **[Docs](https://graphene-django-cruddals.readthedocs.io/en/latest/) |...|...|**
 
-<sub>Built with ❤︎ by [Juan J Cardona](https:github.com/juanjcardona13) and [contributors](https://github.com/juanjcardona13/graphene_django_cruddals/graphs/contributors) 
+<sub>Built with ❤︎ by [Juan J Cardona](https://github.com/juanjcardona13) and [contributors](https://github.com/juanjcardona13/graphene_django_cruddals/graphs/contributors) 
 </sub>
 </div>
 
