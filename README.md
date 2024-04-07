@@ -409,7 +409,7 @@ Distributed under the MIT License. See [LICENSE](https://github.com/juanjcardona
 
 ## <a name="contributing">❤️ Contributing</a>
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. For more information, please read the [CONTRIBUTING.md]()
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. For more information, please read the [CONTRIBUTING.md](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CONTRIBUTING.md)  
 
 ## <a name="contact">📞 Contact</a>
 
