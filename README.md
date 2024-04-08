@@ -8,15 +8,15 @@
 Turn your Django-models into a complete GraphQL API with all CRUD operations  
 
 [![PyPI](https://img.shields.io/pypi/v/graphene-django-cruddals?style=flat-&color=00559c&label=pypi&logo=python&logoColor=white)](https://pypi.org/project/graphene-django-cruddals/)
-[![GitHub License](https://img.shields.io/github/license/juanjcardona13/graphene_django_cruddals?style=flat&color=4c1)](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE)
+[![GitHub License](https://img.shields.io/github/license/juanjcardona13/graphene_django_cruddals?style=flat&color=4c1)](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE)  
 
+![CRUDDALS Gif](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDM1NThoaGJldndtbWlkdTB1cTI3dnYycjVpZGk2eWE1ZGFqam1wbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ODS2bKkBvOVLUskSyW/giphy.gif)  
 
 **[Docs](https://graphene-django-cruddals.readthedocs.io/en/latest/)**
 
 <sub>Built with ❤︎ by [Juan J Cardona](https://github.com/juanjcardona13) and [contributors](https://github.com/juanjcardona13/graphene_django_cruddals/graphs/contributors) 
 </sub>
 
-![CRUDDALS Gif](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDM1NThoaGJldndtbWlkdTB1cTI3dnYycjVpZGk2eWE1ZGFqam1wbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ODS2bKkBvOVLUskSyW/giphy.gif)  
 
 </div>
 
