@@ -1,4 +1,4 @@
-# CRUDDALS Code of Conduct 🚀
+# CRUDDALS Code of Conduct
 
 ## 👥 Our Commitment 
 
@@ -40,7 +40,7 @@ The code of conduct applies to all interactions and contributions related to the
 - Official representation of the project on social media.
 - Any other activity related to CRUDDALS.
 
-## Conflict Resolution Team 🤝
+## 🤝 Conflict Resolution Team  
 
 Our conflict resolution team is here to help and ensure a safe and respectful environment in CRUDDALS. If you have any concerns related to the code of conduct or need help resolving an issue, our team will be happy to assist you.
 
