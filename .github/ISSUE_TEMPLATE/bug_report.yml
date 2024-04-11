@@ -55,11 +55,14 @@ body:
       label: "📝 Log Output"
       description: "Copy and paste any relevant log messages. These will be automatically formatted as code."
       render: shell
-  - type: checkboxes
-    id: terms
-    attributes:
-      label: "📜 Code of Conduct"
-      description: "By submitting this issue, you agree to follow our [Code of Conduct]:" (https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CODE_OF_CONDUCT.md)
-      options:
-        - 
+ - type: checkboxes
+  id: terms
+  attributes:
+    label: "📜 Code of Conduct"
+    description: "By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CODE_OF_CONDUCT.md)."
+    options:
+      - label: "I agree to follow this project's Code of Conduct."
+    validations:
+      required: true
+
 
