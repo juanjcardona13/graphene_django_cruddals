@@ -1,38 +1,65 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+name: "🐞 Bug Report"
+description: "Submit the bug report here"
+title: "[🐛 Bug]: "
+labels: ["bug", "triage"]
+projects: [cruddaLs]
+assignees: [uanjcardona13]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🚨 Thank you for reporting this issue!
 
----
+        Please complete this form to help us investigate the problem.
+  - type: input
+    id: contact
+    attributes:
+      label: "📧 Contact Details"
+      description: "Leave a contact point so we can inform you about the solution to the problem."
+      placeholder: "e.g. email@example.com"
+      validations:
+        required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: "🔍 What happened?"
+      description: "Describe the steps that led to the error. Also, tell us what you expected to happen instead."
+      placeholder: "Describe what you see or what went wrong."
+      value: "An error occurred!"
+      validations:
+        required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: "💻 CruddaLs Version"
+      description: "Select the version of CruddaLs you are using."
+      options:
+        - vX.Y.Z (Default) (Replace with the current version)
+        - vX.Y.Z+ (Edge) (Replace with the current version, if applicable)
+      default: 0
+      validations:
+        required: true
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: "🌐 What browser are you using?"
+      description: "Select the browser(s) where you encountered the error." (Multiple selection allowed)
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: textarea
+    id: logs
+    attributes:
+      label: "📝 Log Output"
+      description: "Copy and paste any relevant log messages. These will be automatically formatted as code."
+      render: shell
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: "📜 Code of Conduct"
+      description: "By submitting this issue, you agree to follow our Code of Conduct: (https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CODE_OF_CONDUCT.md)
+      options:
+        - 
 
-**Describe the bug**
-A clear and concise description of what the bug is.
-
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
-
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
