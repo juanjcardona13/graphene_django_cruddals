@@ -2,8 +2,8 @@ name: "🐞 Bug Report"
 description: "Submit the bug report here"
 title: "[🐛 Bug]: "
 labels: ["bug", "triage"]
-projects: [cruddaLs]
-assignees: [uanjcardona13]
+projects: [CRUDDALS]
+assignees: [juanjcardona13]
 body:
   - type: markdown
     attributes:
@@ -31,7 +31,7 @@ body:
   - type: dropdown
     id: version
     attributes:
-      label: "💻 CruddaLs Version"
+      label: "💻  CRUDDALS Version"
       description: "Select the version of CruddaLs you are using."
       options:
         - vX.Y.Z (Default) (Replace with the current version)
