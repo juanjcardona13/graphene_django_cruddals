@@ -6,9 +6,9 @@ labels:
   - bug
   - triage
 projects: 
-  - cruddaLs
+  - CRUDDALS
 assignees: 
-  - uanjcardona13
+  - juanjcardona13
 body:
   - type: markdown
     attributes:
