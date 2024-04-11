@@ -10,7 +10,7 @@ projects:
 assignees: 
   - juanjcardona13
 body:
-  -type: markdown
+   -type: markdown
     attributes:
       value: |
         ## 🚨 Thank you for reporting this issue!
