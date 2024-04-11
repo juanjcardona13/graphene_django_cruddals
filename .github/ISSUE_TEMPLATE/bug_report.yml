@@ -1,6 +1,5 @@
-name: "🐞 Bug Report"
-description: true
- "Submit the bug report here"
+name: 🐞 Bug Report
+description: "Submit the bug report here"
 title: "[🐛 Bug]: "
 labels: ["bug", "triage"]
 projects: [CRUDDALS]
