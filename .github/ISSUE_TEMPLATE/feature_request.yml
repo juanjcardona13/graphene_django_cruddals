@@ -3,8 +3,7 @@ name: "💡 Feature Request "
 title: "[Feature Request]: "
 description: "Request a new feature for the CRUDDALS project."
 labels:
-  - feature-request
-  - crud dals
+  - enhancement
 assignees: 
   - juanjcardona13
 
