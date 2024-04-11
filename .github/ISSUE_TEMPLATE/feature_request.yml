@@ -5,6 +5,8 @@ description: "Request a new feature for the CRUDDALS project."
 labels:
   - feature-request
   - crud dals
+assignees: 
+  -juanjcardona13
 
 body:
   - type: markdown
