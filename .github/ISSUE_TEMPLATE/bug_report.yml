@@ -1,9 +1,10 @@
 name: 🐞 Bug Report
-description: "Submit the bug report here"
+description: Submit the bug report here
 title: "[🐛 Bug]: "
 labels: ["bug", "triage"]
 projects: [CRUDDALS]
-assignees: [juanjcardona13]
+assignees: 
+   -juanjcardona13
 body:
   - type: markdown
     attributes:
