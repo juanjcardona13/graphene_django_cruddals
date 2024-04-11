@@ -59,7 +59,7 @@ body:
     id: terms
     attributes:
       label: "📜 Code of Conduct"
-      description: "By submitting this issue, you agree to follow our Code of Conduct: (https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CODE_OF_CONDUCT.md)
+      description: "By submitting this issue, you agree to follow our [Code of Conduct]:" (https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CODE_OF_CONDUCT.md)
       options:
         - 
 
