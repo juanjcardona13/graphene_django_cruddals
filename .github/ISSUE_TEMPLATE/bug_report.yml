@@ -1,70 +1,76 @@
------
-name:  🐞 Bug Report
-description: please submit the bug report here
-title: "[🐛 Bug]: "
-labels: ["bug", "triage"]
-projects: [CRUDDALS]
-assignees: 
-   -juanjcardona13
+---  # This line starts the YAML document
+
+name:  Bug Report  # Title of the issue report
+
+description: Please submit the bug report here  # Short description of the issue
+
+title: "[ Bug]: "  # Title format for the specific bug report
+
+labels: ["bug", "triage"]  # Labels to categorize the issue
+
+projects: [CRUDDALS]  # Project where the bug occurred
+
+assignees:  # Assignees for the bug report (if any)
+  - juanjcardona13  # Name of the first assignee
+
 body:
-  - type: markdown
+  - type: markdown  # Defines the first element as markdown
     attributes:
-      value: |
-        ## 🚨 Thank you for reporting this issue!
+      value: |  # Defines the content of the markdown element
+        ##  Thank you for reporting this issue!
 
         Please complete this form to help us investigate the problem.
-  - type: input
-    id: contact
+  - type: input  # Defines the next element as an input field
+    id: contact  # Unique identifier for the input field
     attributes:
-      label: "📧 Contact Details"
-      description: "Leave a contact point so we can inform you about the solution to the problem."
-      placeholder: "e.g. email@example.com"
+      label: " Contact Details"  # Label for the input field
+      description: "Leave a contact point so we can inform you about the solution to the problem."  # Description for the input field
+      placeholder: "e.g. email@example.com"  # Placeholder text for the input field
+      validations:  # Validation rules for the input field
+        required: false  # Contact details are optional
+  - type: textarea  # Defines the next element as a textarea
+    id: what-happened  # Unique identifier for the textarea
+    attributes:
+      label: " What happened?"  # Label for the textarea
+      description: "Describe the steps that led to the error. Also, tell us what you expected to happen instead."  # Description for the textarea
+      placeholder: "Describe what you see or what went wrong."  # Placeholder text for the textarea
+      value: "An error occurred!"  # Default value for the textarea (optional)
       validations:
-        required: false
-  - type: textarea
-    id: what-happened
+        required: true  # Description of the error is required
+  - type: dropdown  # Defines the next element as a dropdown menu
+    id: version  # Unique identifier for the dropdown menu
     attributes:
-      label: "🔍 What happened?"
-      description: "Describe the steps that led to the error. Also, tell us what you expected to happen instead."
-      placeholder: "Describe what you see or what went wrong."
-      value: "An error occurred!"
+      label: " CRUDDALS Version"  # Label for the dropdown menu
+      description: "Select the version of CruddaLs you are using."  # Description for the dropdown menu
+      options:  # Options available in the dropdown menu
+        - vX.Y.Z (Default) (Replace with the current version)  # Default version option
+        - vX.Y.Z+ (Edge) (Replace with the current version, if applicable)  # Optional edge version
+      default: 0  # Selects the first option (default version) by default
       validations:
-        required: true
-  - type: dropdown
-    id: version
+        required: true  # Selecting a version is required
+  - type: dropdown  # Defines another dropdown menu
+    id: browsers  # Unique identifier for the dropdown menu
     attributes:
-      label: "💻  CRUDDALS Version"
-      description: "Select the version of CruddaLs you are using."
-      options:
-        - vX.Y.Z (Default) (Replace with the current version)
-        - vX.Y.Z+ (Edge) (Replace with the current version, if applicable)
-      default: 0
+      label: " What browser are you using?"  # Label for the dropdown menu
+      description: "Select the browser(s) where you encountered the error. (Multiple selection allowed)"  # Description for the dropdown menu
+      options:  # Options available in the dropdown menu
+        - Firefox  # Option for Firefox browser
+        - Chrome  # Option for Chrome browser
+        - Safari  # Option for Safari browser
+        - Microsoft Edge  # Option for Microsoft Edge browser
+  - type: textarea  # Defines another textarea for log output
+    id: logs  # Unique identifier for the textarea
+    attributes:
+      label: " Log Output"  # Label for the textarea
+      description: "Copy and paste any relevant log messages. These will be automatically formatted as code."  # Description for the textarea
+      render: shell  # Renders the content as code
+  - type: checkboxes  # Defines a group of checkboxes
+    id: terms  # Unique identifier for the checkbox group
+    attributes:
+      label: " Code of Conduct"  # Label for the checkbox group
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CODE_OF_CONDUCT.md).  # Description for the checkbox group
+      options:  # Options for the checkboxes
+        - label: "I agree to follow this project's Code of Conduct."  # Text for the checkbox
       validations:
-        required: true
-  - type: dropdown
-    id: browsers
-    attributes:
-      label: "🌐 What browser are you using?"
-      description: "Select the browser(s) where you encountered the error. (Multiple selection allowed) "
-      options:
-        - Firefox
-        - Chrome
-        - Safari
-        - Microsoft Edge
-  - type: textarea
-    id: logs
-    attributes:
-      label: "📝 Log Output"
-      description: "Copy and paste any relevant log messages. These will be automatically formatted as code."
-      render: shell
- - type: checkboxes
-  id: terms
-  attributes:
-    label: "📜 Code of Conduct"
-    description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CODE_OF_CONDUCT.md).
-    options:
-      - label: "I agree to follow this project's Code of Conduct."
-    validations:
-      required: true
-
+        required: true  # Accepting the code of conduct is required
 
