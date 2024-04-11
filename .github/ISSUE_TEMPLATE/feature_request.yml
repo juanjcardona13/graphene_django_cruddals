@@ -6,7 +6,7 @@ labels:
   - feature-request
   - crud dals
 assignees: 
-  -juanjcardona13
+  - juanjcardona13
 
 body:
   - type: markdown
