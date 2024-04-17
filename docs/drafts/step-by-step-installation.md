@@ -1,6 +1,6 @@
-# Step-by-Step Installation
+# 🛠️ Installation
 
-## Install Python
+## 🐍 Install Python
 
 To install or update Python on Ubuntu, follow these steps:
 
@@ -46,7 +46,7 @@ Verify pip installation
 
 If you have another system such as Windows or Mac or if you want more detailed information about installing Python, you can see how to install it on this site [How To Install Python on Windows, macOS, and Linux](https://kinsta.com/knowledgebase/install-python/)
 
-## Install Django
+## 🌐 Install Django
 
 To install Django, follow these steps:
 
@@ -72,7 +72,7 @@ Verify installation
 
 `django-admin --version`
 
-### Create a Django project
+###  Create a Django project
 
 Create a Django project
 
@@ -88,7 +88,7 @@ Run the server
 
 Open your browser and go to `http://localhost:8000/`
 
-### Create a Django app
+###  Create a Django app
 
 Create a Django app
 
@@ -138,7 +138,7 @@ Open your browser and go to `http://localhost:8000/admin/`
 Log in with the superuser credentials you created
 
 
-## Install Graphene Django
+## 📊 Install Graphene Django
 
 To install Graphene Django, follow these steps:
 
@@ -206,7 +206,7 @@ Open your browser and go to `http://localhost:8000/graphql/`
 You can now run queries in the GraphiQL interface
 
 
-## Install Graphene Django CRUDDALS
+##   🔧 Install Graphene Django CRUDDALS
 
 To install Graphene Django CRUDDALS, follow these steps:
 
