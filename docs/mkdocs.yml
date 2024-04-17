@@ -7,9 +7,19 @@ plugins:
   - mkdocstrings
 
 nav:
-  - Quick start: index.md
-  - Step-by-Step Installation: step-by-step-installation.md
-  - What Can It Do?: what-can-do.md
+  
+  - GET STARTED:
+    -  🏁 Quick Start: GET STARTED/Quick-Start.md
+    - ⚙️ Installation: GET STARTED/Installation.md
+  
+  - GUIDE TUTORIALS:
+    -  💡 Basic Usage: GUIDE - TUTORIALS/Basic-Usage.md
+    -  🎓 Advance Usage: GUIDE - TUTORIALS/Advance-Usage.md
+    -  🌟 Features: GUIDE - TUTORIALS/Features.md
+
+  - API:
+    -  🛠️ Custom Types: API/Custom-Types.md
+
   
 
 
