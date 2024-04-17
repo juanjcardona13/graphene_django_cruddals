@@ -17,6 +17,7 @@ from graphene_django_cruddals.registry_global import RegistryGlobal
 from graphene_django.settings import graphene_settings
 from django.db.models import Field as DjangoField
 from django.db.models.fields import NOT_PROVIDED
+from django.db.models.enums import ChoicesMeta
 
 from graphene_django_cruddals.types import TypeRegistryForField, TypesMutation, TypesMutationEnum
 
@@ -62,6 +63,8 @@ def get_choices(choices):
     converted_names = []
     if isinstance(choices, OrderedDict):
         choices = choices.items()
+    elif isinstance(choices, ChoicesMeta):
+        choices = choices.choices # This is for the case of a Django Enum
     for value, help_text in choices:
         if isinstance(help_text, (tuple, list)):
             yield from get_choices(help_text)
@@ -147,6 +150,7 @@ def django_field_is_required(field:DjangoField):
         except AttributeError:
             return False
 
+
 def django_field_get_default(field: DjangoField):
     if field.default == models.fields.NOT_PROVIDED:
         return Undefined
@@ -154,6 +158,8 @@ def django_field_get_default(field: DjangoField):
         return Undefined
     if isinstance(field.default, Promise):
         return Undefined
+    if isinstance(type(field.default), ChoicesMeta):
+        return field.default.value
     return field.default
 
 

@@ -75,7 +75,7 @@ create_model_c_mutation = (
 read_model_c_query = (
     model_c_fragment
     + """
-    query readModelC($where: ModelCFilterInput!) {
+    query readModelC($where: FilterModelCInput!) {
         readModelC(where: $where) {
             ...modelCType
         }
@@ -100,7 +100,7 @@ delete_model_c_mutation = (
     errors_fragment
     + model_c_fragment
     + """
-    mutation deleteModelCs($where: ModelCFilterInput!) {
+    mutation deleteModelCs($where: FilterModelCInput!) {
         deleteModelCs(where: $where) {
             success
             objects { ...modelCType }
@@ -114,7 +114,7 @@ deactivate_model_c_mutation = (
     errors_fragment
     + model_c_fragment
     + """
-    mutation deactivateModelCs($where: ModelCFilterInput!) {
+    mutation deactivateModelCs($where: FilterModelCInput!) {
         deactivateModelCs(where: $where) {
             objects { ...modelCType }
             errorsReport { ...errorsType }
@@ -127,7 +127,7 @@ activate_model_c_mutation = (
     errors_fragment
     + model_c_fragment
     + """
-    mutation activateModelCs($where: ModelCFilterInput!) {
+    mutation activateModelCs($where: FilterModelCInput!) {
         activateModelCs(where: $where) {
             objects { ...modelCType }
             errorsReport { ...errorsType }
@@ -150,7 +150,7 @@ list_model_c_query = (
 search_model_c_query = (
     pagination_fragment
     + """
-    query searchModelCs($where: ModelCFilterInput $orderBy: ModelCOrderByInput $paginated: PaginationConfigInput) {
+    query searchModelCs($where: FilterModelCInput $orderBy: OrderByModelCInput $paginated: PaginationConfigInput) {
         searchModelCs(where: $where orderBy: $orderBy paginated: $paginated) {
             ...paginationType
             objects {
@@ -178,7 +178,7 @@ create_model_d_mutation = (
 read_model_d_query = (
     model_d_fragment
     + """
-    query readModelD($where: ModelDFilterInput!) {
+    query readModelD($where: FilterModelDInput!) {
         readModelD(where: $where) {
             ...modelDType
         }
@@ -201,7 +201,7 @@ update_model_d_mutation = (
 delete_model_d_mutation = (
     errors_fragment + model_d_fragment
     + """
-    mutation deleteModelDs($where: ModelDFilterInput) {
+    mutation deleteModelDs($where: FilterModelDInput) {
         deleteModelDs(where: $where) {
             success
             objects { ...modelDType }
@@ -214,7 +214,7 @@ delete_model_d_mutation = (
 deactivate_model_d_mutation = (
     errors_fragment + model_d_fragment
     + """
-    mutation deactivateModelDs($where: ModelDFilterInput) {
+    mutation deactivateModelDs($where: FilterModelDInput) {
         deactivateModelDs(where: $where) {
             objects { ...modelDType }
             errorsReport { ...errorsType }
@@ -226,7 +226,7 @@ deactivate_model_d_mutation = (
 activate_model_d_mutation = (
     errors_fragment + model_d_fragment
     + """
-    mutation activateModelDs($where: ModelDFilterInput) {
+    mutation activateModelDs($where: FilterModelDInput) {
         activateModelDs(where: $where) {
             objects { ...modelDType }
             errorsReport { ...errorsType }
@@ -249,7 +249,7 @@ list_model_d_query = (
 search_model_d_query = (
     pagination_fragment
     + """
-    query searchModelDs($where: ModelDFilterInput $orderBy: ModelDOrderByInput $paginated: PaginationConfigInput) {
+    query searchModelDs($where: FilterModelDInput $orderBy: OrderByModelDInput $paginated: PaginationConfigInput) {
         searchModelDs(where: $where orderBy: $orderBy paginated: $paginated) {
             ...paginationType
             objects {
@@ -277,7 +277,7 @@ create_model_e_mutation = (
 read_model_e_query = (
     model_e_fragment
     + """
-    query readModelE($where: ModelEFilterInput!) {
+    query readModelE($where: FilterModelEInput!) {
         readModelE(where: $where) {
             ...modelEType
         }
@@ -300,7 +300,7 @@ update_model_e_mutation = (
 delete_model_e_mutation = (
     model_e_fragment + errors_fragment
     + """
-    mutation deleteModelEs($where: ModelEFilterInput) {
+    mutation deleteModelEs($where: FilterModelEInput) {
         deleteModelEs(where: $where) {
             success
             objects { ...modelEType }
@@ -313,7 +313,7 @@ delete_model_e_mutation = (
 deactivate_model_e_mutation = (
     model_e_fragment + errors_fragment
     + """
-    mutation deactivateModelEs($where: ModelEFilterInput) {
+    mutation deactivateModelEs($where: FilterModelEInput) {
         deactivateModelEs(where: $where) {
             objects { ...modelEType }
             errorsReport { ...errorsType }
@@ -325,7 +325,7 @@ deactivate_model_e_mutation = (
 activate_model_e_mutation = (
     model_e_fragment + errors_fragment
     + """
-    mutation activateModelEs($where: ModelEFilterInput) {
+    mutation activateModelEs($where: FilterModelEInput) {
         activateModelEs(where: $where) {
             objects { ...modelEType }
             errorsReport { ...errorsType }
@@ -348,7 +348,7 @@ list_model_e_query = (
 search_model_e_query = (
     pagination_fragment + model_e_fragment
     + """
-    query searchModelEs($where: ModelEFilterInput $orderBy: ModelEOrderByInput $paginated: PaginationConfigInput) {
+    query searchModelEs($where: FilterModelEInput $orderBy: OrderByModelEInput $paginated: PaginationConfigInput) {
         searchModelEs(where: $where orderBy: $orderBy paginated: $paginated) {
             ...paginationType
             objects { ...modelEType }

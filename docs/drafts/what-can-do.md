@@ -28,4 +28,3 @@ Graphene Django CRUDDALS is a tool that allows you to build a complete GraphQL A
 24. Generates a file with the queries and mutations created so that you can test your GraphQL API with GraphiQL.
 25. Generates a .gql and .json file with the entire GraphQL schema generated so that you can share it with your team or anyone interested, or you can also use it with other GraphQL tools for the frontend like those in the ecosystem https://the-guild.dev/#platform, Apollo, etc., or so you can migrate to another language or backend framework. The possibilities are endless.
 
-
