@@ -27,7 +27,7 @@ class CruddalsRestaurant(CruddalsModel):
         model = Restaurant
 ```
 
-Now you can use the `schema` that was generated for you,
+Now you can use the `schema` that was generated for you
 
 ```python
 schema = CruddalsRestaurant.Schema
@@ -55,4 +55,4 @@ class Mutation(
 schema = graphene.Schema( query=Query, mutation=Mutation, )
 ```
 
-and this is it, now you can go to Graphiql and see the new queries and mutations that graphene django cruddals made for you
+and this is it, now you can go to Graphql and see the new queries and mutations that graphene django cruddals made for you

@@ -20,9 +20,10 @@ If you're seeking to streamline your Django models into a robust GraphQL API cap
 - [🏁 Quick Start](GET STARTED/Quick-Start.md)
     - [Install](GET STARTED/Quick-Start.md#install)
     - [Setup](GET STARTED/Quick-Start.md#setup)
+
 - [⚙️ Installation](GET STARTED/Installation.md#installation-step-by-step) 
-    -  [prerequisites](GET STARTED/Quick-Start.md#prerequisites)
-    - [Configurations](GET STARTED/Quick-Start.md#config)
+    - [prerequisites](GET STARTED/Installation.md#prerequisites)
+    - [How to Install CRUDDALS](GET STARTED/Installation.md#graphene-django-cruddals)
   
 ***GUIDE TUTORIALS***
 
