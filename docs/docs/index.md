@@ -7,7 +7,7 @@ graphene-django-cruddals is a **library** for [Django] that extends [Graphene-dj
 
 First time using graphene-django-cruddals? We suggest starting with the [Quick-Start] to quickly set up your development environment and begin using the library in your project. Additionally, we recommend exploring the main documentation for [Graphene-django] to familiarize yourself with the basic utilities it offers.
 
-[Quick-Start]:()
+[Quick-Start]:/GET%20STARTED/Quick-Start/
 [Graphene-django]:https://docs.graphene-python.org/projects/django/en/latest/#
 [Django]: https://www.djangoproject.com/
 
@@ -15,16 +15,22 @@ First time using graphene-django-cruddals? We suggest starting with the [Quick-S
 
 If you're seeking to streamline your Django models into a robust GraphQL API capable of handling all **CRUD + DALS** operations seamlessly, dive into the Installation.
 
-- [🚀 Quick Start](http://127.0.0.1:8000/content/Quick-start/)
-    - [⚙️ Installation](http://127.0.0.1:8000/content/Quick-start/#installation)
-    - [ℹ️ Basic usage](http://127.0.0.1:8000/content/Quick-start/#basic-usage)
+***GET STARTED***
 
-- [🛠️ Step-By-Step Installation](http://127.0.0.1:8000/content/step-by-step-installation/)
-    -  [🐍 Install python](http://127.0.0.1:8000/content/step-by-step-installation/#install-python)
-    -  [🌐 Install Django](http://127.0.0.1:8000/content/step-by-step-installation/#install-django)
-        - [Create a Django Project](http://127.0.0.1:8000/content/step-by-step-installation/#create-a-django-project)
-        - [Create a Django App](http://127.0.0.1:8000/content/step-by-step-installation/#create-a-django-app)
-    -  [📊 Install Graphene Django](http://127.0.0.1:8000/content/step-by-step-installation/#install-graphene-django)
-    -  [🔄 Install Graphene Django CRUDDALS](http://127.0.0.1:8000/content/step-by-step-installation/#install-graphene-django-cruddals)
+- [🏁 Quick Start](GET STARTED/Quick-Start.md)
+    - [Install](GET STARTED/Quick-Start.md#install)
+    - [Setup](GET STARTED/Quick-Start.md#setup)
+- [⚙️ Installation](GET STARTED/Installation.md#installation-step-by-step) 
+    -  [prerequisites](GET STARTED/Quick-Start.md#prerequisites)
+    - [Configurations](GET STARTED/Quick-Start.md#config)
+  
+***GUIDE TUTORIALS***
 
-- [💡 What Can It Do](http://127.0.0.1:8000/content/what-can-do/)
+- [💡 Basic usage](GUIDE-TUTORIALS/Basic-Usage.md)
+- [🎓 Advance Usage](GUIDE-TUTORIALS/Advance-Usage.md)
+- [🌟 Features](GUIDE-TUTORIALS/Features.md)
+
+***API***
+
+[ 🛠️ Custom Types](API/Custom-Types.md)
+

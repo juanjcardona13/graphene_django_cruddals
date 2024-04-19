@@ -2,23 +2,40 @@ site_name: Graphene Django CRUDDALS
 
 theme: readthedocs
 
+repo_url: https://github.com/juanjcardona13/graphene_django_cruddals
+
+edit_uri: tree/main/docs/docs
+
 plugins:
   - search
   - mkdocstrings
 
+extra:
+  edit_on_github: true 
+
+markdown_extensions:
+  - toc:
+      permalink: true
+      baselevel: 1
+      separator: "-"
+
+
 nav:
-  
+  - Home: index.md
   - GET STARTED:
     -  🏁 Quick Start: GET STARTED/Quick-Start.md
     - ⚙️ Installation: GET STARTED/Installation.md
   
   - GUIDE TUTORIALS:
-    -  💡 Basic Usage: GUIDE - TUTORIALS/Basic-Usage.md
-    -  🎓 Advance Usage: GUIDE - TUTORIALS/Advance-Usage.md
-    -  🌟 Features: GUIDE - TUTORIALS/Features.md
+    -  💡 Basic Usage: GUIDE-TUTORIALS/Basic-Usage.md
+    -  🎓 Advance Usage: GUIDE-TUTORIALS/Advance-Usage.md
+    -  🌟 Features: GUIDE-TUTORIALS/Features.md
 
   - API:
     -  🛠️ Custom Types: API/Custom-Types.md
+
+
+
 
   
 
