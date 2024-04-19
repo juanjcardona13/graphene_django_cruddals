@@ -19,18 +19,18 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.decorators.csrf import csrf_exempt
-# from graphene_django_cruddals.views.cruddals_views import CRUDDALSView
-# from menu.schema import schema
+from graphene_django_cruddals.views.cruddals_views import CRUDDALSView
+from menu.schema import schema
 
-from graphene_django.views import GraphQLView
-from restaurantProject.schema import schema
+# from graphene_django.views import GraphQLView
+# from restaurantProject.schema import schema
 
 urlpatterns = (
     [
         path('admin/', admin.site.urls),
         path('_nested_admin/', include('nested_admin.urls')),
-        # path("graphql/", csrf_exempt(CRUDDALSView.as_view(graphiql=True, schema=schema, generate_cruddals_files_client=True))),
-        path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
+        path("graphql/", csrf_exempt(CRUDDALSView.as_view(graphiql=True, schema=schema, generate_cruddals_files_client=True))),
+        # path("graphql/", csrf_exempt(GraphQLView.as_view(graphiql=True, schema=schema))),
     ] 
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

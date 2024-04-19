@@ -1,0 +1,63 @@
+---
+name: "🐞 Bug Report"
+description: "Submit the bug report here"
+title: "[🐛 Bug]: "
+labels: 
+  - bug
+  - triage
+projects: 
+  - CRUDDALS
+assignees: 
+  - juanjcardona13
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🚨 Thank you for reporting this issue!
+
+        Please complete this form to help us investigate the problem.
+  - type: input
+    attributes:
+      label: "📧 Contact Details"
+      description: "Leave a contact point so we can inform you about the solution to the problem."
+      placeholder: "e.g. email@example.com"
+  - type: textarea
+    attributes:
+      label: "🔍 What happened?"
+      description: "Describe the steps that led to the error. Also, tell us what you expected to happen instead."
+      placeholder: "Describe what you see or what went wrong."
+      value: "An error occurred!"
+  - type: dropdown
+    attributes:
+      label: "💻 CruddaLs Version"
+      description: "Select the version of CruddaLs you are using."
+      options:
+        - vX.Y.Z (Default) (Replace with the current version)
+        - vX.Y.Z+ (Edge) (Replace with the current version, if applicable)
+      default: 0
+  - type: dropdown
+    attributes:
+      label: "🌐 What browser are you using?"
+      description: "Select the browser(s) where you encountered the error. (Multiple selection allowed)"
+      options:
+        - Firefox
+        - Chrome
+        - Safari
+        - Microsoft Edge
+  - type: textarea
+    attributes:
+      label: "📝 Log Output"
+      description: "Copy and paste any relevant log messages. These will be automatically formatted as code."
+      render: shell
+  - type: checkboxes
+    attributes:
+      label: "📜 Code of Conduct"
+      description: "By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/CODE_OF_CONDUCT.md)."
+      options:
+        - label: "I agree to follow this project's Code of Conduct."
+
+
+---
+
+
+
