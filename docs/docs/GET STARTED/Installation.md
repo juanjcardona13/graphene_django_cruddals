@@ -22,7 +22,7 @@ Install Graphene Django CRUDDALS with the virtual environment activated and in t
 
 ---
 
-## Install Python
+## <a id="python"></a>Install Python
 
 To install or update Python on Ubuntu, follow these steps:
 
@@ -61,13 +61,12 @@ Verify pip installation
 
 If you have another system such as Windows or Mac or if you want more detailed information about installing Python, you can see how to install it on this site [How To Install Python on Windows, macOS, and Linux](https://kinsta.com/knowledgebase/install-python/)
 
-## Install Django
-
+## <a id="django"></a>Install Django
 To install Django, follow these steps:
 
- you need to have Python installed on your system. If you have not installed Python, you can follow the steps in the previous section to install it.  
+ <!--you need to have Python installed on your system. If you have not installed Python, you can follow the steps in the previous section to install it.--> 
 
-Create the folder where you want to install Django 
+Create the folder where you want to install Django  
 `mkdir django_projects && cd django_projects`
 
 Create a virtual environment  
@@ -102,7 +101,7 @@ Setting up a Django App
 
 Add the app to the installed apps in the settings.py file of the project
 
-> This file is located in the `myproject` folder
+This file is located in the `myproject` folder
 
 ```python
   INSTALLED_APPS = [
@@ -139,7 +138,7 @@ Open your browser and go to `http://localhost:8000/admin/`
 Log in with the superuser credentials you created
 
 
-## Install Graphene Django
+## <a id="graphene-django"></a>Install Graphene Django
 
 To install Graphene Django, follow these steps:  
 
@@ -198,12 +197,11 @@ Add the graphene URL to the project's urls.py file
   ]
 ```
 
-Run the server
+Run the server  
   `python manage.py runserver`
 
-Open your browser and go to `http://localhost:8000/graphql/`
-
-You can now run queries in the GraphiQL interface
+Open your browser and go to `http://localhost:8000/graphql/`  
+You can now run queries in the GraphQL interface
 
 
 
