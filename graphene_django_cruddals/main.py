@@ -98,17 +98,8 @@ def validate_list_func_cruddals(functions:Tuple[FunctionType, ...], exclude_func
             "You cannot provide both 'functions' and 'exclude_functions'. Please provide only one."
         )
     else:
-        if functions:
-            name_input = "functions"
-            input_list = functions
-        elif exclude_functions:
-            name_input = "exclude_functions"
-            input_list = exclude_functions
-        else:
-            return True
-
-    if not isinstance(input_list, tuple) or len(input_list) == 0:
-        raise ValueError(f"'{name_input}' must be a non-empty tuple.")
+        name_input = "function" if functions else "exclude_function"
+        input_list = functions if functions else exclude_functions
 
     invalid_values = [value for value in input_list if value not in valid_values]
 
@@ -119,7 +110,7 @@ def validate_list_func_cruddals(functions:Tuple[FunctionType, ...], exclude_func
 
     return True
 
-#from graphene_django_cruddals.operations_fields.main import DjangoReadField, DjangoCreateUpdateField, DjangoDeleteField, DjangoDeactivateField, DjangoActivateField, DjangoListField, DjangoSearchField
+
 def get_schema_query_mutation(
         queries:Tuple[Type[graphene.ObjectType], ...]=(), 
         attrs_for_query:Dict[str, graphene.Field]={}, 
@@ -127,19 +118,19 @@ def get_schema_query_mutation(
         attrs_for_mutation:Union[Dict[str, graphene.Field], None]={}
     ) -> Tuple[graphene.Schema, Type[graphene.ObjectType], Union[Type[graphene.ObjectType], None]]:
     base = (graphene.ObjectType,)
-    Query:Type[graphene.ObjectType] = build_class(name="Query", bases=(queries+base), attrs=attrs_for_query)
+    query: Type[graphene.ObjectType] = build_class(name="Query", bases=(queries+base), attrs=attrs_for_query)
     
-    dict_for_schema: RootFieldsType = {'query': Query, 'mutation': None}
+    dict_for_schema: RootFieldsType = {'query': query, 'mutation': None}
 
-    Mutation:Union[Type[graphene.ObjectType], None] = None
+    mutation: Union[Type[graphene.ObjectType], None] = None
     if mutations or attrs_for_mutation:
         attrs_for_mutation = {} if attrs_for_mutation is None else attrs_for_mutation
-        Mutation = build_class(name="Mutation", bases=(mutations+base), attrs=attrs_for_mutation)
-        dict_for_schema.update({"mutation": Mutation})
+        mutation = build_class(name="Mutation", bases=(mutations+base), attrs=attrs_for_mutation)
+        dict_for_schema.update({"mutation": mutation})
 
     schema = graphene.Schema(**dict_for_schema)
 
-    return schema, Query, Mutation
+    return schema, query, mutation
 
 
 class CruddalsInterfaceNames(Enum):
@@ -261,14 +252,11 @@ class BuilderBase:
 
     @staticmethod #TODO: Change to a class method
     def add_cruddals_model_to_request(info, cruddals_model):
-        try:
-            if info.context is None:
-                class Context:
-                    pass
-                setattr(info, "context", Context())
-            setattr(info.context, "CruddalsModel", cruddals_model)
-        except Exception as e:
-            raise e
+        if info.context is None:
+            class Context:
+                pass
+            setattr(info, "context", Context())
+        setattr(info.context, "CruddalsModel", cruddals_model)
 
 
     def wrap_resolver_with_pre_post_resolvers( self, kwargs, name_function, default_resolver ):
@@ -297,19 +285,19 @@ class BuilderBase:
     def get_resolve_for_operation_field( self, kwargs, name_function: str, default_resolver ):
         return self.wrap_resolver_with_pre_post_resolvers( kwargs, name_function, default_resolver )
 
-    def get_interface_attrs(self, Interface, include_meta_attrs=True):
-        if Interface is not None:
+    def get_interface_attrs(self, interface, include_meta_attrs=True):
+        if interface is not None:
             attrs_internal_cls_meta = {}
-            if getattr(Interface, "Meta", None) is not None and include_meta_attrs:
-                attrs_internal_cls_meta = props(Interface.Meta)
-            props_function = delete_keys(props(Interface), ["Meta"])
+            if getattr(interface, "Meta", None) is not None and include_meta_attrs:
+                attrs_internal_cls_meta = props(interface.Meta)
+            props_function = delete_keys(props(interface), ["Meta"])
             return {**props_function, **attrs_internal_cls_meta}
         return {}
 
-    def get_interface_meta_attrs(self, InterfaceType):
-        if InterfaceType is not None:
-            if getattr(InterfaceType, "Meta", None) is not None:
-                p = props(InterfaceType.Meta)
+    def get_interface_meta_attrs(self, interface_type):
+        if interface_type is not None:
+            if getattr(interface_type, "Meta", None) is not None:
+                p = props(interface_type.Meta)
 
                 fields = p.get("fields", p.get("only_fields", p.get("only", [])))
                 exclude = p.get(
@@ -406,7 +394,7 @@ class BuilderMutation(BuilderBase):
     def get_state_controller_field(self, kwargs) -> str:
         return self.get_last_element(
             "state_controller_field", kwargs, "is_active"
-        )  # TODO- Debo de mirar esto donde lo voy a cuadrar para que sea global
+        )  #TODO: Debo de mirar esto donde lo voy a cuadrar para que sea global
 
     @staticmethod #TODO: Change to a class method
     def get_input_arg(model_as_input_object_type, kw={}):
@@ -668,6 +656,7 @@ class IntOrAll(GenericScalar):
     class Meta:
         description = "The page size can be int or 'All'"
 
+
 class PaginationConfigInput(graphene.InputObjectType):
     page = graphene.InputField(type_=graphene.Int, default_value=1)
     items_per_page = graphene.InputField(type_=IntOrAll, default_value="All")
@@ -797,14 +786,14 @@ class BuilderCruddalsModel(
 
     def __init__(
         self,
-        Model:DjangoModel,
+        model:DjangoModel,
         prefix:str="",
         suffix:str="",
         interfaces:Tuple[InterfaceStructure, ...]=tuple(),
         exclude_interfaces:Tuple[str, ...]=tuple(),
         registry:Union[RegistryGlobal,None]=None,
     ) -> None:
-        assert Model, "Model is required for BuilderCruddalsModel"
+        assert model, "model is required for BuilderCruddalsModel"
 
         attrs_for_child = [ "model", "prefix", "suffix", "model_as_form", "model_name_in_different_case", "registry", "model_as_object_type", "model_as_paginated_object_type", "model_as_input_object_type", "model_as_filter_input_object_type", "model_as_order_by_input_object_type", "read_field", "list_field", "search_field", "create_field", "update_field", "activate_field", "deactivate_field", "delete_field", ]
         [setattr(self, attr, None) for attr in attrs_for_child]
@@ -814,11 +803,11 @@ class BuilderCruddalsModel(
         else:
             self.registry = registry
 
-        self.model = Model
+        self.model = model
         self.prefix = prefix
         self.suffix = suffix
         self.model_name_in_different_case = get_name_of_model_in_different_case(
-            Model, prefix, suffix
+            model, prefix, suffix
         )
 
         assert isinstance(
@@ -1085,7 +1074,7 @@ class CruddalsModel(SubclassWithMeta):
             registry (Union[RegistryGlobal, None]): The registry to use for schema registration.
         """
         cruddals_of_model = BuilderCruddalsModel(
-            Model=model,
+            model=model,
             prefix=prefix,
             suffix=suffix,
             interfaces=interfaces,
@@ -1205,8 +1194,8 @@ class BuilderCruddalsApp:
                 models_to_include.append(model_to_include)
             self.models = models_to_include
 
-        for Model in self.models:
-            settings_model = settings_for_model.get(Model.__name__, dict())
+        for class_model in self.models:
+            settings_model = settings_for_model.get(class_model.__name__, dict())
 
             settings_model["interfaces"] = interfaces + settings_model.get(
                 "interfaces", ()
@@ -1226,10 +1215,10 @@ class BuilderCruddalsApp:
             settings_model["suffix"] = settings_model.get("suffix", suffix)
 
             cruddals_model_meta = build_class(
-                name="Meta", attrs={"model": Model, **settings_model}
+                name="Meta", attrs={"model": class_model, **settings_model}
             )
             cruddals_model = build_class(
-                name=f"{Model.__name__}Cruddals",
+                name=f"{class_model.__name__}Cruddals",
                 bases=(CruddalsModel,),
                 attrs={"Meta": cruddals_model_meta},
             )
@@ -1256,7 +1245,6 @@ class BuilderCruddalsApp:
             assert isinstance( exclude_models, (tuple,) ), f"'exclude_models' should be tuple received {type(exclude_models)}"
         if include_models is not None:
             assert isinstance( include_models, (tuple,) ), f"'models' should be tuple received {type(include_models)}"
-
 
 
 class CruddalsApp(SubclassWithMeta):
@@ -1304,16 +1292,6 @@ class CruddalsApp(SubclassWithMeta):
         )
 
         super(CruddalsApp, cls).__init_subclass_with_meta__()
-
-
-class AppSettings(NamedTuple):
-    exclude_models: tuple = None
-    models: tuple = None
-    interfaces: tuple = ()
-    exclude_interfaces: tuple = ()
-    functions: tuple = ()
-    exclude_functions: tuple = ()
-    settings_for_model: dict = {}
 
 
 class CruddalsProject(SubclassWithMeta):
@@ -1390,7 +1368,7 @@ class CruddalsProject(SubclassWithMeta):
 
             final_settings_for_model = settings_of_app.get("settings_for_model", {})
 
-            AppSchema = cls._create_app_schema(
+            class_app_schema = cls._create_app_schema(
                 _app_name,
                 final_models,
                 final_exclude_models,
@@ -1403,9 +1381,9 @@ class CruddalsProject(SubclassWithMeta):
                 final_settings_for_model,
             )
 
-            queries = queries + (AppSchema.Query,)
-            if AppSchema.Mutation:
-                mutations = mutations + (AppSchema.Mutation,)
+            queries = queries + (class_app_schema.Query,)
+            if class_app_schema.Mutation:
+                mutations = mutations + (class_app_schema.Mutation,)
 
         cls.schema, cls.Query, cls.Mutation = get_schema_query_mutation(
             queries, {}, mutations, {}
@@ -1477,276 +1455,3 @@ class CruddalsProject(SubclassWithMeta):
 
         return AppSchema
 
-
-
-
-
-
-class ExampleModelInterface:
-    
-    class ObjectType: # This is the class that will be used to modify the ObjectType of the model
-        
-        class Meta: # This is the class that will be used to modify the Meta class of the ObjectType
-            only_fields = "__all__" # Tuple of str or "__all__"
-            exclude_fields = () # Tuple of str
-
-        new_field = graphene.String() # Graphene => Scalar, String, ID, Int, Float, Boolean, Date, DateTime, Time, Decimal, JSONString, UUID, List, NonNull, Enum, Argument, Dynamic
-
-        def resolve_new_field(self, info): # Resolver for new_field should be a function with the same name as the field prefixed by "resolve_" and receive 2 arguments (self, info), return the value of the field same type as the field
-            return "new_field"
-
-        # another fields with their resolvers
-
-        @classmethod
-        def get_queryset(cls, queryset, info): # This method is special and is used to modify the queryset before it is returned, receives 3 arguments (cls, queryset:QuerySet de Django, info), return queryset
-            return queryset
-
-    class InputObjectType:
-        class Meta:
-            only_fields = "__all__"
-            exclude_fields = ()
-            #(deprecated)hold_required_in_fields = False  # Podría ser también reemplazar esto por required_fields = "__all__" y not_required_fields = ()
-
-        new_field = graphene.String()
-        # exist_field = CruddalsRelationField() => For relations
-
-        # Implícitamente si pone un campo que ya estaba en el ModelInputObjectType, sera sobrescrito por el que ponga de ultimo
-        # y ya todos los otros nuevos serán nuevos campos como tal
-
-    class CreateInputObjectType:
-        class Meta:
-            only_fields = "__all__"
-            exclude_fields = ()
-            #(deprecated)hold_required_in_fields = False  # Podría ser también reemplazar esto por required_fields = "__all__" y not_required_fields = ()
-
-        new_field = graphene.String()
-        # exist_field = CruddalsRelationField() => For relations
-
-        # Implícitamente si pone un campo que ya estaba en el ModelInputObjectType, sera sobrescrito por el que ponga de ultimo
-        # y ya todos los otros nuevos serán nuevos campos como tal
-
-    class UpdateInputObjectType:
-        class Meta:
-            only_fields = "__all__"
-            exclude_fields = ()
-            #(deprecated)hold_required_in_fields = False  # Podría ser también reemplazar esto por required_fields = "__all__" y not_required_fields = ()
-
-        new_field = graphene.String()
-        # exist_field = CruddalsRelationField() => For relations
-
-        # Implícitamente si pone un campo que ya estaba en el ModelInputObjectType, sera sobrescrito por el que ponga de ultimo
-        # y ya todos los otros nuevos serán nuevos campos como tal
-
-    class FilterInputObjectType:
-        class Meta:
-            only_fields = "__all__"
-            exclude_fields = ()
-
-        new_field = graphene.String()
-
-        # Implícitamente si pone un campo que ya estaba en el ModelInputObjectType, sera sobrescrito por el que ponga de ultimo
-        # y ya todos los otros nuevos serán nuevos campos como tal
-
-    class OrderByInputObjectType:
-        class Meta:
-            only_fields = "__all__"
-            exclude_fields = ()
-
-        new_field = graphene.String()
-
-        # Implícitamente si pone un campo que ya estaba en el ModelInputObjectType, sera sobrescrito por el que ponga de ultimo
-        # y ya todos los otros nuevos serán nuevos campos como tal
-
-    class CreateField:
-        class Meta:
-            modify_input_argument = {
-                "name": "input",
-                "required": True,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
-
-        def pre_mutate(*args, **kwargs):
-            return (*args, kwargs)
-
-        def mutate(*args, **kwargs):
-            return "object_create"
-
-        def override_total_mutate(*args, **kwargs):
-            return "object_create"
-
-        def post_mutate(*args, **kwargs):
-            return "object_create"
-
-    class ReadField:
-        class Meta:
-            modify_where_argument = {
-                "name": "where",
-                "required": True,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
-
-        def pre_resolve(*args, **kwargs):
-            return (*args, kwargs)
-
-        def resolve(*args, **kwargs):
-            return "object_read"
-
-        def override_total_resolve(*args, **kwargs):
-            return "object_read"
-
-        def post_resolve(*args, **kwargs):
-            return "object_read"
-
-    class UpdateField:
-        class Meta:
-            modify_input_argument = {
-                "name": "input",
-                "required": True,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
-
-        def pre_mutate(*args, **kwargs):
-            return (*args, kwargs)
-
-        def mutate(*args, **kwargs):
-            return "object_update"
-
-        def override_total_mutate(*args, **kwargs):
-            return "object_update"
-
-        def post_mutate(*args, **kwargs):
-            return "object_update"
-
-    class DeleteField:
-        class Meta:
-            modify_where_argument = {
-                "name": "where",
-                "required": True,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
-
-        def pre_mutate(*args, **kwargs):
-            return (*args, kwargs)
-
-        def mutate(*args, **kwargs):
-            return "object_read"
-
-        def override_total_mutate(*args, **kwargs):
-            return "object_read"
-
-        def post_mutate(*args, **kwargs):
-            return "object_read"
-
-    class DeactivateField:
-        class Meta:
-            modify_where_argument = {
-                "name": "where",
-                "required": True,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
-
-        def pre_mutate(*args, **kwargs):
-            return (*args, kwargs)
-
-        def mutate(*args, **kwargs):
-            return "list_objects_deactivates"
-
-        def override_total_mutate(*args, **kwargs):
-            return "list_objects_deactivates"
-
-        def post_mutate(*args, **kwargs):
-            return "list_objects_deactivates"
-
-    class ActivateField:
-        class Meta:
-            modify_where_argument = {
-                "name": "where",
-                "required": True,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
-
-        def pre_mutate(*args, **kwargs):
-            return (*args, kwargs)
-
-        def mutate(*args, **kwargs):
-            return "list_objects_actives"
-
-        def override_total_mutate(*args, **kwargs):
-            return "list_objects_actives"
-
-        def post_mutate(*args, **kwargs):
-            return "list_objects_actives"
-
-    class ListField:
-        class Meta:
-            modify_order_by_argument = {
-                "name": "orderBy",
-                "required": False,
-                "description": "",
-                "hidden": False,
-            }
-            modify_pagination_config_argument = {
-                "name": "paginated",
-                "required": False,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
-
-        def pre_resolve(*args, **kwargs):
-            return (*args, kwargs)
-
-        def resolve(*args, **kwargs):
-            return "paginated_objects"
-
-        def override_total_resolve(*args, **kwargs):
-            return "paginated_objects"
-
-        def post_resolve(*args, **kwargs):
-            return "paginated_objects"
-
-    class SearchField:
-        class Meta:
-            modify_where_argument = {
-                "name": "where",
-                "required": False,
-                "description": "",
-                "hidden": False,
-            }
-            modify_order_by_argument = {
-                "name": "orderBy",
-                "required": False,
-                "description": "",
-                "hidden": False,
-            }
-            modify_pagination_config_argument = {
-                "name": "paginated",
-                "required": False,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
-
-        def pre_resolve(*args, **kwargs):
-            return (*args, kwargs)
-
-        def resolve(*args, **kwargs):
-            return "paginated_objects"
-
-        def override_total_resolve(*args, **kwargs):
-            return "paginated_objects"
-
-        def post_resolve(*args, **kwargs):
-            return "paginated_objects"
