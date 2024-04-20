@@ -37,16 +37,16 @@ from graphene_django_cruddals.operations_fields.main import (
     DjangoReadField,
     DjangoSearchField,
 )
-from graphene_django_cruddals.registry_global import (
-    RegistryGlobal,
-    TypeRegistryForModelEnum,
-    get_global_registry,
-)
-from graphene_django_cruddals.types import (
+from graphene_django_cruddals.python_types import (
     CamelFunctionType,
     FunctionType,
     InterfaceStructure,
     NameCaseType,
+)
+from graphene_django_cruddals.registry_global import (
+    RegistryGlobal,
+    TypeRegistryForModelEnum,
+    get_global_registry,
 )
 from graphene_django_cruddals.utils.utils import (
     convert_model_to_model_form,

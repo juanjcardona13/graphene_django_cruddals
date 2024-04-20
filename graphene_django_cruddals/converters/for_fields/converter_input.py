@@ -27,6 +27,7 @@ from graphene_django_cruddals.converters.for_fields.utils import (
     django_field_is_required,
     get_django_field_description,
 )
+from graphene_django_cruddals.python_types import TypesMutation, TypesMutationEnum
 from graphene_django_cruddals.registry_global import RegistryGlobal
 from graphene_django_cruddals.scalars_type import (
     IP,
@@ -39,7 +40,6 @@ from graphene_django_cruddals.scalars_type import (
     Slug,
     Upload,
 )
-from graphene_django_cruddals.types import TypesMutation, TypesMutationEnum
 
 from .compat import HStoreField, JSONField, PGJSONField
 

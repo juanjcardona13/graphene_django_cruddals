@@ -14,11 +14,11 @@ from graphene_django_cruddals.converters.for_entity.utils import (
     get_output_fields,
 )
 from graphene_django_cruddals.operations_fields.main import DjangoListField
+from graphene_django_cruddals.python_types import TypesMutation, TypesMutationEnum
 from graphene_django_cruddals.registry_global import (
     RegistryGlobal,
     TypeRegistryForModelEnum,
 )
-from graphene_django_cruddals.types import TypesMutation, TypesMutationEnum
 from graphene_django_cruddals.utils.utils import (
     build_class,
     get_name_of_model_in_different_case,

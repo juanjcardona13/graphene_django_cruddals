@@ -16,11 +16,11 @@ from graphene_django_cruddals.converters.for_fields.utils import (
     convert_choice_field_to_graphene_enum,
     get_converted_field,
 )
+from graphene_django_cruddals.python_types import TypesMutation, TypesMutationEnum
 from graphene_django_cruddals.registry_global import (
     RegistryGlobal,
     TypeRegistryForFieldEnum,
 )
-from graphene_django_cruddals.types import TypesMutation, TypesMutationEnum
 
 
 def convert_django_field_with_choices_to_output(

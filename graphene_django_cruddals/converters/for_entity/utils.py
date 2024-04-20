@@ -23,12 +23,12 @@ from graphene_django_cruddals.converters.for_fields.main import (
     convert_django_field_without_choices_to_filter_input,
     convert_django_field_without_choices_to_order_by_input,
 )
-from graphene_django_cruddals.registry_global import RegistryGlobal
-from graphene_django_cruddals.types import (
+from graphene_django_cruddals.python_types import (
     TypeRegistryForModel,
     TypesMutation,
     TypesMutationEnum,
 )
+from graphene_django_cruddals.registry_global import RegistryGlobal
 
 
 class CruddalsRelationField:

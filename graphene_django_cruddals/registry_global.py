@@ -4,7 +4,10 @@ from typing import Any, Dict, Union
 from django.db.models import Model as DjangoModel
 from django.db.models.fields import Field as DjangoField
 
-from graphene_django_cruddals.types import TypeRegistryForField, TypeRegistryForModel
+from graphene_django_cruddals.python_types import (
+    TypeRegistryForField,
+    TypeRegistryForModel,
+)
 
 
 class TypeRegistryForModelEnum(Enum):

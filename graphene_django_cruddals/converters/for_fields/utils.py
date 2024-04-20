@@ -17,12 +17,12 @@ from text_unidecode import unidecode
 
 import graphene
 from graphene.utils.str_converters import to_camel_case
-from graphene_django_cruddals.registry_global import RegistryGlobal
-from graphene_django_cruddals.types import (
+from graphene_django_cruddals.python_types import (
     TypeRegistryForField,
     TypesMutation,
     TypesMutationEnum,
 )
+from graphene_django_cruddals.registry_global import RegistryGlobal
 
 
 # region === CONVERTER FOR FIELD WITH CHOICES

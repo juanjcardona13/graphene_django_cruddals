@@ -8,7 +8,11 @@ from django.utils.encoding import force_str
 from django.utils.functional import Promise
 
 import graphene
-from graphene_django_cruddals.types import FunctionType, NameCaseType, RootFieldsType
+from graphene_django_cruddals.python_types import (
+    FunctionType,
+    NameCaseType,
+    RootFieldsType,
+)
 
 
 def is_iterable(obj: Any, exclude_string=True) -> bool:
