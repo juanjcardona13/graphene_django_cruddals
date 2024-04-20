@@ -1,6 +1,7 @@
-from setuptools import find_packages, setup
 import ast
 import re
+
+from setuptools import find_packages, setup
 
 _version_re = re.compile(r"__version__\s+=\s+(.*)")
 
@@ -10,8 +11,20 @@ with open("graphene_django_cruddals/__init__.py", "rb") as f:
     )
 
 tests_require = [
-    "pytest>=3.6.3"
+    "pytest>=7.3.1",
+    "pytest-cov",
+    "pytest-random-order",
+    "coveralls",
+    "mock",
+    "pytz",
+    "django-filter>=22.1",
+    "pytest-django>=4.5.2",
 ]
+
+dev_requires = [
+    "ruff==0.1.2",
+    "pre-commit",
+] + tests_require
 
 setup(
     name="graphene_django_cruddals",
@@ -19,11 +32,12 @@ setup(
     description="Framework for trivial code, Easy and Fast for learn, Easy and Fast for use",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/juanjcardona13",
+    url="https://github.com/juanjcardona13/graphene_django_cruddals",
     author="Juan J Cardona",
     author_email="juanjcardona13@gmail.com",
-    license="MIT",
+    license="Apache 2.0",
     classifiers=[
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries",
         "Programming Language :: Python :: 3",
@@ -34,11 +48,10 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: PyPy",
         "Framework :: Django",
-        "Framework :: Django :: 3.0",
-        "Framework :: Django :: 3.1",
         "Framework :: Django :: 3.2",
+        "Framework :: Django :: 4.2",
     ],
-    keywords="api graphql crud graphene graphene-django",
+    keywords="api graphql crud graphene graphene-django cruddals",
     packages=find_packages(exclude=["tests", "examples", "examples.*"]),
     install_requires=[
         "graphene-django>=3.0.0",
@@ -47,7 +60,8 @@ setup(
     setup_requires=["pytest-runner"],
     tests_require=tests_require,
     extras_require={
-        "test": tests_require
+        "test": tests_require,
+        "dev": dev_requires,
     },
     include_package_data=True,
     zip_safe=False,
