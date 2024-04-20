@@ -379,3 +379,5 @@ sw.*
 
 # Vim swap files
 *.swp
+
+schema_client_js
