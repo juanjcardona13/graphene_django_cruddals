@@ -10,7 +10,8 @@ dev-setup:
 
 .PHONY: tests ## Run unit tests
 tests:
-	PYTHONPATH=. pytest tests --cov=graphene_django_cruddals -vv
+	PYTHONPATH=. pytest tests --ignore=tests/integration --cov=graphene_django_cruddals -vv
+	cd tests/integration && pip install -r requirements.txt && ./manage.py test
 
 .PHONY: format ## Format code
 format:
