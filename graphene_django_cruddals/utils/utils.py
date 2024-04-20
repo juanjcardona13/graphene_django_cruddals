@@ -174,12 +174,16 @@ def validate_list_func_cruddals(
 
 def get_schema_query_mutation(
     queries: Tuple[Type[graphene.ObjectType], ...] = (),
-    attrs_for_query: Dict[str, graphene.Field] = {},
+    attrs_for_query: Dict[str, graphene.Field] = None,
     mutations: Tuple[Type[graphene.ObjectType], ...] = (),
-    attrs_for_mutation: Union[Dict[str, graphene.Field], None] = {},
+    attrs_for_mutation: Union[Dict[str, graphene.Field], None] = None,
 ) -> Tuple[
     graphene.Schema, Type[graphene.ObjectType], Union[Type[graphene.ObjectType], None]
 ]:
+    if attrs_for_query is None:
+        attrs_for_query = {}
+    if attrs_for_mutation is None:
+        attrs_for_mutation = {}
     base = (graphene.ObjectType,)
     query: Type[graphene.ObjectType] = build_class(
         name="Query", bases=(queries + base), attrs=attrs_for_query

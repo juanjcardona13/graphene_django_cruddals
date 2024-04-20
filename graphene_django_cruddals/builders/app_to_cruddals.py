@@ -29,8 +29,10 @@ class BuilderCruddalsApp:
         exclude_interfaces=(),
         functions=(),
         exclude_functions=(),
-        settings_for_model={},
+        settings_for_model=None,
     ) -> None:
+        if settings_for_model is None:
+            settings_for_model = {}
         assert app_name, "app_name is required for BuilderCruddalsApp"
         validate_list_func_cruddals(functions, exclude_functions)
 
@@ -163,8 +165,10 @@ class CruddalsApp(SubclassWithMeta):
         exclude_interfaces=(),
         functions=(),
         exclude_functions=(),
-        settings_for_model={},
+        settings_for_model=None,
     ):
+        if settings_for_model is None:
+            settings_for_model = {}
         assert app_name, "app_name is required for CruddalsApp"
         validate_list_func_cruddals(functions, exclude_functions)
 

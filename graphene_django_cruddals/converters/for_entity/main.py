@@ -36,8 +36,12 @@ class PaginationInterface(graphene.Interface):
 
 
 def convert_django_model_to_object_type(
-    model: DjangoModel, registry: RegistryGlobal, meta_attrs={}, extra_attrs={}
+    model: DjangoModel, registry: RegistryGlobal, meta_attrs=None, extra_attrs=None
 ) -> Type[DjangoObjectType]:
+    if meta_attrs is None:
+        meta_attrs = {}
+    if extra_attrs is None:
+        extra_attrs = {}
     """TODO: Mejorar esto
     Los meta_attrs que espera recibir son los que permite Django Object Type en su clase interna `Meta`
     la doc encuentran en: https://docs.graphene-python.org/projects/django/en/latest/queries/
@@ -93,8 +97,10 @@ def convert_django_model_to_paginated_object_type(
     model: DjangoModel,
     registry: RegistryGlobal,
     model_as_object_type=None,
-    extra_attrs={},
+    extra_attrs=None,
 ):
+    if extra_attrs is None:
+        extra_attrs = {}
     if exists_conversion_for_model(
         model, registry, TypeRegistryForModelEnum.PAGINATED_OBJECT_TYPE.value
     ):
@@ -136,9 +142,13 @@ def convert_django_model_to_mutate_input_object_type(
     model: DjangoModel,
     registry: RegistryGlobal,
     type_mutation: TypesMutation = TypesMutationEnum.CREATE_UPDATE.value,
-    meta_attrs={},
-    extra_attrs={},
+    meta_attrs=None,
+    extra_attrs=None,
 ) -> Type[graphene.InputObjectType]:
+    if meta_attrs is None:
+        meta_attrs = {}
+    if extra_attrs is None:
+        extra_attrs = {}
     names_of_model = get_name_of_model_in_different_case(model)
     singular_camel_case_name = names_of_model["camel_case"]
 
@@ -179,8 +189,12 @@ def convert_django_model_to_mutate_input_object_type(
 
 
 def convert_django_model_to_filter_input_object_type(
-    model: DjangoModel, registry: RegistryGlobal, meta_attrs={}, extra_attrs={}
+    model: DjangoModel, registry: RegistryGlobal, meta_attrs=None, extra_attrs=None
 ):
+    if meta_attrs is None:
+        meta_attrs = {}
+    if extra_attrs is None:
+        extra_attrs = {}
     names_of_model = get_name_of_model_in_different_case(model)
     singular_camel_case_name = names_of_model["camel_case"]
     if exists_conversion_for_model(
@@ -233,8 +247,12 @@ def convert_django_model_to_filter_input_object_type(
 
 
 def convert_django_model_to_order_by_input_object_type(
-    model: DjangoModel, registry: RegistryGlobal, meta_attrs={}, extra_attrs={}
+    model: DjangoModel, registry: RegistryGlobal, meta_attrs=None, extra_attrs=None
 ):
+    if meta_attrs is None:
+        meta_attrs = {}
+    if extra_attrs is None:
+        extra_attrs = {}
     names_of_model = get_name_of_model_in_different_case(model)
     singular_camel_case_name = names_of_model["camel_case"]
     if exists_conversion_for_model(
