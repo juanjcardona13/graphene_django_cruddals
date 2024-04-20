@@ -1,4 +1,4 @@
-from graphene_django_cruddals.utils import (
+from graphene_django_cruddals.utils.utils import (
     build_class,
     camel_to_snake,
     camelize,

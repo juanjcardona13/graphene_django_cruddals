@@ -1,55 +1,60 @@
-# # -*- coding: utf-8 -*-
 from collections import OrderedDict
 from enum import Enum
-from typing import Any, Callable, Dict, Literal, NamedTuple, Optional, Tuple, Type, Union
-import graphene
-from graphene.utils.str_converters import to_snake_case
-from graphene.utils.props import props
-from graphene.utils.subclass_with_meta import SubclassWithMeta
-from graphene.types.generic import GenericScalar
+from typing import Any, Callable, Dict, Tuple, Type, Union
 
-from django.apps import apps as django_apps
 from django.db.models import Model as DjangoModel
 from django.forms import ModelForm as DjangoModelForm
 
-
+import graphene
+from graphene.types.generic import GenericScalar
+from graphene.utils.props import props
+from graphene.utils.str_converters import to_snake_case
+from graphene.utils.subclass_with_meta import SubclassWithMeta
 from graphene_django_cruddals.converters.django_types import DjangoObjectType
 from graphene_django_cruddals.converters.for_entity.main import (
-    convert_django_model_to_object_type,
-    convert_django_model_to_paginated_object_type,
-    convert_django_model_to_mutate_input_object_type,
     convert_django_model_to_filter_input_object_type,
+    convert_django_model_to_mutate_input_object_type,
+    convert_django_model_to_object_type,
     convert_django_model_to_order_by_input_object_type,
-)
-from graphene_django_cruddals.operations_fields.main import (
-    DjangoCreateUpdateField,
-    DjangoReadField,
-    DjangoDeleteField,
-    DjangoDeactivateField,
-    DjangoActivateField,
-    DjangoListField,
-    DjangoSearchField,
+    convert_django_model_to_paginated_object_type,
 )
 from graphene_django_cruddals.operations_fields.default_resolvers import (
-    default_create_update_resolver,
-    default_read_field_resolver,
-    default_delete_field_resolver,
-    default_deactivate_field_resolver,
     default_activate_field_resolver,
+    default_create_update_resolver,
+    default_deactivate_field_resolver,
+    default_delete_field_resolver,
     default_list_field_resolver,
+    default_read_field_resolver,
     default_search_field_resolver,
-    default_update_resolver,
 )
-from graphene_django_cruddals.registry_global import RegistryGlobal, TypeRegistryForModelEnum, get_global_registry
-from graphene_django_cruddals.types import CamelFunctionType, FunctionType, InterfaceStructure, ListFieldStructure, NameCaseType, RootFieldsType
-from graphene_django_cruddals.utils import (
-    build_class,
+from graphene_django_cruddals.operations_fields.main import (
+    DjangoActivateField,
+    DjangoCreateUpdateField,
+    DjangoDeactivateField,
+    DjangoDeleteField,
+    DjangoListField,
+    DjangoReadField,
+    DjangoSearchField,
+)
+from graphene_django_cruddals.registry_global import (
+    RegistryGlobal,
+    TypeRegistryForModelEnum,
+    get_global_registry,
+)
+from graphene_django_cruddals.types import (
+    CamelFunctionType,
+    FunctionType,
+    InterfaceStructure,
+    NameCaseType,
+)
+from graphene_django_cruddals.utils.utils import (
     convert_model_to_model_form,
     delete_keys,
     get_name_of_model_in_different_case,
+    get_schema_query_mutation,
     merge_dict,
+    validate_list_func_cruddals,
 )
-
 
 # For interfaces,
 # is executed first AppInterface, after Model Interface, for both is executed in order of list
@@ -80,57 +85,6 @@ CLASS_INTERFACE_FIELDS_NAMES = [
     "SearchField",
 ]
 INTERFACES_NAME_CRUDDALS = CLASS_INTERFACE_FIELDS_NAMES + CLASS_INTERFACE_TYPE_NAMES
-
-def validate_list_func_cruddals(functions:Tuple[FunctionType, ...], exclude_functions:Tuple[FunctionType, ...]) -> bool:
-    valid_values = [
-        "create",
-        "read",
-        "update",
-        "delete",
-        "deactivate",
-        "activate",
-        "list",
-        "search",
-    ]
-
-    if functions and exclude_functions:
-        raise ValueError(
-            "You cannot provide both 'functions' and 'exclude_functions'. Please provide only one."
-        )
-    else:
-        name_input = "function" if functions else "exclude_function"
-        input_list = functions if functions else exclude_functions
-
-    invalid_values = [value for value in input_list if value not in valid_values]
-
-    if invalid_values:
-        raise ValueError(
-            f"Expected in '{name_input}' a tuple with some of these values {valid_values}, but got these invalid values {invalid_values}"
-        )
-
-    return True
-
-
-def get_schema_query_mutation(
-        queries:Tuple[Type[graphene.ObjectType], ...]=(), 
-        attrs_for_query:Dict[str, graphene.Field]={}, 
-        mutations:Tuple[Type[graphene.ObjectType], ...]=(), 
-        attrs_for_mutation:Union[Dict[str, graphene.Field], None]={}
-    ) -> Tuple[graphene.Schema, Type[graphene.ObjectType], Union[Type[graphene.ObjectType], None]]:
-    base = (graphene.ObjectType,)
-    query: Type[graphene.ObjectType] = build_class(name="Query", bases=(queries+base), attrs=attrs_for_query)
-    
-    dict_for_schema: RootFieldsType = {'query': query, 'mutation': None}
-
-    mutation: Union[Type[graphene.ObjectType], None] = None
-    if mutations or attrs_for_mutation:
-        attrs_for_mutation = {} if attrs_for_mutation is None else attrs_for_mutation
-        mutation = build_class(name="Mutation", bases=(mutations+base), attrs=attrs_for_mutation)
-        dict_for_schema.update({"mutation": mutation})
-
-    schema = graphene.Schema(**dict_for_schema)
-
-    return schema, query, mutation
 
 
 class CruddalsInterfaceNames(Enum):
@@ -193,7 +147,7 @@ class BuilderBase:
         model_as_update_input_object_type: The GraphQL input object type for update operations.
         model_as_filter_input_object_type: The GraphQL input object type for filtering operations.
         model_as_order_by_input_object_type: The GraphQL input object type for ordering operations.
-        
+
         read_field: The read field (or also called operation) for the model.
         list_field: The list field (or also called operation) for the model.
         search_field: The search field (or also called operation) for the model.
@@ -216,24 +170,25 @@ class BuilderBase:
         get_pre_and_post_resolves: Get pre and post resolves.
 
     """
-    model_as_object_type:Type[DjangoObjectType]
-    model_as_paginated_object_type:Type[graphene.ObjectType]
-    model_as_input_object_type:Type[graphene.InputObjectType]
-    model_as_create_input_object_type:Type[graphene.InputObjectType]
-    model_as_update_input_object_type:Type[graphene.InputObjectType]
-    model_as_filter_input_object_type:Type[graphene.InputObjectType]
-    model_as_order_by_input_object_type:Type[graphene.InputObjectType]
 
-    read_field:DjangoReadField
-    list_field:Union[DjangoListField,None] = None
-    search_field:Union[DjangoSearchField,None] = None
-    create_field:Union[DjangoCreateUpdateField,None] = None
-    update_field:Union[DjangoCreateUpdateField,None] = None
-    activate_field:Union[DjangoActivateField,None] = None
-    deactivate_field:Union[DjangoDeactivateField,None] = None
-    delete_field:Union[DjangoDeleteField,None] = None
+    model_as_object_type: Type[DjangoObjectType]
+    model_as_paginated_object_type: Type[graphene.ObjectType]
+    model_as_input_object_type: Type[graphene.InputObjectType]
+    model_as_create_input_object_type: Type[graphene.InputObjectType]
+    model_as_update_input_object_type: Type[graphene.InputObjectType]
+    model_as_filter_input_object_type: Type[graphene.InputObjectType]
+    model_as_order_by_input_object_type: Type[graphene.InputObjectType]
 
-    @staticmethod #TODO: Change to a class method
+    read_field: DjangoReadField
+    list_field: Union[DjangoListField, None] = None
+    search_field: Union[DjangoSearchField, None] = None
+    create_field: Union[DjangoCreateUpdateField, None] = None
+    update_field: Union[DjangoCreateUpdateField, None] = None
+    activate_field: Union[DjangoActivateField, None] = None
+    deactivate_field: Union[DjangoDeactivateField, None] = None
+    delete_field: Union[DjangoDeleteField, None] = None
+
+    @staticmethod  # TODa: Change to a class method
     def get_where_arg(model_as_filter_input_object_type, kw={}, default_required=False):
         attrs_for_input_arg = kw.get("modify_where_argument", {})
         default_values_for_where = {
@@ -250,16 +205,19 @@ class BuilderBase:
         else:
             return {"where": graphene.Argument(**default_values_for_where)}
 
-    @staticmethod #TODO: Change to a class method
+    @staticmethod  # TODa: Change to a class method
     def add_cruddals_model_to_request(info, cruddals_model):
         if info.context is None:
+
             class Context:
                 pass
-            setattr(info, "context", Context())
-        setattr(info.context, "CruddalsModel", cruddals_model)
 
+            info.context = Context()
+        info.context.CruddalsModel = cruddals_model
 
-    def wrap_resolver_with_pre_post_resolvers( self, kwargs, name_function, default_resolver ):
+    def wrap_resolver_with_pre_post_resolvers(
+        self, kwargs, name_function, default_resolver
+    ):
         pre_resolves, post_resolves = self.get_pre_and_post_resolves(
             kwargs, name_function
         )
@@ -282,8 +240,12 @@ class BuilderBase:
             default_final_resolver_with_pre_and_post,
         )
 
-    def get_resolve_for_operation_field( self, kwargs, name_function: str, default_resolver ):
-        return self.wrap_resolver_with_pre_post_resolvers( kwargs, name_function, default_resolver )
+    def get_resolve_for_operation_field(
+        self, kwargs, name_function: str, default_resolver
+    ):
+        return self.wrap_resolver_with_pre_post_resolvers(
+            kwargs, name_function, default_resolver
+        )
 
     def get_interface_attrs(self, interface, include_meta_attrs=True):
         if interface is not None:
@@ -355,10 +317,11 @@ class BuilderBase:
                     kwargs[attr] = [value]
 
     def get_pre_and_post_resolves(self, kwargs, name_function: str):
-        pre_default = lambda *args, **kwargs: (*args, kwargs)
-        post_default = (
-            lambda root, info, default_response=None, **kwargs: default_response
-        )
+        def pre_default(*args, **kwargs):
+            return (*args, kwargs)
+
+        def post_default(root, info, default_response=None, **kwargs):
+            return default_response
 
         pre_resolves_model = self.get_function_lists(
             f"pre_{name_function}", kwargs, pre_default
@@ -377,6 +340,7 @@ class BuilderQuery(BuilderBase):
         BuilderBase
 
     """
+
     pass
 
 
@@ -391,12 +355,13 @@ class BuilderMutation(BuilderBase):
         get_state_controller_field: Get the state controller field.
 
     """
+
     def get_state_controller_field(self, kwargs) -> str:
         return self.get_last_element(
             "state_controller_field", kwargs, "is_active"
-        )  #TODO: Debo de mirar esto donde lo voy a cuadrar para que sea global
+        )  # TODa: Debo de mirar esto donde lo voy a cuadrar para que sea global
 
-    @staticmethod #TODO: Change to a class method
+    @staticmethod  # TODa: Change to a class method
     def get_input_arg(model_as_input_object_type, kw={}):
         attrs_for_input_arg = kw.get("modify_input_argument", {})
         default_values_for_input = {
@@ -422,19 +387,25 @@ class BuilderCreate(BuilderMutation):
         BuilderMutation
 
     """
+
     def validate_props_create_field(self, props, name=None):
         self.validate_attrs(props, "override_total_mutate", "Create", name)
 
-    #TODO: I should change to class method
+    # TODa: I should change to class method
     def build_create(self, **kwargs) -> DjangoCreateUpdateField:
         extra_args = self.get_extra_arguments(kwargs)
+
+        def default_resolver(root, info, **args):
+            return default_create_update_resolver(
+                self.model, self.model_as_form, self.registry, root, info, **args
+            )
+
         input_arg = self.get_input_arg(self.model_as_create_input_object_type, kwargs)
 
         name_function = "mutate"
-        default_resolver = lambda root, info, **args: default_create_update_resolver(
-            self.model, self.model_as_form, self.registry, root, info, **args
+        resolver = self.get_resolve_for_operation_field(
+            kwargs, name_function, default_resolver
         )
-        resolver = self.get_resolve_for_operation_field( kwargs, name_function, default_resolver )
 
         create_field = DjangoCreateUpdateField(
             _type=self.model_as_object_type,
@@ -454,19 +425,31 @@ class BuilderRead(BuilderQuery):
         BuilderQuery
 
     """
+
     def validate_props_read_field(self, props, name=None):
         self.validate_attrs(props, "override_total_resolve", "Read", name)
 
-    #TODO: I should change to class method
+    # TODa: I should change to class method
     def build_read(self, **kwargs) -> DjangoReadField:
         extra_args = self.get_extra_arguments(kwargs)
-        where_arg = self.get_where_arg(self.model_as_filter_input_object_type, kwargs, True)
+        where_arg = self.get_where_arg(
+            self.model_as_filter_input_object_type, kwargs, True
+        )
 
         name_function = "resolve"
-        default_resolver = lambda root, info, **args: default_read_field_resolver(
-            self.model_as_object_type, self.model._default_manager, root, info, **args
+
+        def default_resolver(root, info, **args):
+            return default_read_field_resolver(
+                self.model_as_object_type,
+                self.model._default_manager,
+                root,
+                info,
+                **args,
+            )
+
+        resolver = self.get_resolve_for_operation_field(
+            kwargs, name_function, default_resolver
         )
-        resolver = self.get_resolve_for_operation_field( kwargs, name_function, default_resolver )
 
         read_field = DjangoReadField(
             _type=self.model_as_object_type,
@@ -485,18 +468,22 @@ class BuilderUpdate(BuilderMutation):
         BuilderMutation
 
     """
+
     def validate_props_update_field(self, props, name=None):
         self.validate_attrs(props, "override_total_mutate", "Update", name)
 
-    #TODO: I should change to class method
+    # TODa: I should change to class method
     def build_update(self, **kwargs) -> DjangoCreateUpdateField:
         extra_args = self.get_extra_arguments(kwargs)
         input_arg = self.get_input_arg(self.model_as_update_input_object_type, kwargs)
 
         name_function = "mutate"
-        default_resolver = lambda root, info, **args: default_update_resolver(
-            self.model, self.model_as_form, self.registry, root, info, **args
-        )
+
+        def default_resolver(root, info, **args):
+            return default_create_update_resolver(
+                self.model, self.model_as_form, self.registry, root, info, **args
+            )
+
         resolver = self.get_resolve_for_operation_field(
             kwargs, name_function, default_resolver
         )
@@ -519,18 +506,22 @@ class BuilderDelete(BuilderMutation):
         BuilderMutation
 
     """
+
     def validate_props_delete_field(self, props, name=None):
         self.validate_attrs(props, "override_total_mutate", "Delete", name)
 
-    #TODO: I should change to class method
+    # TODa: I should change to class method
     def build_delete(self, **kwargs) -> DjangoDeleteField:
         extra_args = self.get_extra_arguments(kwargs)
-        where_arg = self.get_where_arg(self.model_as_filter_input_object_type, kwargs, True)
+        where_arg = self.get_where_arg(
+            self.model_as_filter_input_object_type, kwargs, True
+        )
 
         name_function = "mutate"
-        default_resolver = lambda root, info, **args: default_delete_field_resolver(
-            self.model, root, info, **args
-        )
+
+        def default_resolver(root, info, **args):
+            return default_delete_field_resolver(self.model, root, info, **args)
+
         resolver = self.get_resolve_for_operation_field(
             kwargs, name_function, default_resolver
         )
@@ -553,19 +544,25 @@ class BuilderDeactivate(BuilderMutation):
         BuilderMutation
 
     """
+
     def validate_props_deactivate_field(self, props, name=None):
         self.validate_attrs(props, "override_total_mutate", "Deactivate", name)
 
-    #TODO: I should change to class method
+    # TODa: I should change to class method
     def build_deactivate(self, **kwargs) -> DjangoDeactivateField:
         extra_args = self.get_extra_arguments(kwargs)
-        where_arg = self.get_where_arg(self.model_as_filter_input_object_type, kwargs, True)
+        where_arg = self.get_where_arg(
+            self.model_as_filter_input_object_type, kwargs, True
+        )
 
         name_function = "mutate"
         field_for_activate_deactivate: str = self.get_state_controller_field(kwargs)
-        default_resolver = lambda root, info, **args: default_deactivate_field_resolver(
-            self.model, field_for_activate_deactivate, root, info, **args
-        )
+
+        def default_resolver(root, info, **args):
+            return default_deactivate_field_resolver(
+                self.model, field_for_activate_deactivate, root, info, **args
+            )
+
         resolver = self.get_resolve_for_operation_field(
             kwargs, name_function, default_resolver
         )
@@ -588,19 +585,25 @@ class BuilderActivate(BuilderMutation):
         BuilderMutation
 
     """
+
     def validate_props_activate_field(self, props, name=None):
         self.validate_attrs(props, "override_total_mutate", "Activate", name)
 
-    #TODO: I should change to class method
+    # TODa: I should change to class method
     def build_activate(self, **kwargs) -> DjangoActivateField:
         extra_args = self.get_extra_arguments(kwargs)
-        where_arg = self.get_where_arg(self.model_as_filter_input_object_type, kwargs, True)
+        where_arg = self.get_where_arg(
+            self.model_as_filter_input_object_type, kwargs, True
+        )
 
         name_function = "mutate"
         field_for_activate_deactivate: str = self.get_state_controller_field(kwargs)
-        default_resolver = lambda root, info, **args: default_activate_field_resolver(
-            self.model, field_for_activate_deactivate, root, info, **args
-        )
+
+        def default_resolver(root, info, **args):
+            return default_activate_field_resolver(
+                self.model, field_for_activate_deactivate, root, info, **args
+            )
+
         resolver = self.get_resolve_for_operation_field(
             kwargs, name_function, default_resolver
         )
@@ -623,22 +626,26 @@ class BuilderList(BuilderQuery):
         BuilderQuery
 
     """
+
     def validate_props_list_field(self, props, name=None):
         self.validate_attrs(props, "override_total_resolve", "List", name)
 
-    #TODO: I should change to class method
+    # TODa: I should change to class method
     def build_list(self, **kwargs) -> DjangoListField:
         extra_args = self.get_extra_arguments(kwargs)
 
         name_function = "resolve"
-        default_resolver = lambda root, info, **args: default_list_field_resolver(
-            self.model_as_object_type,
-            None,
-            self.model._default_manager,
-            root,
-            info,
-            **args,
-        )
+
+        def default_resolver(root, info, **args):
+            return default_list_field_resolver(
+                self.model_as_object_type,
+                None,
+                self.model._default_manager,
+                root,
+                info,
+                **args,
+            )
+
         resolver = self.get_resolve_for_operation_field(
             kwargs, name_function, default_resolver
         )
@@ -670,7 +677,8 @@ class BuilderSearch(BuilderQuery):
         BuilderQuery
 
     """
-    @staticmethod #TODO: Change to a class method
+
+    @staticmethod  # TODa: Change to a class method
     def get_order_by_arg(model_as_order_by_input_object_type, kw={}):
         attrs_for_order_by_arg = kw.get("modify_order_by_argument", {})
         default_values_for_order_by = {
@@ -687,7 +695,7 @@ class BuilderSearch(BuilderQuery):
         else:
             return {"order_by": graphene.Argument(**default_values_for_order_by)}
 
-    @staticmethod #TODO: Change to a class method
+    @staticmethod  # TODa: Change to a class method
     def get_pagination_config_arg(kw={}):
         default_values_for_paginated = {
             "type_": PaginationConfigInput,
@@ -695,8 +703,12 @@ class BuilderSearch(BuilderQuery):
             "required": False,
             "description": "",
         }
-        attrs_for_pagination_config_arg = kw.get("modify_pagination_config_argument", {})
-        attrs_for_pagination_config_arg = default_values_for_paginated | attrs_for_pagination_config_arg
+        attrs_for_pagination_config_arg = kw.get(
+            "modify_pagination_config_argument", {}
+        )
+        attrs_for_pagination_config_arg = (
+            default_values_for_paginated | attrs_for_pagination_config_arg
+        )
         if default_values_for_paginated.get("hidden", False):
             return {}
         else:
@@ -705,32 +717,42 @@ class BuilderSearch(BuilderQuery):
     def validate_props_search_field(self, props, name=None):
         self.validate_attrs(props, "override_total_resolve", "Search", name)
 
-    #TODO: I should change to class method
+    # TODa: I should change to class method
     def build_search(self, **kwargs) -> DjangoSearchField:
         extra_arg_for_search = self.get_extra_arguments(kwargs)
-        where_arg = self.get_where_arg(self.model_as_filter_input_object_type, kwargs, False)
+        where_arg = self.get_where_arg(
+            self.model_as_filter_input_object_type, kwargs, False
+        )
         order_by_arg = self.get_order_by_arg(
             self.model_as_order_by_input_object_type, kw=kwargs
         )
         pagination_config_arg = self.get_pagination_config_arg(kw=kwargs)
 
         name_function = "resolve"
-        default_resolver = lambda root, info, **args: default_search_field_resolver(
-            self.model_as_paginated_object_type,
-            self.model_as_object_type,
-            None,
-            self.model._default_manager,
-            root,
-            info,
-            **args,
-        )
+
+        def default_resolver(root, info, **args):
+            return default_search_field_resolver(
+                self.model_as_paginated_object_type,
+                self.model_as_object_type,
+                None,
+                self.model._default_manager,
+                root,
+                info,
+                **args,
+            )
+
         resolver = self.get_resolve_for_operation_field(
             kwargs, name_function, default_resolver
         )
 
         search_field = DjangoSearchField(
             _type=self.model_as_paginated_object_type,
-            args={**where_arg, **order_by_arg, **pagination_config_arg, **extra_arg_for_search},
+            args={
+                **where_arg,
+                **order_by_arg,
+                **pagination_config_arg,
+                **extra_arg_for_search,
+            },
             resolver=resolver,
             name=f"search{self.model_name_in_different_case['plural_camel_case']}",
         )
@@ -776,26 +798,46 @@ class BuilderCruddalsModel(
 
     """
 
-    model:DjangoModel
-    prefix:str = ""
-    suffix:str = ""
+    model: DjangoModel
+    prefix: str = ""
+    suffix: str = ""
 
-    model_name_in_different_case:NameCaseType
-    model_as_form:DjangoModelForm
-    registry:RegistryGlobal
+    model_name_in_different_case: NameCaseType
+    model_as_form: DjangoModelForm
+    registry: RegistryGlobal
 
     def __init__(
         self,
-        model:DjangoModel,
-        prefix:str="",
-        suffix:str="",
-        interfaces:Tuple[InterfaceStructure, ...]=tuple(),
-        exclude_interfaces:Tuple[str, ...]=tuple(),
-        registry:Union[RegistryGlobal,None]=None,
+        model: DjangoModel,
+        prefix: str = "",
+        suffix: str = "",
+        interfaces: Tuple[InterfaceStructure, ...] = (),
+        exclude_interfaces: Tuple[str, ...] = (),
+        registry: Union[RegistryGlobal, None] = None,
     ) -> None:
         assert model, "model is required for BuilderCruddalsModel"
 
-        attrs_for_child = [ "model", "prefix", "suffix", "model_as_form", "model_name_in_different_case", "registry", "model_as_object_type", "model_as_paginated_object_type", "model_as_input_object_type", "model_as_filter_input_object_type", "model_as_order_by_input_object_type", "read_field", "list_field", "search_field", "create_field", "update_field", "activate_field", "deactivate_field", "delete_field", ]
+        attrs_for_child = [
+            "model",
+            "prefix",
+            "suffix",
+            "model_as_form",
+            "model_name_in_different_case",
+            "registry",
+            "model_as_object_type",
+            "model_as_paginated_object_type",
+            "model_as_input_object_type",
+            "model_as_filter_input_object_type",
+            "model_as_order_by_input_object_type",
+            "read_field",
+            "list_field",
+            "search_field",
+            "create_field",
+            "update_field",
+            "activate_field",
+            "deactivate_field",
+            "delete_field",
+        ]
         [setattr(self, attr, None) for attr in attrs_for_child]
 
         if not registry:
@@ -817,7 +859,9 @@ class BuilderCruddalsModel(
             exclude_interfaces, (tuple,)
         ), f"'exclude_interfaces' should be tuple received {type(exclude_interfaces)}"
 
-        dict_of_interface_attr = self.get_dict_of_interface_attr( interfaces, exclude_interfaces )
+        dict_of_interface_attr = self.get_dict_of_interface_attr(
+            interfaces, exclude_interfaces
+        )
 
         self.model_as_object_type = convert_django_model_to_object_type(
             model=self.model,
@@ -923,8 +967,11 @@ class BuilderCruddalsModel(
             attr_name = f"{prop_name.lower()}_field"
             setattr(self, attr_name, operation_field)
 
-    def get_dict_of_interface_attr(self, interfaces:Tuple[InterfaceStructure, ...], exclude_interfaces:Tuple[str, ...]) -> Dict[str, OrderedDict[str, Any]]:
-
+    def get_dict_of_interface_attr(
+        self,
+        interfaces: Tuple[InterfaceStructure, ...],
+        exclude_interfaces: Tuple[str, ...],
+    ) -> Dict[str, OrderedDict[str, Any]]:
         dict_of_interface_attr = {
             interface_name: OrderedDict() for interface_name in INTERFACES_NAME_CRUDDALS
         }
@@ -1003,24 +1050,36 @@ class CruddalsModel(SubclassWithMeta):
 
     """
 
-    Query:Type[graphene.ObjectType]
-    Mutation:Union[Type[graphene.ObjectType], None] = None
-    schema:graphene.Schema
-    operation_fields_for_queries:Dict[str, graphene.Field | DjangoReadField | DjangoListField | DjangoSearchField]
-    operation_fields_for_mutations:Union[Dict[str, graphene.Field | DjangoCreateUpdateField | DjangoDeleteField | DjangoDeactivateField | DjangoActivateField ], None] = None
-    meta:BuilderCruddalsModel
+    Query: Type[graphene.ObjectType]
+    Mutation: Union[Type[graphene.ObjectType], None] = None
+    schema: graphene.Schema
+    operation_fields_for_queries: Dict[
+        str, graphene.Field | DjangoReadField | DjangoListField | DjangoSearchField
+    ]
+    operation_fields_for_mutations: Union[
+        Dict[
+            str,
+            graphene.Field
+            | DjangoCreateUpdateField
+            | DjangoDeleteField
+            | DjangoDeactivateField
+            | DjangoActivateField,
+        ],
+        None,
+    ] = None
+    meta: BuilderCruddalsModel
 
     @classmethod
     def __init_subclass_with_meta__(
         cls,
-        model:Union[DjangoModel, None]=None,
-        prefix:str="",
-        suffix:str="",
-        interfaces:Tuple[InterfaceStructure, ...]=tuple(),
-        exclude_interfaces:Tuple[str, ...]=tuple(),
-        functions:Tuple[FunctionType, ...]=tuple(),
-        exclude_functions:Tuple[FunctionType, ...]=tuple(),
-        registry:Union[RegistryGlobal,None]=None,
+        model: Union[DjangoModel, None] = None,
+        prefix: str = "",
+        suffix: str = "",
+        interfaces: Tuple[InterfaceStructure, ...] = (),
+        exclude_interfaces: Tuple[str, ...] = (),
+        functions: Tuple[FunctionType, ...] = (),
+        exclude_functions: Tuple[FunctionType, ...] = (),
+        registry: Union[RegistryGlobal, None] = None,
         **kwargs,
     ):
         """
@@ -1037,7 +1096,7 @@ class CruddalsModel(SubclassWithMeta):
             registry (Union[RegistryGlobal, None]): The registry to use for schema registration.
             **kwargs: Additional keyword arguments.
         """
-        
+
         assert model, "model is required for CruddalsModel"
         validate_list_func_cruddals(functions, exclude_functions)
 
@@ -1045,23 +1104,34 @@ class CruddalsModel(SubclassWithMeta):
             registry = get_global_registry(f"{prefix}{suffix}")
 
         cls._initialize_attributes()
-        cls._build_cruddals_model(model, prefix, suffix, interfaces, exclude_interfaces, registry)
+        cls._build_cruddals_model(
+            model, prefix, suffix, interfaces, exclude_interfaces, registry
+        )
         cls._build_dict_for_operation_fields(functions, exclude_functions)
         cls._build_schema_query_mutation()
         registry.register_model(model, TypeRegistryForModelEnum.CRUDDALS.value, cls)
 
-        super(CruddalsModel, cls).__init_subclass_with_meta__(**kwargs)
+        super().__init_subclass_with_meta__(**kwargs)
 
     @classmethod
     def _initialize_attributes(cls):
         """
         Initialize attributes to None for the child class.
         """
-        attrs_for_child = [ "Query", "Mutation", "schema", "operation_fields_for_queries", "operation_fields_for_mutations", "meta", ]
+        attrs_for_child = [
+            "Query",
+            "Mutation",
+            "schema",
+            "operation_fields_for_queries",
+            "operation_fields_for_mutations",
+            "meta",
+        ]
         [setattr(cls, attr, None) for attr in attrs_for_child]
 
     @classmethod
-    def _build_cruddals_model(cls, model, prefix, suffix, interfaces, exclude_interfaces, registry):
+    def _build_cruddals_model(
+        cls, model, prefix, suffix, interfaces, exclude_interfaces, registry
+    ):
         """
         Build the CruddalsModel using BuilderCruddalsModel.
 
@@ -1100,7 +1170,14 @@ class CruddalsModel(SubclassWithMeta):
             "deactivate",
             "delete",
         )
-        final_functions = ( functions if functions else tuple( set(functions_type_query + functions_type_mutation) - set(exclude_functions) ) )
+        final_functions = (
+            functions
+            if functions
+            else tuple(
+                set(functions_type_query + functions_type_mutation)
+                - set(exclude_functions)
+            )
+        )
 
         cls.operation_fields_for_queries = {}
         cls.operation_fields_for_mutations = {}
@@ -1108,8 +1185,12 @@ class CruddalsModel(SubclassWithMeta):
         for function in final_functions:
             key = f"{function}_{cls.meta.model_name_in_different_case['plural_snake_case']}"
             if function == "read":
-                key = f"{function}_{cls.meta.model_name_in_different_case['snake_case']}"
-            attr_field:Dict[str, graphene.Field] = {key: getattr(cls.meta, f"{function}_field")}
+                key = (
+                    f"{function}_{cls.meta.model_name_in_different_case['snake_case']}"
+                )
+            attr_field: Dict[str, graphene.Field] = {
+                key: getattr(cls.meta, f"{function}_field")
+            }
             if function in functions_type_query:
                 cls.operation_fields_for_queries.update(attr_field)
             elif function in functions_type_mutation:
@@ -1118,9 +1199,7 @@ class CruddalsModel(SubclassWithMeta):
         if not cls.operation_fields_for_queries:
             cls.operation_fields_for_queries.update(
                 {
-                    f"read_{cls.meta.model_name_in_different_case['snake_case']}": getattr(
-                        cls.meta, "read_field"
-                    )
+                    f"read_{cls.meta.model_name_in_different_case['snake_case']}": cls.meta.read_field
                 }
             )
 
@@ -1129,329 +1208,6 @@ class CruddalsModel(SubclassWithMeta):
         """
         Build the schema, Query, and Mutation objects.
         """
-        cls.schema, cls.Query, cls.Mutation = get_schema_query_mutation( 
-            (), 
-            cls.operation_fields_for_queries, 
-            (), 
-            cls.operation_fields_for_mutations 
-        )
-
-
-class BuilderCruddalsApp:
-    app_name = None
-    app_config = None
-    models = None
-    cruddals_of_models = dict()
-
-    queries = tuple()
-    mutations = tuple()
-
-    def __init__(
-        self,
-        app_name,
-        exclude_models=None,
-        models=None,
-        prefix="",
-        suffix="",
-        interfaces=tuple(),
-        exclude_interfaces=tuple(),
-        functions=tuple(),
-        exclude_functions=tuple(),
-        settings_for_model=dict(),
-    ) -> None:
-        assert app_name, "app_name is required for BuilderCruddalsApp"
-        validate_list_func_cruddals(functions, exclude_functions)
-
-        [setattr(self, attr, None) for attr in ["app_name", "app_config", "models"]]
-        [setattr(self, attr, tuple()) for attr in ["queries", "mutations"]]
-        setattr(self, "cruddals_of_models", dict())
-
-        self.validate_variables_of_cruddals_app(
-            exclude_models,
-            models,
-            interfaces,
-            exclude_interfaces,
-            functions,
-            exclude_functions,
-            settings_for_model,
-            app_name,
-        )
-
-        self.app_name = app_name
-        self.app_config = django_apps.get_app_config(app_name)
-        self.models = tuple(self.app_config.get_models())
-
-        if exclude_models is not None:
-            models_to_exclude = set()
-            for exclude_model in exclude_models:
-                model_to_exclude = self.app_config.get_model(model_name=exclude_model)
-                models_to_exclude.add(model_to_exclude)
-            self.models = tuple(set(self.models) - models_to_exclude)
-        elif models is not None:
-            models_to_include = []
-            for include_model in models:
-                model_to_include = self.app_config.get_model(model_name=include_model)
-                models_to_include.append(model_to_include)
-            self.models = models_to_include
-
-        for class_model in self.models:
-            settings_model = settings_for_model.get(class_model.__name__, dict())
-
-            settings_model["interfaces"] = interfaces + settings_model.get(
-                "interfaces", ()
-            )
-            settings_model["exclude_interfaces"] = (
-                exclude_interfaces + settings_model.get("exclude_interfaces", ())
-            )
-
-            settings_model["functions"] = functions + settings_model.get(
-                "functions", ()
-            )
-            settings_model["exclude_functions"] = (
-                exclude_functions + settings_model.get("exclude_functions", ())
-            )
-
-            settings_model["prefix"] = settings_model.get("prefix", prefix)
-            settings_model["suffix"] = settings_model.get("suffix", suffix)
-
-            cruddals_model_meta = build_class(
-                name="Meta", attrs={"model": class_model, **settings_model}
-            )
-            cruddals_model = build_class(
-                name=f"{class_model.__name__}Cruddals",
-                bases=(CruddalsModel,),
-                attrs={"Meta": cruddals_model_meta},
-            )
-
-            self.cruddals_of_models.update(
-                {
-                    f"{cruddals_model.meta.model_name_in_different_case['camel_case']}": cruddals_model
-                }
-            )
-            self.queries = self.queries + (cruddals_model.Query,)
-            if cruddals_model.Mutation:
-                self.mutations = self.mutations + (cruddals_model.Mutation,)
-
-    @staticmethod #TODO: Change to a class method
-    def validate_variables_of_cruddals_app(exclude_models, include_models, interfaces_app, exclude_interfaces_app, functions_app, exclude_functions_app, settings_for_model, app_name):
-        assert not ( exclude_models and include_models ), f"Cannot set both 'exclude_models' and 'models' options on {app_name}."
-        assert isinstance( interfaces_app, (tuple,) ), f"'interfaces' should be tuple received {type(interfaces_app)}"
-        assert isinstance( exclude_interfaces_app, (tuple,) ), f"'exclude_interfaces' should be tuple received {type(exclude_interfaces_app)}"
-        assert isinstance( functions_app, (tuple,) ), f"'functions' should be tuple received {type(functions_app)}"
-        assert isinstance( exclude_functions_app, (tuple,) ), f"'exclude_functions' should be tuple received {type(exclude_functions_app)}"
-        assert isinstance( settings_for_model, dict ), f"'settings_for_model' should be dict, received {type(settings_for_model)}"
-
-        if exclude_models is not None:
-            assert isinstance( exclude_models, (tuple,) ), f"'exclude_models' should be tuple received {type(exclude_models)}"
-        if include_models is not None:
-            assert isinstance( include_models, (tuple,) ), f"'models' should be tuple received {type(include_models)}"
-
-
-class CruddalsApp(SubclassWithMeta):
-    Query = None
-    Mutation = None
-    schema = None
-
-    meta = None
-
-    @classmethod
-    def __init_subclass_with_meta__(
-        cls,
-        app_name,
-        models=None,
-        exclude_models=None,
-        prefix="",
-        suffix="",
-        interfaces=tuple(),
-        exclude_interfaces=tuple(),
-        functions=tuple(),
-        exclude_functions=tuple(),
-        settings_for_model=dict(),
-    ):
-        assert app_name, "app_name is required for CruddalsApp"
-        validate_list_func_cruddals(functions, exclude_functions)
-
-        [setattr(cls, attr, None) for attr in ["Query", "Mutation", "schema", "meta"]]
-
-        cruddals_of_app = BuilderCruddalsApp(
-            app_name=app_name,
-            exclude_models=exclude_models,
-            models=models,
-            prefix=prefix,
-            suffix=suffix,
-            interfaces=interfaces,
-            exclude_interfaces=exclude_interfaces,
-            functions=functions,
-            exclude_functions=exclude_functions,
-            settings_for_model=settings_for_model,
-        )
-        cls.meta = cruddals_of_app
-
         cls.schema, cls.Query, cls.Mutation = get_schema_query_mutation(
-            cruddals_of_app.queries, {}, cruddals_of_app.mutations, {}
+            (), cls.operation_fields_for_queries, (), cls.operation_fields_for_mutations
         )
-
-        super(CruddalsApp, cls).__init_subclass_with_meta__()
-
-
-class CruddalsProject(SubclassWithMeta):
-    """
-    A base class for defining GraphQL schemas for Django apps in a project using Cruddals.
-
-    This class provides methods to dynamically create GraphQL schemas for each app in the project
-    based on provided settings.
-
-    Attributes:
-        apps (str or tuple or dict): Names of Django apps for which schemas will be generated.
-            Defaults to "__all__", meaning all apps in the project.
-        schema: The generated GraphQL schema for the project.
-        Query: The combined Query object for the project.
-        Mutation: The combined Mutation object for the project.
-    """
-    apps: Union[Literal["__all__"], Tuple[str, ...]] = "__all__"
-    schema: graphene.Schema = None
-
-    Query = None #TODO: Type
-    Mutation = None #TODO: Type
-
-    @classmethod
-    def __init_subclass_with_meta__(
-        cls,
-        apps: Union[Literal["__all__"], Tuple[str, ...]] = "__all__",
-        exclude_apps: Tuple[str, ...] = (),
-        interfaces: Tuple[str, ...] = (),
-        settings_for_app: Optional[Dict[str, Any]] = None,
-        functions: Tuple[str] = (),
-        exclude_functions: Tuple[str] = (),
-        **kwargs: Any,
-    ):
-        """
-        Initialize the subclass with meta settings and dynamically create GraphQL schemas for apps.
-
-        Args:
-            apps (str or tuple): Names of Django apps for which schemas will be generated.
-                Defaults to "__all__", meaning all apps in the project.
-            exclude_apps (tuple): Names of apps to exclude from schema generation.
-            interfaces (tuple): Additional GraphQL interfaces to include in the schemas.
-            settings_for_app (dict): Settings specific to each app for schema generation.
-            functions (tuple): Functions to include in the schemas can be "create", "read", "update", "delete", "deactivate", "activate", "list", "search" . #TODO: Should name "functions" be changed to "operations" or "fields"?
-            exclude_functions (tuple): Functions to exclude from schema generation.
-            **kwargs: Additional keyword arguments.
-        """
-        if settings_for_app is None:
-            settings_for_app = {}
-
-        default_exclude_apps = (
-            "graphene_django",
-            "messages",
-            "staticfiles",
-            "corsheaders",
-            "graphene_django_cruddals",
-        )
-        exclude_apps = exclude_apps + default_exclude_apps
-
-        interfaces_for_project = interfaces
-
-        apps_name = cls._get_apps_name(apps, exclude_apps)
-        cls._validate_apps(apps_name)
-        cls._validate_apps(settings_for_app.keys())
-
-        queries = ()
-        mutations = ()
-
-        for _app_name in apps_name:
-            settings_of_app = settings_for_app.get(_app_name, {})
-
-            final_models, final_exclude_models = cls._get_final_models(apps, _app_name, settings_of_app)
-            final_interfaces, final_exclude_interfaces = cls._get_final_interfaces(interfaces_for_project, settings_of_app)
-            final_functions, final_exclude_functions = cls._get_final_functions(functions, exclude_functions, settings_of_app)
-
-            final_settings_for_model = settings_of_app.get("settings_for_model", {})
-
-            class_app_schema = cls._create_app_schema(
-                _app_name,
-                final_models,
-                final_exclude_models,
-
-                final_interfaces,
-                final_exclude_interfaces,
-
-                final_functions,
-                final_exclude_functions,
-                final_settings_for_model,
-            )
-
-            queries = queries + (class_app_schema.Query,)
-            if class_app_schema.Mutation:
-                mutations = mutations + (class_app_schema.Mutation,)
-
-        cls.schema, cls.Query, cls.Mutation = get_schema_query_mutation(
-            queries, {}, mutations, {}
-        )
-
-    @classmethod
-    def _get_apps_name(cls, apps, exclude_apps):
-        apps_name = ()
-        if apps == "__all__":
-            apps_name = django_apps.app_configs.keys()
-        elif isinstance(apps, tuple):
-            apps_name = apps
-        else:
-            raise ValueError("apps should be '__all__' or tuple")
-        
-        apps_name = [item for item in apps_name if item not in exclude_apps]
-        return apps_name
-
-    @classmethod
-    def _validate_apps(cls, apps_name):
-        [django_apps.get_app_config(app_name) for app_name in apps_name]
-
-    @classmethod
-    def _get_final_models(cls, apps, _app_name, settings_of_app):
-        exclude_models = settings_of_app.get("exclude_models", None)
-        if exclude_models is None:
-            _models = apps.get(_app_name, None) if isinstance(apps, dict) else None
-            return (settings_of_app.get("models", _models), None)
-        else:
-            return (None, exclude_models)
-
-    @classmethod
-    def _get_final_interfaces(cls, interfaces_for_project, settings_of_app):
-        interfaces_for_app = settings_of_app.get("interfaces", ())
-        return (interfaces_for_project + interfaces_for_app, settings_of_app.get("exclude_interfaces", ()))
-
-    @classmethod
-    def _get_final_functions(cls, functions, exclude_functions, settings_of_app):
-        functions_of_app = settings_of_app.get("functions", ())
-        exclude_functions_of_app = settings_of_app.get("exclude_functions", ())
-        return (functions + functions_of_app, exclude_functions + exclude_functions_of_app)
-
-    @classmethod
-    def _create_app_schema(
-        cls,
-        _app_name,
-        final_models,
-        final_exclude_models,
-        final_interfaces,
-        exclude_interfaces_of_app,
-        final_functions,
-        final_exclude_functions,
-        final_settings_for_model,
-    ):
-        class AppSchema(CruddalsApp):
-            class Meta:
-                app_name = _app_name
-
-                models = final_models
-                exclude_models = final_exclude_models
-
-                interfaces = final_interfaces
-                exclude_interfaces = exclude_interfaces_of_app
-
-                functions = final_functions
-                exclude_functions = final_exclude_functions
-
-                settings_for_model = final_settings_for_model
-
-        return AppSchema
-

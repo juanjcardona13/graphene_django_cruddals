@@ -1,35 +1,32 @@
 from functools import singledispatch
-from typing import Literal, Type, Union
+from typing import Union
 
+from django.contrib.contenttypes.fields import (
+    GenericForeignKey,
+    GenericRel,
+    GenericRelation,
+)
 from django.db import models
-from django.db.models import Model as DjangoModel
 from django.db.models.fields import Field as DjangoField
 from django.utils.functional import Promise
+from graphql.pyutils import register_description
+
+import graphene
 from graphene import (
     ID,
-    UUID,
-    BigInt,
-    Boolean,
-    Date,
-    DateTime,
-    Decimal,
     Dynamic,
-    Float,
     InputField,
     InputObjectType,
-    Int,
-    JSONString,
     List,
     NonNull,
     String,
-    Time,
 )
-import graphene
-from graphql.pyutils import register_description
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, GenericRel
-
-from graphene_django_cruddals.converters.for_fields.utils import django_field_get_default, get_django_field_description, django_field_is_required
-from graphene_django_cruddals.types import TypesMutation, TypesMutationEnum
+from graphene.types.generic import GenericScalar
+from graphene_django_cruddals.converters.for_fields.utils import (
+    django_field_get_default,
+    django_field_is_required,
+    get_django_field_description,
+)
 from graphene_django_cruddals.registry_global import RegistryGlobal
 from graphene_django_cruddals.scalars_type import (
     IP,
@@ -42,328 +39,495 @@ from graphene_django_cruddals.scalars_type import (
     Slug,
     Upload,
 )
+from graphene_django_cruddals.types import TypesMutation, TypesMutationEnum
 
 from .compat import HStoreField, JSONField, PGJSONField
-from graphene.types.generic import GenericScalar
 
 
 @singledispatch
-def convert_django_field_to_input(field: DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation=TypesMutationEnum.CREATE_UPDATE.value) -> Union[graphene.InputField, None]: #String, Upload, Int, Boolean, BigInt, Date, Time, DateTime, Decimal, Float, Duration, Binary, JSONString, UUID, Email, IPv4, IP, PositiveInt, Slug, URL
+def convert_django_field_to_input(
+    field: DjangoField,
+    registry: RegistryGlobal,
+    type_mutation: TypesMutation = TypesMutationEnum.CREATE_UPDATE.value,
+) -> Union[
+    graphene.InputField, None
+]:  # String, Upload, Int, Boolean, BigInt, Date, Time, DateTime, Decimal, Float, Duration, Binary, JSONString, UUID, Email, IPv4, IP, PositiveInt, Slug, URL
     raise Exception(
-        "Don't know how to convert the Django field {} ({})".format(
-            field, field.__class__
-        )
+        f"Don't know how to convert the Django field {field} ({field.__class__})"
     )
 
 
 @convert_django_field_to_input.register(models.BigAutoField)
 @convert_django_field_to_input.register(models.AutoField)
 @convert_django_field_to_input.register(models.SmallAutoField)
-def convert_field_to_id(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_id(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.ID, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.ID,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.ID, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.ID, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.CharField)
 @convert_django_field_to_input.register(models.TextField)
 @convert_django_field_to_input.register(models.FilePathField)
-def convert_field_to_string(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_string(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.String, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.String,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.String, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.String, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.FileField)
 @convert_django_field_to_input.register(models.ImageField)
-def convert_field_to_upload_or_string(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_upload_or_string(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=Upload, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=Upload,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
         return InputField(type_=Upload, description=get_django_field_description(field))
-    
 
 
 @convert_django_field_to_input.register(models.PositiveSmallIntegerField)
 @convert_django_field_to_input.register(models.SmallIntegerField)
 @convert_django_field_to_input.register(models.IntegerField)
-def convert_field_to_int(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_int(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.Int, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.Int,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.Int, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.Int, description=get_django_field_description(field)
+        )
 
 
 # @convert_django_field_to_input.register(models.NullBooleanField)
 @convert_django_field_to_input.register(models.BooleanField)
-def convert_field_to_boolean(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_boolean(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.Boolean, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.Boolean,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.Boolean, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.Boolean, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.BigIntegerField)
-def convert_field_to_big_int(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_big_int(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.BigInt, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.BigInt,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.BigInt, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.BigInt, description=get_django_field_description(field)
+        )
+
+
 @convert_django_field_to_input.register(models.DateField)
-def convert_field_to_date(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_date(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.Date, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.Date,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.Date, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.Date, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.TimeField)
-def convert_field_to_time(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_time(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.Time, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.Time,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.Time, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.Time, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.DateTimeField)
-def convert_field_to_datetime(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_datetime(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.DateTime, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.DateTime,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.DateTime, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.DateTime, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.DecimalField)
-def convert_field_to_decimal(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_decimal(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.Decimal, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.Decimal,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.Decimal, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.Decimal, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.FloatField)
-def convert_field_to_float(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_float(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.Float, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.Float,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.Float, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.Float, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.DurationField)
-def convert_field_to_duration(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_duration(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=Duration, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=Duration,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=Duration, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=Duration, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.BinaryField)
-def convert_field_to_binary(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_binary(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=Binary, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=Binary,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
         return InputField(type_=Binary, description=get_django_field_description(field))
-    #https://docs.djangoproject.com/en/3.2/ref/models/fields/#binaryfield
-    #https://stackoverflow.com/questions/40800941/how-to-make-a-binaryfield-editable-in-django
-    #https://stackoverflow.com/questions/59213498/binary-in-graphql
+    # https://docs.djangoproject.com/en/3.2/ref/models/fields/#binaryfield
+    # https://stackoverflow.com/questions/40800941/how-to-make-a-binaryfield-editable-in-django
+    # https://stackoverflow.com/questions/59213498/binary-in-graphql
 
 
 @convert_django_field_to_input.register(HStoreField)
 @convert_django_field_to_input.register(PGJSONField)
 @convert_django_field_to_input.register(JSONField)
-def convert_pg_and_json_field_to_json_string(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_pg_and_json_field_to_json_string(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.JSONString, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.JSONString,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.JSONString, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.JSONString, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.UUIDField)
-def convert_field_to_uuid(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_uuid(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=graphene.UUID, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=graphene.UUID,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=graphene.UUID, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=graphene.UUID, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.EmailField)
-def convert_field_to_email(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_email(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=Email, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=Email,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
         return InputField(type_=Email, description=get_django_field_description(field))
-    
 
 
 @convert_django_field_to_input.register(models.GenericIPAddressField)
-def convert_field_to_ipv4(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_ipv4(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=IPv4, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=IPv4,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
         return InputField(type_=IPv4, description=get_django_field_description(field))
-    
 
 
 @convert_django_field_to_input.register(models.IPAddressField)
-def convert_field_to_ip(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_ip(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=IP, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=IP,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
         return InputField(type_=IP, description=get_django_field_description(field))
-    
 
 
 @convert_django_field_to_input.register(models.PositiveIntegerField)
-def convert_field_to_positive_int(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_positive_int(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=PositiveInt, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=PositiveInt,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
-        return InputField(type_=PositiveInt, description=get_django_field_description(field))
-    
+        return InputField(
+            type_=PositiveInt, description=get_django_field_description(field)
+        )
 
 
 @convert_django_field_to_input.register(models.SlugField)
-def convert_field_to_slug(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_slug(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=Slug, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=Slug,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
         return InputField(type_=Slug, description=get_django_field_description(field))
-    
 
 
 @convert_django_field_to_input.register(models.URLField)
-def convert_field_to_url(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_url(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=URL, description=get_django_field_description(field), required=django_field_is_required(field), default_value=django_field_get_default(field))
+        return InputField(
+            type_=URL,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+            default_value=django_field_get_default(field),
+        )
     else:
-        # If type_mutation is for create_update 
-        # is best to not have default value because 
-        # is not possible after make a update the value 
+        # If type_mutation is for create_update
+        # is best to not have default value because
+        # is not possible after make a update the value
         # because the default value always is provided in the schema
         # and the attr required is not necessary
         return InputField(type_=URL, description=get_django_field_description(field))
-    
 
 
 @convert_django_field_to_input.register(models.OneToOneRel)
-def convert_onetoone_field_to_djangomodel(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_onetoone_field_to_djangomodel(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=ID, description=get_django_field_description(field), required=django_field_is_required(field))
+        return InputField(
+            type_=ID,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+        )
     else:
         return InputField(type_=ID, description=get_django_field_description(field))
     # from graphene_django_cruddals.converters.for_entity.utils import converter_pkk_field
@@ -382,11 +546,19 @@ def convert_onetoone_field_to_djangomodel(field:DjangoField, registry: RegistryG
 @convert_django_field_to_input.register(models.ManyToManyField)
 @convert_django_field_to_input.register(models.ManyToManyRel)
 @convert_django_field_to_input.register(models.ManyToOneRel)
-def convert_field_to_list_or_connection(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_list_or_connection(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=List(ID), description=get_django_field_description(field), required=django_field_is_required(field))
+        return InputField(
+            type_=List(ID),
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+        )
     else:
-        return InputField(type_=List(ID), description=get_django_field_description(field))
+        return InputField(
+            type_=List(ID), description=get_django_field_description(field)
+        )
     # model = field.related_model
     # from graphene_django_cruddals.converters.for_entity.utils import converter_pkk_field
 
@@ -399,9 +571,15 @@ def convert_field_to_list_or_connection(field:DjangoField, registry: RegistryGlo
 
 @convert_django_field_to_input.register(models.OneToOneField)
 @convert_django_field_to_input.register(models.ForeignKey)
-def convert_field_to_djangomodel(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_djangomodel(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     if type_mutation == TypesMutationEnum.CREATE.value:
-        return InputField(type_=ID, description=get_django_field_description(field), required=django_field_is_required(field))
+        return InputField(
+            type_=ID,
+            description=get_django_field_description(field),
+            required=django_field_is_required(field),
+        )
     else:
         return InputField(type_=ID, description=get_django_field_description(field))
     # model = field.related_model
@@ -412,24 +590,29 @@ def convert_field_to_djangomodel(field:DjangoField, registry: RegistryGlobal, ty
     # return converted_pk_field => This old code is if maybe the pk is not a ID
 
 
-
-
 @convert_django_field_to_input.register(GenericForeignKey)
-def convert_field_to_union_type(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_field_to_union_type(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     """TODO Add support"""
     return
 
 
 @convert_django_field_to_input.register(GenericRelation)
-def convert_relation_field_to_union_type(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+def convert_relation_field_to_union_type(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     """TODO Add support"""
     return
 
 
-@convert_django_field_to_input.register(GenericRel) # Representa otro tipo OneToMany
-def convert_field_to__type(field:DjangoField, registry: RegistryGlobal, type_mutation:TypesMutation):
+@convert_django_field_to_input.register(GenericRel)  # Representa otro tipo OneToMany
+def convert_field_to__type(
+    field: DjangoField, registry: RegistryGlobal, type_mutation: TypesMutation
+):
     """TODO Add support"""
     return
+
 
 # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 # @@@@@@@@@@@@@@@@@@@@@@ FOR RELATION FIELDS NESTED @@@@@@@@@@@@@@@@@@@@@@@@@
@@ -440,7 +623,7 @@ def convert_field_to__type(field:DjangoField, registry: RegistryGlobal, type_mut
 def convert_relation_field_to_input(
     field: DjangoField,
     registry: RegistryGlobal,
-    type_mutation_input: TypesMutation  = TypesMutationEnum.CREATE.value,
+    type_mutation_input: TypesMutation = TypesMutationEnum.CREATE.value,
 ):
     raise Exception(
         "Don't know how to convert the Django field {} ({}), please check if is relation Field".format(
@@ -452,7 +635,9 @@ def convert_relation_field_to_input(
 @convert_relation_field_to_input.register(models.ManyToManyField)
 @convert_relation_field_to_input.register(models.ManyToManyRel)
 @convert_relation_field_to_input.register(models.ManyToOneRel)
-@convert_relation_field_to_input.register(GenericRelation) # Representa otro tipo ManyToOne
+@convert_relation_field_to_input.register(
+    GenericRelation
+)  # Representa otro tipo ManyToOne
 def convert_field_to_list(
     field: DjangoField,
     registry: RegistryGlobal,
@@ -471,13 +656,13 @@ def convert_field_to_list(
 
         if not model_input_object_type:
             return
-        from graphene_django_cruddals.utils import build_class
+        from graphene_django_cruddals.utils.utils import build_class
 
         if type_mutation_input == TypesMutationEnum.CREATE.value:
-            connect_model_input = build_class( 
-                name=f"{model.__name__}ConnectInput", 
-                bases=(InputObjectType,), 
-                attrs={ "connect": List(NonNull(model_input_object_type)) }
+            connect_model_input = build_class(
+                name=f"{model.__name__}ConnectInput",
+                bases=(InputObjectType,),
+                attrs={"connect": List(NonNull(model_input_object_type))},
             )
 
             registry.register_model(
@@ -489,8 +674,6 @@ def convert_field_to_list(
             return InputField(connect_model_input)
             # return InputField(List(NonNull(model_input_object_type)))
         else:  # update, create_update
-            
-
             model_where_input_object_type = None
             if (
                 registries_for_model is not None
@@ -554,25 +737,26 @@ def convert_field_to_input_django_model(
     return Dynamic(dynamic_type)
 
 
-
 class GenericForeignKeyInput(InputObjectType):
     app_label = String(required=True)
     model = String(required=True)
     object = GenericScalar()
 
 
-
 @convert_relation_field_to_input.register(GenericForeignKey)
-def convert_generic_field_to_input_django_model( field: DjangoField, registry: RegistryGlobal, type_mutation_input: TypesMutation = TypesMutationEnum.CREATE.value, ):
-    
+def convert_generic_field_to_input_django_model(
+    field: DjangoField,
+    registry: RegistryGlobal,
+    type_mutation_input: TypesMutation = TypesMutationEnum.CREATE.value,
+):
     return GenericForeignKeyInput()
 
 
-
-@convert_relation_field_to_input.register(GenericRel) # Representa otro tipo OneToMany
-def convert_relation_field_to__type(field:DjangoField, registry: RegistryGlobal):
+@convert_relation_field_to_input.register(GenericRel)  # Representa otro tipo OneToMany
+def convert_relation_field_to__type(field: DjangoField, registry: RegistryGlobal):
     """TODO Add support"""
     return
+
 
 """TODO"""
 # @convert_django_field_to_input.register(ArrayField)

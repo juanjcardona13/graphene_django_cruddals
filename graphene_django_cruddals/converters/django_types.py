@@ -1,12 +1,11 @@
 import inspect
 import warnings
-from typing import Type
+
+from django.db.models import Model as DjangoModel
 
 import graphene
-from django.db.models import Model as DjangoModel
 from graphene.relay import Connection, Node
 from graphene.types.objecttype import ObjectType, ObjectTypeOptions
-
 
 ALL_FIELDS = "__all__"
 
@@ -51,10 +50,8 @@ def validate_fields(type_, model, fields, only_fields, exclude_fields):
         if name in all_field_names:
             # Field is a custom field
             warnings.warn(
-                (
-                    'Excluding the custom field "{field_name}" on DjangoObjectType "{type_}" has no effect. '
-                    'Either remove the custom field or remove the field from the "exclude" list.'
-                ).format(field_name=name, type_=type_)
+                f'Excluding the custom field "{name}" on DjangoObjectType "{type_}" has no effect. '
+                'Either remove the custom field or remove the field from the "exclude" list.'
             )
         else:
             if not hasattr(model, name):
@@ -88,7 +85,6 @@ class DjangoObjectType(ObjectType):
     def __init_subclass_with_meta__(
         cls,
         model=None,
-        
         filter_fields=None,
         filterset_class=None,
         connection=None,
@@ -99,11 +95,12 @@ class DjangoObjectType(ObjectType):
         **options,
     ):
         # region === validations
-        assert is_valid_django_model(model), ( 'You need to pass a valid Django Model in {}.Meta, received "{}".' ).format(cls.__name__, model)
+        assert is_valid_django_model(
+            model
+        ), f'You need to pass a valid Django Model in {cls.__name__}.Meta, received "{model}".'
         if filter_fields and filterset_class:
             raise Exception("Can't set both filter_fields and filterset_class")
         # endregion
-
 
         if use_connection is None and interfaces:
             use_connection = any(
@@ -116,9 +113,9 @@ class DjangoObjectType(ObjectType):
                 "{}Connection".format(options.get("name") or cls.__name__), node=cls
             )
         if connection is not None:
-            assert issubclass(connection, Connection), (
-                "The connection must be a Connection. Received {}"
-            ).format(connection.__name__)
+            assert issubclass(
+                connection, Connection
+            ), f"The connection must be a Connection. Received {connection.__name__}"
 
         if not _meta:
             _meta = DjangoObjectTypeOptions(cls)
@@ -128,11 +125,12 @@ class DjangoObjectType(ObjectType):
         _meta.filter_fields = filter_fields
         _meta.filterset_class = filterset_class
 
-        super().__init_subclass_with_meta__( _meta=_meta, interfaces=interfaces, **options )
+        super().__init_subclass_with_meta__(
+            _meta=_meta, interfaces=interfaces, **options
+        )
 
         # Validate fields
         # validate_fields(cls, model, _meta.fields, fields, exclude) #TODO
-
 
     def resolve_id(self, info):
         return self.pk
@@ -142,7 +140,7 @@ class DjangoObjectType(ObjectType):
         if isinstance(root, cls):
             return True
         if not is_valid_django_model(root.__class__):
-            raise Exception(('Received incompatible instance "{}".').format(root))
+            raise Exception(f'Received incompatible instance "{root}".')
 
         if cls._meta.model._meta.proxy:
             model = root._meta.model
@@ -170,7 +168,7 @@ class ErrorType(ObjectType):
 
     @classmethod
     def from_errors(cls, errors):
-        from graphene_django_cruddals.utils import camelize
+        from graphene_django_cruddals.utils.utils import camelize
 
         data = camelize(errors) if True else errors
         return [cls(field=key, messages=value) for key, value in data.items()]

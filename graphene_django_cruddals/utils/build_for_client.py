@@ -2,12 +2,12 @@ import json
 import os
 import textwrap
 
-import graphene
 from django.apps import apps as django_apps
 from graphql.utilities.build_client_schema import build_client_schema
 from graphql.utilities.print_schema import print_introspection_schema, print_schema
 
-from graphene_django_cruddals.utils import transform_string
+import graphene
+from graphene_django_cruddals.utils.utils import transform_string
 
 global_cruddals_strings = {}
 
@@ -131,7 +131,6 @@ def build_create(app_name, model_name, model_name_plural, mutations):
 
 def build_read(app_name, model_name, queries):
     name_function_read = f"read{model_name}"
-    name_model_type = f"{model_name}Type"
     function_read = queries.get(name_function_read, None)
     text = ""
     if function_read is not None:
@@ -207,7 +206,7 @@ def build_update(app_name, model_name, model_name_plural, mutations):
                 }}
                 const defaultFields = 'id';
                 const selectedFields = fields ? fields : defaultFields;
-                
+
                 const mutation = gql`
                     mutation {name_function_update}({vars_str} ${{varsStr}}) {{
                         {name_function_update}({args_str}) {{
@@ -263,7 +262,7 @@ def build_delete(app_name, model_name, model_name_plural, mutations):
                 }}
                 const defaultFields = 'id';
                 const selectedFields = fields ? fields : defaultFields;
-                
+
                 const mutation = gql`
                     mutation {name_function_delete}({vars_str} ${{varsStr}}) {{
                         {name_function_delete}({args_str}) {{
@@ -319,7 +318,7 @@ def build_deactivate(app_name, model_name, model_name_plural, mutations):
                 }}
                 const defaultFields = 'id';
                 const selectedFields = fields ? fields : defaultFields;
-                
+
                 const mutation = gql`
                     mutation {name_function_deactivate}({vars_str} ${{varsStr}}) {{
                         {name_function_deactivate}({args_str}) {{
@@ -374,7 +373,7 @@ def build_activate(app_name, model_name, model_name_plural, mutations):
                 }}
                 const defaultFields = 'id';
                 const selectedFields = fields ? fields : defaultFields;
-                
+
                 const mutation = gql`
                     mutation {name_function_activate}({vars_str} ${{varsStr}}) {{
                         {name_function_activate}({args_str}) {{
@@ -395,27 +394,16 @@ def build_activate(app_name, model_name, model_name_plural, mutations):
 
 def build_list(app_name, model_name, model_name_plural, queries):
     name_function_list = f"list{model_name_plural}"
-    name_model_type = f"{model_name}Type"
     function_list = queries.get(name_function_list, None)
     text = ""
     if function_list is not None:
-        vars_str, args_str = return_args_and_variables(function_list)
         globals()["global_cruddals_strings"][app_name][model_name].update(
             {
                 "list": textwrap.dedent(
                     f"""
-                query {name_function_list}({vars_str}) {{
-                    {name_function_list}({args_str}) {{
-                        total
-                        page
-                        pages
-                        hasNext
-                        hasPrev
-                        indexStartObj
-                        indexEndObj
-                        objects {{
-                            id
-                        }}
+                query {name_function_list} {{
+                    {name_function_list} {{
+                        id
                     }}
                 }}
             """
@@ -430,14 +418,11 @@ def build_list(app_name, model_name, model_name_plural, queries):
                 }}
                 const defaultFields = 'id';
                 const selectedFields = fields ? fields : defaultFields;
-                
+
                 const query = gql`
-                    query {name_function_list}({vars_str} ${{varsStr}}) {{
-                        {name_function_list}({args_str}) {{
-                            ${{PaginatedType}}
-                            objects {{
-                                ${{selectedFields}}
-                            }}
+                    query {name_function_list} {{
+                        {name_function_list} {{
+                            ${{selectedFields}}
                         }}
                     }}
                 `;
@@ -449,7 +434,6 @@ def build_list(app_name, model_name, model_name_plural, queries):
 
 def build_search(app_name, model_name, model_name_plural, queries):
     name_function_search = f"search{model_name_plural}"
-    name_model_type = f"{model_name}Type"
     function_search = queries.get(name_function_search, None)
     text = ""
     if function_search is not None:
@@ -484,7 +468,7 @@ def build_search(app_name, model_name, model_name_plural, queries):
                 }}
                 const defaultFields = 'id';
                 const selectedFields = fields ? fields : defaultFields;
-                
+
                 const query = gql`
                     query {name_function_search}({vars_str} ${{varsStr}}) {{
                         {name_function_search}({args_str}) {{
@@ -529,10 +513,10 @@ def build_file_test_in_graphiql():
         text_for_graphiql += f"#region ============= {app_name.upper()}\n"
         for model_name, strings_cruddals in models.items():
             text_for_graphiql += f"\n#region ============= {model_name.upper()}\n"
-            for func_name, string in strings_cruddals.items():
+            for string in strings_cruddals.values():
                 text_for_graphiql += f"{string}"
-            text_for_graphiql += f"\n#endregion\n\n"
-        text_for_graphiql += f"\n#endregion\n\n"
+            text_for_graphiql += "\n#endregion\n\n"
+        text_for_graphiql += "\n#endregion\n\n"
     with open(f"{PATH_CLIENT}/test_in_graphiql.gql", "w+") as file:
         text_for_graphiql = textwrap.dedent(text_for_graphiql)
         file.write(text_for_graphiql)
@@ -616,8 +600,8 @@ def build_files_for_client_schema_cruddals(schema):
                 ):
                     text_mutations += f"\n//region ============= {model_name.upper()}{mutation_create}{mutation_update}{mutation_delete}{mutation_deactivate}{mutation_activate}\n//endregion\n"
 
-            text_queries += f"\n//endregion\n\n"
-            text_mutations += f"\n//endregion\n\n"
+            text_queries += "\n//endregion\n\n"
+            text_mutations += "\n//endregion\n\n"
 
         build_file_general_types()
         build_file_queries(text_queries)

@@ -1,13 +1,14 @@
 import re
 from collections.abc import Iterable
-from typing import Any, Literal, Union
+from typing import Any, Dict, Literal, Tuple, Type, Union
 
 from django.db.models import Model as DjangoModel
 from django.forms import ModelForm as DjangoModelForm
 from django.utils.encoding import force_str
 from django.utils.functional import Promise
 
-from graphene_django_cruddals.types import NameCaseType
+import graphene
+from graphene_django_cruddals.types import FunctionType, NameCaseType, RootFieldsType
 
 
 def is_iterable(obj: Any, exclude_string=True) -> bool:
@@ -137,6 +138,66 @@ def build_class(name: str, bases: tuple = (), attrs: dict = None) -> Any:
     if attrs is None:
         attrs = {}
     return type(name, bases, attrs)
+
+
+def validate_list_func_cruddals(
+    functions: Tuple[FunctionType, ...], exclude_functions: Tuple[FunctionType, ...]
+) -> bool:
+    valid_values = [
+        "create",
+        "read",
+        "update",
+        "delete",
+        "deactivate",
+        "activate",
+        "list",
+        "search",
+    ]
+
+    if functions and exclude_functions:
+        raise ValueError(
+            "You cannot provide both 'functions' and 'exclude_functions'. Please provide only one."
+        )
+    else:
+        name_input = "function" if functions else "exclude_function"
+        input_list = functions if functions else exclude_functions
+
+    invalid_values = [value for value in input_list if value not in valid_values]
+
+    if invalid_values:
+        raise ValueError(
+            f"Expected in '{name_input}' a tuple with some of these values {valid_values}, but got these invalid values {invalid_values}"
+        )
+
+    return True
+
+
+def get_schema_query_mutation(
+    queries: Tuple[Type[graphene.ObjectType], ...] = (),
+    attrs_for_query: Dict[str, graphene.Field] = {},
+    mutations: Tuple[Type[graphene.ObjectType], ...] = (),
+    attrs_for_mutation: Union[Dict[str, graphene.Field], None] = {},
+) -> Tuple[
+    graphene.Schema, Type[graphene.ObjectType], Union[Type[graphene.ObjectType], None]
+]:
+    base = (graphene.ObjectType,)
+    query: Type[graphene.ObjectType] = build_class(
+        name="Query", bases=(queries + base), attrs=attrs_for_query
+    )
+
+    dict_for_schema: RootFieldsType = {"query": query, "mutation": None}
+
+    mutation: Union[Type[graphene.ObjectType], None] = None
+    if mutations or attrs_for_mutation:
+        attrs_for_mutation = {} if attrs_for_mutation is None else attrs_for_mutation
+        mutation = build_class(
+            name="Mutation", bases=(mutations + base), attrs=attrs_for_mutation
+        )
+        dict_for_schema.update({"mutation": mutation})
+
+    schema = graphene.Schema(**dict_for_schema)
+
+    return schema, query, mutation
 
 
 # region Maybe I should move this to another file
