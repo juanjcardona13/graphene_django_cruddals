@@ -2,7 +2,7 @@ import os
 import sys
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, ROOT_PATH + "/examples/")
+sys.path.insert(0, ROOT_PATH + "/tests/")
 
 SECRET_KEY = 1
 
@@ -14,7 +14,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "graphene_django",
     # "graphene_django_cruddals.tests",
-    # "examples.test_project",
+    # "tests.test_project",
 ]
 
 DATABASES = {
@@ -29,6 +29,6 @@ TEMPLATES = [
     }
 ]
 
-GRAPHENE = {"SCHEMA": "graphene_django_cruddals.tests.schema.schema"}
+# GRAPHENE = {"SCHEMA": "tests.schema.schema"}
 
-ROOT_URLCONF = "graphene_django_cruddals.tests.urls"
+ROOT_URLCONF = "tests.settings.urls"

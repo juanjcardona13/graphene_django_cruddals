@@ -1,33 +1,25 @@
-# -*- coding: utf-8 -*-
-
 import re
 from collections.abc import Iterable
 from typing import Any, Literal, Union
 
-import graphene
+from django.db.models import Model as DjangoModel
 from django.forms import ModelForm as DjangoModelForm
 from django.utils.encoding import force_str
 from django.utils.functional import Promise
-from django.db.models import Model as DjangoModel
-
-from graphene.utils.str_converters import to_camel_case
-
-import graphene
-from graphene.types.generic import GenericScalar
 
 from graphene_django_cruddals.types import NameCaseType
 
 
-def is_iterable(obj:Any, exclude_string=True) -> bool:
+def is_iterable(obj: Any, exclude_string=True) -> bool:
     if exclude_string:
         return isinstance(obj, Iterable) and not isinstance(obj, str)
     return isinstance(obj, Iterable)
 
 
-def _camelize_django_str(string:str) -> str:
+def _camelize_django_str(string: str) -> str:
     if isinstance(string, Promise):
         string = force_str(string)
-    return transform_string(string, 'camelCase') if isinstance(string, str) else string
+    return transform_string(string, "camelCase") if isinstance(string, str) else string
 
 
 def camelize(data):
@@ -38,13 +30,16 @@ def camelize(data):
     return data
 
 
-def camel_to_snake(s:Union[str, bytes]) -> str:
+def camel_to_snake(s: Union[str, bytes]) -> str:
     s = str(s)
     s = re.sub("(.)([A-Z][a-z]+)", r"\1_\2", s)
     return re.sub("([a-z0-9])([A-Z])", r"\1_\2", s).lower()
 
 
-def transform_string(s:Union[str, bytes], type: Literal["PascalCase", "camelCase", "snake_case", "kebab-case", "lowercase"]) -> str:
+def transform_string(
+    s: Union[str, bytes],
+    type: Literal["PascalCase", "camelCase", "snake_case", "kebab-case", "lowercase"],
+) -> str:
     """Type: PascalCase, camelCase, snake_case, kebab-case, lowercase"""
     s = str(s)
     if " " in s or "_" in s or "-" in s:
@@ -57,6 +52,10 @@ def transform_string(s:Union[str, bytes], type: Literal["PascalCase", "camelCase
             return "-".join(word.lower() for word in s.split(separator))
         elif type == "lowercase":
             return "".join(word.lower() for word in s.split(separator))
+        elif type == "camelCase":
+            return (
+                s[0].lower() + "".join(word.title() for word in s.split(separator))[1:]
+            )
         else:
             return "".join(word for word in s.split(separator))
     else:
@@ -71,14 +70,20 @@ def transform_string(s:Union[str, bytes], type: Literal["PascalCase", "camelCase
             return s
 
 
-def delete_keys(obj:dict, keys:list[str]) -> dict:
+def delete_keys(obj: dict, keys: list[str]) -> dict:
     for key in keys:
         if key in obj:
             del obj[key]
     return obj
 
 
-def merge_dict(source:dict, destination:dict, overwrite:bool=False, keep_both:bool=False, path:Union[list[str], None]=None) -> dict:
+def merge_dict(
+    source: dict,
+    destination: dict,
+    overwrite: bool = False,
+    keep_both: bool = False,
+    path: Union[list[str], None] = None,
+) -> dict:
     "merges source into destination"
     import copy
 
@@ -128,11 +133,16 @@ def merge_dict(source:dict, destination:dict, overwrite:bool=False, keep_both:bo
     return new_destination
 
 
-def build_class(name:str, bases:tuple=(), attrs:dict={}) -> Any:
+def build_class(name: str, bases: tuple = (), attrs: dict = None) -> Any:
+    if attrs is None:
+        attrs = {}
     return type(name, bases, attrs)
 
 
-def get_name_of_model_in_different_case(model:DjangoModel, prefix="", suffix="") -> NameCaseType:
+# region Maybe I should move this to another file
+def get_name_of_model_in_different_case(
+    model: DjangoModel, prefix="", suffix=""
+) -> NameCaseType:
     # snake_case
     # kebab-case
     # camelCase
@@ -168,13 +178,15 @@ def get_name_of_model_in_different_case(model:DjangoModel, prefix="", suffix="")
     }
 
 
-
-#region Maybe I should move this to another file
-def convert_model_to_model_form( model:DjangoModel, prefix_for_name="", suffix_for_name="" ) -> DjangoModelForm:
+def convert_model_to_model_form(
+    model: DjangoModel, prefix_for_name="", suffix_for_name=""
+) -> DjangoModelForm:
     """
     Convert a Django model to a Django model form
     """
-    names_of_model = get_name_of_model_in_different_case( model, prefix=prefix_for_name, suffix=suffix_for_name )
+    names_of_model = get_name_of_model_in_different_case(
+        model, prefix=prefix_for_name, suffix=suffix_for_name
+    )
     singular_camel_case_name = names_of_model.get("camel_case")
 
     MetaForm = build_class(
@@ -191,4 +203,6 @@ def convert_model_to_model_form( model:DjangoModel, prefix_for_name="", suffix_f
         attrs={"Meta": MetaForm},
     )
     return ModelForm
-#endregion
+
+
+# endregion

@@ -10,15 +10,15 @@ dev-setup:
 
 .PHONY: tests ## Run unit tests
 tests:
-	PYTHONPATH=. pytest graphene_django_cruddals --cov=graphene_django_cruddals -vv
+	PYTHONPATH=. pytest tests --cov=graphene_django_cruddals -vv
 
 .PHONY: format ## Format code
 format:
-	ruff format graphene_django_cruddals examples setup.py
+	ruff format graphene_django_cruddals tests setup.py
 
 .PHONY: lint ## Lint code
 lint:
-	ruff graphene_django_cruddals examples
+	ruff graphene_django_cruddals tests
 
 .PHONY: docs ## Generate docs
 docs: dev-setup
