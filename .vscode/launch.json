@@ -21,26 +21,26 @@
       "name": "Run Test Project - Python Debugger Django",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/tests/cruddalsTestProject/manage.py",
+      "program": "${workspaceFolder}/tests/integration/manage.py",
       "args": [
         "runserver"
       ],
       "django": true,
       "autoStartBrowser": false,
-      "python": "${workspaceFolder}/tests/cruddalsTestProject/venv/bin/python"
+      "python": "${workspaceFolder}/tests/integration/venv/bin/python"
     },
     {
       "name": "Run Tests - Python Debugger Django",
       "type": "debugpy",
       "request": "launch",
-      "program": "${workspaceFolder}/tests/cruddalsTestProject/manage.py",
+      "program": "${workspaceFolder}/tests/integration/manage.py",
       "args": [
         "test",
-        "tests/cruddalsTestProject/"     
+        "tests/integration/"     
       ],
       "django": true,
       "autoStartBrowser": false,
-      "python": "${workspaceFolder}/tests/cruddalsTestProject/venv/bin/python"
+      "python": "${workspaceFolder}/tests/integration/venv/bin/python"
     },
     {
       "name": "Run Current File - Python Debugger",
