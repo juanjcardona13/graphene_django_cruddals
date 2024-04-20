@@ -387,7 +387,7 @@ def convert_field_to_union_type(field, registry: RegistryGlobal):
     def dynamic_type():
         all_models_registered = registry.get_all_models_registered()
 
-        types_for_union = {}
+        types_for_union = ()
 
         for registries_for_model in all_models_registered.values():
             if (

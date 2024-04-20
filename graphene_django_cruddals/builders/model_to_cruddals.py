@@ -26,6 +26,7 @@ from graphene_django_cruddals.operations_fields.default_resolvers import (
     default_list_field_resolver,
     default_read_field_resolver,
     default_search_field_resolver,
+    default_update_resolver,
 )
 from graphene_django_cruddals.operations_fields.main import (
     DjangoActivateField,
@@ -189,7 +190,11 @@ class BuilderBase:
     delete_field: Union[DjangoDeleteField, None] = None
 
     @staticmethod  # TODa: Change to a class method
-    def get_where_arg(model_as_filter_input_object_type, kw={}, default_required=False):
+    def get_where_arg(
+        model_as_filter_input_object_type, kw=None, default_required=False
+    ):
+        if kw is None:
+            kw = {}
         attrs_for_input_arg = kw.get("modify_where_argument", {})
         default_values_for_where = {
             "type_": model_as_filter_input_object_type,
@@ -362,7 +367,9 @@ class BuilderMutation(BuilderBase):
         )  # TODa: Debo de mirar esto donde lo voy a cuadrar para que sea global
 
     @staticmethod  # TODa: Change to a class method
-    def get_input_arg(model_as_input_object_type, kw={}):
+    def get_input_arg(model_as_input_object_type, kw=None):
+        if kw is None:
+            kw = {}
         attrs_for_input_arg = kw.get("modify_input_argument", {})
         default_values_for_input = {
             "type_": graphene.List(graphene.NonNull(model_as_input_object_type)),
@@ -480,7 +487,7 @@ class BuilderUpdate(BuilderMutation):
         name_function = "mutate"
 
         def default_resolver(root, info, **args):
-            return default_create_update_resolver(
+            return default_update_resolver(
                 self.model, self.model_as_form, self.registry, root, info, **args
             )
 
@@ -679,7 +686,9 @@ class BuilderSearch(BuilderQuery):
     """
 
     @staticmethod  # TODa: Change to a class method
-    def get_order_by_arg(model_as_order_by_input_object_type, kw={}):
+    def get_order_by_arg(model_as_order_by_input_object_type, kw=None):
+        if kw is None:
+            kw = {}
         attrs_for_order_by_arg = kw.get("modify_order_by_argument", {})
         default_values_for_order_by = {
             "type_": model_as_order_by_input_object_type,
@@ -696,7 +705,9 @@ class BuilderSearch(BuilderQuery):
             return {"order_by": graphene.Argument(**default_values_for_order_by)}
 
     @staticmethod  # TODa: Change to a class method
-    def get_pagination_config_arg(kw={}):
+    def get_pagination_config_arg(kw=None):
+        if kw is None:
+            kw = {}
         default_values_for_paginated = {
             "type_": PaginationConfigInput,
             "name": "paginated",
