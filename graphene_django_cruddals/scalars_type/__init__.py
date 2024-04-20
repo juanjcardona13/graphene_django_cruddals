@@ -4,9 +4,10 @@ from datetime import timedelta
 from typing import Any
 from urllib.parse import urlparse
 
-import graphene
 from graphql import GraphQLError, IntValueNode, StringValueNode, ValueNode, print_ast
 from graphql.language import ast
+
+import graphene
 
 
 class URL(graphene.Scalar):
@@ -105,8 +106,11 @@ class PositiveInt(graphene.Scalar):
             raise GraphQLError(f"{type} cannot be less than 0")
         return value
 
-    serialize = lambda value: PositiveInt.process_value(value, "PositiveInt")
-    parse_value = lambda value: PositiveInt.process_value(value, "PositiveInt")
+    def serialize(self, value):
+        return PositiveInt.process_value(value, "PositiveInt")
+
+    def parse_value(self, value):
+        return PositiveInt.process_value(value, "PositiveInt")
 
     @staticmethod
     def parse_int_literal(value_node: ValueNode):
@@ -315,7 +319,9 @@ class Duration(graphene.Scalar):
         if isinstance(node, graphene.IntValue):
             return timedelta(seconds=node.value)
         else:
-            raise Exception(f"Cannot represent {node} as timedelta. Should be an integer.")
+            raise Exception(
+                f"Cannot represent {node} as timedelta. Should be an integer."
+            )
 
     @staticmethod
     def parse_value(value):

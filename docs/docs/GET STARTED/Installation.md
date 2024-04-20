@@ -15,9 +15,9 @@ Before installing Graphene-Django-CRUDDALS, make sure you have the following ins
 
 Install Graphene Django CRUDDALS with the virtual environment activated and in the root project folder
 
-1. Open up your terminal.  
+1. Open up your terminal.
 
-2. Copy and paste the following command:  
+2. Copy and paste the following command:
 `pip install graphene_django_cruddals`
 
 ---
@@ -26,19 +26,19 @@ Install Graphene Django CRUDDALS with the virtual environment activated and in t
 
 To install or update Python on Ubuntu, follow these steps:
 
-Update repositories and install the latest versions of package  
+Update repositories and install the latest versions of package
 `sudo apt update && sudo apt upgrade -y`
 
-Install the necessary dependencies to add the repository  
+Install the necessary dependencies to add the repository
 `sudo apt install software-properties-common -y`
 
-Add the deadsnakes PPA to your sources list  
+Add the deadsnakes PPA to your sources list
 `sudo add-apt-repository ppa:deadsnakes/ppa`
 
-Check for pre-installed Python  
+Check for pre-installed Python
 `python --version`
 
-Install via Package Manager  
+Install via Package Manager
 
 ```bash
 
@@ -50,53 +50,53 @@ Install via Package Manager
 
 ```
 
-Verify installation  
+Verify installation
 `python3 --version`
 
-Install pip  
+Install pip
 `sudo apt install python3-pip`
 
-Verify pip installation  
-`pip3 --version`  
+Verify pip installation
+`pip3 --version`
 
 If you have another system such as Windows or Mac or if you want more detailed information about installing Python, you can see how to install it on this site [How To Install Python on Windows, macOS, and Linux](https://kinsta.com/knowledgebase/install-python/)
 
 ## <a id="django"></a>Install Django
 To install Django, follow these steps:
 
- <!--you need to have Python installed on your system. If you have not installed Python, you can follow the steps in the previous section to install it.--> 
+ <!--you need to have Python installed on your system. If you have not installed Python, you can follow the steps in the previous section to install it.-->
 
-Create the folder where you want to install Django  
+Create the folder where you want to install Django
 `mkdir django_projects && cd django_projects`
 
-Create a virtual environment  
+Create a virtual environment
 `python3 -m venv myenv`
 
-Activate the virtual environment  
+Activate the virtual environment
 `source myenv/bin/activate`
 
-Install Django  
+Install Django
 `pip install django`
 
-Verify installation  
+Verify installation
 `django-admin --version`
 
 ###  Create a Django project
 
-Create a Django project  
+Create a Django project
 `django-admin startproject myproject`
 
-Change the directory to the project folder  
+Change the directory to the project folder
 `cd myproject`
 
-Run the server  
+Run the server
 `python manage.py runserver`
 
 Open your browser and go to `http://localhost:8000/`
 
 ###  Create a Django app
 
-Setting up a Django App  
+Setting up a Django App
 `python manage.py startapp myapp`
 
 Add the app to the installed apps in the settings.py file of the project
@@ -122,27 +122,27 @@ Create a model in the models.py file of the app
     description = models.TextField()
 ```
 
-Create a migration  
+Create a migration
 `python manage.py makemigrations`
 
-Apply the migration  
+Apply the migration
 `python manage.py migrate`
 
-Create a superuser  
+Create a superuser
 `python manage.py createsuperuser`
 
-Run the server  
+Run the server
 `python manage.py runserver`
 
-Open your browser and go to `http://localhost:8000/admin/`  
+Open your browser and go to `http://localhost:8000/admin/`
 Log in with the superuser credentials you created
 
 
 ## <a id="graphene-django"></a>Install Graphene Django
 
-To install Graphene Django, follow these steps:  
+To install Graphene Django, follow these steps:
 
-Install Graphene Django with the virtual environment activated and in the project folder  
+Install Graphene Django with the virtual environment activated and in the project folder
 `pip install graphene-django`
 
 Add `graphene_django` to the installed apps in the settings.py file of the project
@@ -197,10 +197,10 @@ Add the graphene URL to the project's urls.py file
   ]
 ```
 
-Run the server  
+Run the server
   `python manage.py runserver`
 
-Open your browser and go to `http://localhost:8000/graphql/`  
+Open your browser and go to `http://localhost:8000/graphql/`
 You can now run queries in the GraphQL interface
 
 

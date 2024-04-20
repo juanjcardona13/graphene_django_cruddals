@@ -1,14 +1,18 @@
 from functools import singledispatch
 from typing import Union
-import graphene
+
+from django.contrib.contenttypes.fields import (
+    GenericForeignKey,
+    GenericRel,
+    GenericRelation,
+)
 from django.db import models
 from django.db.models.fields import Field as DjangoField
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, GenericRel
-
 from django.utils.functional import Promise
-from graphene import Dynamic
 from graphql.pyutils import register_description
 
+import graphene
+from graphene import Dynamic
 from graphene_django_cruddals.registry_global import RegistryGlobal
 from graphene_django_cruddals.scalars_type import OrderEnum, OrderStringEnum
 
@@ -16,11 +20,11 @@ from .compat import HStoreField, JSONField, PGJSONField
 
 
 @singledispatch
-def convert_django_field_to_order_by_input( field: DjangoField, registry: RegistryGlobal ) -> Union[graphene.Enum, Dynamic, None]:
+def convert_django_field_to_order_by_input(
+    field: DjangoField, registry: RegistryGlobal
+) -> Union[graphene.Enum, Dynamic, None]:
     raise Exception(
-        "Don't know how to convert the Django field {} ({})".format(
-            field, field.__class__
-        )
+        f"Don't know how to convert the Django field {field} ({field.__class__})"
     )
 
 
@@ -111,14 +115,17 @@ def convert_field_to_django_model(field, registry: RegistryGlobal):
 
 @convert_django_field_to_order_by_input.register(GenericForeignKey)
 def convert_field_to_union_type(field, registry: RegistryGlobal):
-    #TODO-Podría ser un GenericForeignKeyOrderByInput, Similar a como se crea con el GenericForeignKeyInput
+    # TODO-Podría ser un GenericForeignKeyOrderByInput, Similar a como se crea con el GenericForeignKeyInput
     return
 
 
-@convert_django_field_to_order_by_input.register(GenericRel) # Representa otro tipo OneToMany
+@convert_django_field_to_order_by_input.register(
+    GenericRel
+)  # Representa otro tipo OneToMany
 def convert_field_to__type(field, registry: RegistryGlobal):
     """TODO Add support"""
     return
+
 
 # Register Django lazy()-wrapped values as GraphQL description/help_text.
 # This is needed for using lazy translations, see https://github.com/graphql-python/graphql-core-next/issues/58.

@@ -21,7 +21,7 @@ In the schema.py file of the app, replace all content, import the CruddalsModel 
           model = MyModel
 ```
 
-In the root schema, import the class created in the previous step and add it to the Query class, and the 
+In the root schema, import the class created in the previous step and add it to the Query class, and the
 mutations for your model also was added, so you now can create the Mutation class
 ```python
   from myapp.schema import CruddalsMyModel
@@ -31,7 +31,7 @@ mutations for your model also was added, so you now can create the Mutation clas
 
   class Mutation(CruddalsMyModel.Mutation, graphene.ObjectType):
       pass
-  
+
   schema = graphene.Schema(query=Query, mutation=Mutation)
 ```
 

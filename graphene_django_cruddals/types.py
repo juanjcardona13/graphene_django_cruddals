@@ -1,8 +1,9 @@
 from enum import Enum
 from typing import Any, Dict, Literal, Optional, Protocol, Tuple, Type, TypedDict, Union
-import graphene
+
 from django.db.models.query import QuerySet as DjangoQuerySet
 
+import graphene
 
 GRAPHENE_TYPE = Union[
     graphene.Scalar,
@@ -21,8 +22,9 @@ GRAPHENE_TYPE = Union[
     graphene.NonNull,
     graphene.Enum,
     graphene.Argument,
-    graphene.Dynamic
+    graphene.Dynamic,
 ]
+
 
 class MetaTypeStructure(Protocol):
     only_fields: Union[Tuple[str, ...], Literal["__all__"]]
@@ -44,7 +46,7 @@ class ObjectTypeStructure(Protocol):
         ...
 
     @classmethod
-    def get_queryset(cls, queryset:DjangoQuerySet, info) -> DjangoQuerySet:
+    def get_queryset(cls, queryset: DjangoQuerySet, info) -> DjangoQuerySet:
         ...
 
 
@@ -130,7 +132,7 @@ class CreateFieldStructure(Protocol):
     class Meta:
         modify_input_argument: ModifyArgument
         extra_arguments: Dict[str, GRAPHENE_TYPE]
-    
+
     def pre_mutate(self, info, *args, **kwargs) -> Tuple:
         ...
 
@@ -290,15 +292,38 @@ class InterfaceStructure(Protocol):
     SearchField: SearchFieldStructure
 
 
-FunctionType = Literal['create', 'read', 'update', 'delete', 'deactivate', 'activate', 'list', 'search']
+FunctionType = Literal[
+    "create", "read", "update", "delete", "deactivate", "activate", "list", "search"
+]
 
-CamelFunctionType = Literal['Create', 'Read', 'Update', 'Delete', 'Deactivate', 'Activate', 'List', 'Search']
+CamelFunctionType = Literal[
+    "Create", "Read", "Update", "Delete", "Deactivate", "Activate", "List", "Search"
+]
 
-TypesMutation = Literal['create_update', 'create', 'update']
+TypesMutation = Literal["create_update", "create", "update"]
 
-TypeRegistryForModel = Literal['object_type', 'paginated_object_type', 'input_object_type', 'input_object_type_for_create', 'input_object_type_for_update', 'input_object_type_for_search', 'input_object_type_for_order_by', 'input_object_type_for_connect', 'input_object_type_for_connect_disconnect', 'cruddals']
+TypeRegistryForModel = Literal[
+    "object_type",
+    "paginated_object_type",
+    "input_object_type",
+    "input_object_type_for_create",
+    "input_object_type_for_update",
+    "input_object_type_for_search",
+    "input_object_type_for_order_by",
+    "input_object_type_for_connect",
+    "input_object_type_for_connect_disconnect",
+    "cruddals",
+]
 
-TypeRegistryForField = Literal['output', 'input_for_create_update', 'input_for_create', 'input_for_update', 'input_for_search', 'input_for_order_by']
+TypeRegistryForField = Literal[
+    "output",
+    "input_for_create_update",
+    "input_for_create",
+    "input_for_update",
+    "input_for_search",
+    "input_for_order_by",
+]
+
 
 class NameCaseType(TypedDict):
     snake_case: str
@@ -308,10 +333,12 @@ class NameCaseType(TypedDict):
     pascal_case: str
     plural_pascal_case: str
 
+
 class RootFieldsType(TypedDict):
     query: Type[graphene.ObjectType]
     mutation: Optional[Type[graphene.ObjectType]]
     # subscription: Optional[Type[graphene.ObjectType]]
+
 
 class TypesMutationEnum(Enum):
     CREATE = "create"

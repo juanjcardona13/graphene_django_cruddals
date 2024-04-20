@@ -1,9 +1,8 @@
 """Apply multipart request spec to django"""
 import json
 
-from six import iteritems
-
 from graphene_django.views import GraphQLView
+from six import iteritems
 
 
 def place_files_in_operations(operations, files_map, files):
@@ -74,4 +73,4 @@ class FileUploadGraphQLView(GraphQLView):
             operations = json.loads(request.POST.get("operations", "{}"))
             files_map = json.loads(request.POST.get("map", "{}"))
             return place_files_in_operations(operations, files_map, request.FILES)
-        return super(FileUploadGraphQLView, self).parse_body(request)
+        return super().parse_body(request)

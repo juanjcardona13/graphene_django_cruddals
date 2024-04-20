@@ -1,8 +1,8 @@
 ```python
 class ExampleModelInterface:
-    
+
     class ObjectType: # This is the class that will be used to modify the ObjectType of the model
-        
+
         class Meta: # This is the class that will be used to modify the Meta class of the ObjectType
             only_fields = "__all__" # Tuple of str or "__all__"
             exclude_fields = () # Tuple of str

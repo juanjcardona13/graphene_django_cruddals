@@ -10,9 +10,9 @@ try:
         ArrayField,
         HStoreField,
         IntegerRangeField,
+        JSONField as PGJSONField,
+        RangeField,
     )
-    from django.contrib.postgres.fields import JSONField as PGJSONField
-    from django.contrib.postgres.fields import RangeField
 except ImportError:
     IntegerRangeField, ArrayField, HStoreField, PGJSONField, RangeField = (
         MissingType,

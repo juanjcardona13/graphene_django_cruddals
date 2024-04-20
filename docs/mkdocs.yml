@@ -11,7 +11,7 @@ plugins:
   - mkdocstrings
 
 extra:
-  edit_on_github: true 
+  edit_on_github: true
 
 markdown_extensions:
   - toc:
@@ -25,7 +25,7 @@ nav:
   - GET STARTED:
     -  🏁 Quick Start: GET STARTED/Quick-Start.md
     - ⚙️ Installation: GET STARTED/Installation.md
-  
+
   - GUIDE TUTORIALS:
     -  💡 Basic Usage: GUIDE-TUTORIALS/Basic-Usage.md
     -  🎓 Advance Usage: GUIDE-TUTORIALS/Advance-Usage.md
@@ -37,7 +37,7 @@ nav:
 
 
 
-  
+
 
 
 

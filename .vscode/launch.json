@@ -1,53 +1,50 @@
 {
-  // Use IntelliSense to learn about possible attributes.
-  // Hover to view descriptions of existing attributes.
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-  "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run Example Restaurant Project - Python Debugger Django",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/examples/restaurantProject/manage.py",
       "args": [
         "runserver"
       ],
+      "autoStartBrowser": false,
       "django": true,
       "justMyCode": false,
-      "autoStartBrowser": false,
-      "python": "${workspaceFolder}/examples/restaurantProject/venv/bin/python"
+      "name": "Run Example Restaurant Project - Python Debugger Django",
+      "program": "${workspaceFolder}/examples/restaurantProject/manage.py",
+      "python": "${workspaceFolder}/examples/restaurantProject/venv/bin/python",
+      "request": "launch",
+      "type": "debugpy"
     },
     {
-      "name": "Run Test Project - Python Debugger Django",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/tests/integration/manage.py",
       "args": [
         "runserver"
       ],
-      "django": true,
       "autoStartBrowser": false,
-      "python": "${workspaceFolder}/tests/integration/venv/bin/python"
+      "django": true,
+      "name": "Run Test Project - Python Debugger Django",
+      "program": "${workspaceFolder}/tests/integration/manage.py",
+      "python": "${workspaceFolder}/tests/integration/venv/bin/python",
+      "request": "launch",
+      "type": "debugpy"
     },
     {
-      "name": "Run Tests - Python Debugger Django",
-      "type": "debugpy",
-      "request": "launch",
-      "program": "${workspaceFolder}/tests/integration/manage.py",
       "args": [
         "test",
-        "tests/integration/"     
+        "tests/integration/"
       ],
-      "django": true,
       "autoStartBrowser": false,
-      "python": "${workspaceFolder}/tests/integration/venv/bin/python"
+      "django": true,
+      "name": "Run Tests - Python Debugger Django",
+      "program": "${workspaceFolder}/tests/integration/manage.py",
+      "python": "${workspaceFolder}/tests/integration/venv/bin/python",
+      "request": "launch",
+      "type": "debugpy"
     },
     {
+      "console": "integratedTerminal",
       "name": "Run Current File - Python Debugger",
-      "type": "debugpy",
-      "request": "launch",
       "program": "${file}",
-      "console": "integratedTerminal"
+      "request": "launch",
+      "type": "debugpy"
     }
-  ]
+  ],
+  "version": "0.2.0"
 }

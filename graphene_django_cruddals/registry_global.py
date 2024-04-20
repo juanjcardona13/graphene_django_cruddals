@@ -15,9 +15,7 @@ class TypeRegistryForModelEnum(Enum):
     INPUT_OBJECT_TYPE_FOR_UPDATE = "input_object_type_for_update"
     INPUT_OBJECT_TYPE_FOR_SEARCH = "input_object_type_for_search"
     INPUT_OBJECT_TYPE_FOR_ORDER_BY = "input_object_type_for_order_by"
-    INPUT_OBJECT_TYPE_FOR_CONNECT = (
-        "input_object_type_for_connect"
-    )
+    INPUT_OBJECT_TYPE_FOR_CONNECT = "input_object_type_for_connect"
     INPUT_OBJECT_TYPE_FOR_CONNECT_DISCONNECT = (
         "input_object_type_for_connect_disconnect"
     )
@@ -69,7 +67,9 @@ class RegistryGlobal:
         self._model_registry: Dict[Any, Dict[TypeRegistryForModel, Any]] = {}
         self._field_registry: Dict[Any, Dict[TypeRegistryForField, Any]] = {}
 
-    def register_model( self, model: DjangoModel, type_to_registry: TypeRegistryForModel, cls ):
+    def register_model(
+        self, model: DjangoModel, type_to_registry: TypeRegistryForModel, cls
+    ):
         self._model_registry.setdefault(model, {})[type_to_registry] = cls
 
     def get_registry_for_model(self, model: DjangoModel):
@@ -81,7 +81,9 @@ class RegistryGlobal:
     def get_all_fields_registered(self):
         return self._field_registry
 
-    def register_field( self, field: DjangoField, type_to_registry: TypeRegistryForField, converted ):
+    def register_field(
+        self, field: DjangoField, type_to_registry: TypeRegistryForField, converted
+    ):
         self._field_registry.setdefault(field, {})[type_to_registry] = converted
 
     def get_registry_for_field(self, field: DjangoField):
@@ -91,7 +93,7 @@ class RegistryGlobal:
 registry = None
 
 
-def get_global_registry(name_registry:Union[str,None]=None) -> RegistryGlobal :
+def get_global_registry(name_registry: Union[str, None] = None) -> RegistryGlobal:
     if name_registry:
         custom_registry = globals().get(name_registry)
         if not custom_registry:

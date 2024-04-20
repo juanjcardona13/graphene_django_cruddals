@@ -2,12 +2,12 @@
 name: "🐞 Bug Report"
 description: "Submit the bug report here"
 title: "[🐛 Bug]: "
-labels: 
+labels:
   - bug
   - triage
-projects: 
+projects:
   - CRUDDALS
-assignees: 
+assignees:
   - juanjcardona13
 body:
   - type: markdown
@@ -58,6 +58,3 @@ body:
 
 
 ---
-
-
-
