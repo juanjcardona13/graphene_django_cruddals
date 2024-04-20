@@ -27,3 +27,4 @@ SecretStorage==3.3.3
 twine==5.0.0
 urllib3==2.2.1
 zipp==3.18.1
+-e ./
