@@ -2,10 +2,17 @@ from collections import OrderedDict
 from functools import singledispatch
 from typing import Type, Union
 
-import graphene
+from django.contrib.contenttypes.fields import (
+    GenericForeignKey,
+    GenericRel,
+    GenericRelation,
+)
 from django.db import models
 from django.db.models.fields import Field as DjangoField
 from django.utils.functional import Promise
+from graphql.pyutils import register_description
+
+import graphene
 from graphene import (
     ID,
     UUID,
@@ -20,30 +27,27 @@ from graphene import (
     JSONString,
     String,
     Time,
-    InputField
 )
-from graphql.pyutils import register_description
-
 from graphene_django_cruddals.registry_global import RegistryGlobal
 from graphene_django_cruddals.scalars_type import (
     IP,
     URL,
-    Binary,
     Duration,
     Email,
     IPv4,
     PositiveInt,
     Slug,
 )
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, GenericRel
 
 from .compat import HStoreField, JSONField, PGJSONField
 
 
-def get_filter_input_object_type(django_field: DjangoField, type_of_field, name: str) -> Type[graphene.InputObjectType]:
+def get_filter_input_object_type(
+    django_field: DjangoField, type_of_field, name: str
+) -> Type[graphene.InputObjectType]:
     input_fields = OrderedDict()
     lookups = django_field.get_lookups()
-    for name_lookup, lookup in lookups.items():
+    for name_lookup in lookups.keys():
         if name_lookup == "regex" or name_lookup == "iregex":
             input_fields[name_lookup] = graphene.InputField(type_=graphene.String)
         elif name_lookup == "in":
@@ -63,11 +67,11 @@ def get_filter_input_object_type(django_field: DjangoField, type_of_field, name:
 
 
 @singledispatch
-def convert_django_field_to_filter_input( field: DjangoField, registry: RegistryGlobal) -> Union[graphene.InputObjectType, Dynamic, None]:
+def convert_django_field_to_filter_input(
+    field: DjangoField, registry: RegistryGlobal
+) -> Union[graphene.InputObjectType, Dynamic, None]:
     raise Exception(
-        "Don't know how to convert the Django field {} ({})".format(
-            field, field.__class__
-        )
+        f"Don't know how to convert the Django field {field} ({field.__class__})"
     )
 
 
@@ -160,7 +164,9 @@ def convert_field_to_binary(field, registry: RegistryGlobal):
 @convert_django_field_to_filter_input.register(PGJSONField)
 @convert_django_field_to_filter_input.register(JSONField)
 def convert_pg_and_json_field_to_json_string(field, registry: RegistryGlobal):
-    JSONStringFilter = get_filter_input_object_type( field, JSONString, "JSONStringFilter" )
+    JSONStringFilter = get_filter_input_object_type(
+        field, JSONString, "JSONStringFilter"
+    )
     return JSONStringFilter()
 
 
@@ -190,7 +196,9 @@ def convert_field_to_ip(field, registry: RegistryGlobal):
 
 @convert_django_field_to_filter_input.register(models.PositiveIntegerField)
 def convert_field_to_positive_int(field, registry: RegistryGlobal):
-    PositiveIntFilter = get_filter_input_object_type( field, PositiveInt, "PositiveIntFilter" )
+    PositiveIntFilter = get_filter_input_object_type(
+        field, PositiveInt, "PositiveIntFilter"
+    )
     return PositiveIntFilter()
 
 
@@ -225,7 +233,9 @@ def convert_onetoone_field_to_djangomodel(field, registry: RegistryGlobal):
 @convert_django_field_to_filter_input.register(models.ManyToManyField)
 @convert_django_field_to_filter_input.register(models.ManyToManyRel)
 @convert_django_field_to_filter_input.register(models.ManyToOneRel)
-@convert_django_field_to_filter_input.register(GenericRelation) # Representa otro tipo ManyToOne
+@convert_django_field_to_filter_input.register(
+    GenericRelation
+)  # Representa otro tipo ManyToOne
 def convert_field_to_list_or_connection(field, registry: RegistryGlobal):
     model = field.related_model
 
@@ -265,14 +275,17 @@ def convert_field_to_djangomodel(field, registry: RegistryGlobal):
 
 @convert_django_field_to_filter_input.register(GenericForeignKey)
 def convert_field_to_union_type(field, registry: RegistryGlobal):
-    #TODO-Podría ser un GenericForeignKeyFilterInput, Similar a como se crea con el GenericForeignKeyInput
+    # TODO-Podría ser un GenericForeignKeyFilterInput, Similar a como se crea con el GenericForeignKeyInput
     return
 
 
-@convert_django_field_to_filter_input.register(GenericRel) # Representa otro tipo OneToMany
+@convert_django_field_to_filter_input.register(
+    GenericRel
+)  # Representa otro tipo OneToMany
 def convert_field_to__type(field, registry: RegistryGlobal):
     """TODO Add support"""
     return
+
 
 # Register Django lazy()-wrapped values as GraphQL description/help_text.
 # This is needed for using lazy translations, see https://github.com/graphql-python/graphql-core-next/issues/58.

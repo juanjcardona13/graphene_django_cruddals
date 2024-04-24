@@ -447,4 +447,3 @@ Contributions are what make the open-source community such an amazing place to l
 - [ ] Add collaboration
 - [ ] Add communication
 - [ ] Add networking
-
