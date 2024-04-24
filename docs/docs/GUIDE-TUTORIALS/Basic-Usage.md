@@ -1,4 +1,4 @@
-## 💡 Basic usage
+## <a id="uso"></a>💡 Basic usage
 
 To use it, simply create a new class that inherits "`CruddalsModel`"
 Suppose we have the following model.

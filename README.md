@@ -408,7 +408,8 @@ You can find the full documentation [here](https://graphene-django-cruddals.read
 
 ## <a name="license">📜 License</a>
 
-Distributed under the MIT License. See [LICENSE](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE) for more information.
+Distributed under the Apache License, Version 2.0. See [LICENSE]((https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE) ) for more information.
+
 
 ## <a name="contributing">❤️ Contributing</a>
 
