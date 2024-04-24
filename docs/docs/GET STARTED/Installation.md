@@ -64,7 +64,7 @@ If you have another system such as Windows or Mac or if you want more detailed i
 ## <a id="django"></a>Install Django
 To install Django, follow these steps:
 
- <!--you need to have Python installed on your system. If you have not installed Python, you can follow the steps in the previous section to install it.--> 
+ >You need to have Python installed on your system. If you have not installed Python, you can follow the steps in the previous section to install it.
 
 Create the folder where you want to install Django  
 `mkdir django_projects && cd django_projects`
