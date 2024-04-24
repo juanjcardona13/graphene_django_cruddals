@@ -42,7 +42,7 @@ The code of conduct applies to all interactions and contributions related to the
 
 ## 🤝 Conflict Resolution Team  
 
-Our conflict resolution team is here to help and ensure a safe and respectful environment in CRUDDALS. If you have any concerns related to the code of conduct or need help resolving an issue, our team will be happy to assist you.
+Our conflict resolution team is here to help and ensure a safe and respectful environment in CRUDDALS. If you have any concerns related to the code of conduct or need help resolving an issue, [our team will be happy to assist you.](#contact)
 
 ## 🕵️‍♂️ Reporting Mechanism 
 
@@ -70,7 +70,7 @@ In the event that someone violates our code of conduct, we will take action to a
 
 4. **Permanent Ban:** If violations persist or are particularly severe, and if there is no adequate response to previous measures, it may result in a permanent ban from participating in the CRUDDALS community.
 
-## 🛡️ Available Resources and Reporting Violations 
+## <a name="contact"></a>🛡️ Available Resources and Reporting Violations  
 
 If you have any concerns or wish to report a violation of the code of conduct, you can contact us through the following means:
 
