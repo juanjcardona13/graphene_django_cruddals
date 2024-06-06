@@ -381,3 +381,4 @@ sw.*
 *.swp
 
 schema_client_js
+!tests/schema_client_js

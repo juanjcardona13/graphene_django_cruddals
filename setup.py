@@ -5,10 +5,12 @@ from setuptools import find_packages, setup
 
 _version_re = re.compile(r"__version__\s+=\s+(.*)")
 
+VERSION = "0.0.0"
+
 with open("graphene_django_cruddals/__init__.py", "rb") as f:
-    VERSION = str(
-        ast.literal_eval(_version_re.search(f.read().decode("utf-8")).group(1))
-    )
+    _version_re_search = _version_re.search(f.read().decode("utf-8"))
+    if _version_re_search is not None:
+        VERSION = str(ast.literal_eval(_version_re_search.group(1)))
 
 tests_require = [
     "pytest>=7.3.1",
@@ -53,7 +55,7 @@ setup(
     ],
     keywords="api graphql crud graphene graphene-django cruddals",
     packages=find_packages(exclude=["tests", "examples", "examples.*"]),
-    install_requires=["graphene-django>=3.0.0", "mypy==1.9.0"],
+    install_requires=["graphene-django>=3.0.0", "graphene-cruddals"],
     setup_requires=["pytest-runner"],
     tests_require=tests_require,
     extras_require={

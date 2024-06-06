@@ -1,0 +1,2206 @@
+input ModelAInput {
+  id: ID
+  binaryFieldRequired: Binary
+  binaryFieldNullable: Binary
+  binaryFieldWithDefault: Binary
+
+  """binary_field_with_description"""
+  binaryFieldWithDescription: Binary
+  booleanFieldRequired: Boolean
+  booleanFieldNullable: Boolean
+  booleanFieldWithDefault: Boolean
+
+  """boolean_field_with_description"""
+  booleanFieldWithDescription: Boolean
+  charFieldRequired: String
+  charFieldNullable: String
+  charFieldWithDefault: String
+
+  """char_field_with_description"""
+  charFieldWithDescription: String
+  choiceFieldRequired: TestsModelAChoiceFieldRequiredChoices
+  choiceFieldNullable: TestsModelAChoiceFieldNullableChoices
+  choiceFieldWithDefault: TestsModelAChoiceFieldWithDefaultChoices
+
+  """choice_field_with_description"""
+  choiceFieldWithDescription: TestsModelAChoiceFieldWithDescriptionChoices
+  dateFieldRequired: Date
+  dateFieldNullable: Date
+
+  """date_field_with_description"""
+  dateFieldWithDescription: Date
+  dateTimeFieldRequired: DateTime
+  dateTimeFieldNullable: DateTime
+
+  """date_time_field_with_description"""
+  dateTimeFieldWithDescription: DateTime
+  timeFieldRequired: Time
+  timeFieldNullable: Time
+
+  """time_field_with_description"""
+  timeFieldWithDescription: Time
+  decimalFieldRequired: Decimal
+  decimalFieldNullable: Decimal
+  decimalFieldWithDefault: Decimal
+
+  """decimal_field_with_description"""
+  decimalFieldWithDescription: Decimal
+  durationFieldRequired: Duration
+  durationFieldNullable: Duration
+  durationFieldWithDefault: Duration
+
+  """duration_field_with_description"""
+  durationFieldWithDescription: Duration
+  emailFieldRequired: Email
+  emailFieldNullable: Email
+  emailFieldWithDefault: Email
+
+  """email_field_with_description"""
+  emailFieldWithDescription: Email
+  floatFieldRequired: Float
+  floatFieldNullable: Float
+  floatFieldWithDefault: Float
+
+  """float_field_with_description"""
+  floatFieldWithDescription: Float
+  integerFieldRequired: Int
+  integerFieldNullable: Int
+  integerFieldWithDefault: Int
+
+  """integer_field_with_description"""
+  integerFieldWithDescription: Int
+  positiveIntegerFieldRequired: PositiveInt
+  positiveIntegerFieldNullable: PositiveInt
+  positiveIntegerFieldWithDefault: PositiveInt
+
+  """positive_integer_field_with_description"""
+  positiveIntegerFieldWithDescription: PositiveInt
+  smallIntegerFieldRequired: Int
+  smallIntegerFieldNullable: Int
+  smallIntegerFieldWithDefault: Int
+
+  """small_integer_field_with_description"""
+  smallIntegerFieldWithDescription: Int
+  positiveSmallIntegerFieldRequired: Int
+  positiveSmallIntegerFieldNullable: Int
+  positiveSmallIntegerFieldWithDefault: Int
+
+  """positive_small_integer_field_with_description"""
+  positiveSmallIntegerFieldWithDescription: Int
+  bigIntegerFieldRequired: BigInt
+  bigIntegerFieldNullable: BigInt
+  bigIntegerFieldWithDefault: BigInt
+
+  """big_integer_field_with_description"""
+  bigIntegerFieldWithDescription: BigInt
+  positiveBigIntegerFieldRequired: BigInt
+  positiveBigIntegerFieldNullable: BigInt
+  positiveBigIntegerFieldWithDefault: BigInt
+
+  """positive_big_integer_field_with_description"""
+  positiveBigIntegerFieldWithDescription: BigInt
+  slugFieldRequired: Slug
+  slugFieldNullable: Slug
+  slugFieldWithDefault: Slug
+
+  """slug_field_with_description"""
+  slugFieldWithDescription: Slug
+  textFieldRequired: String
+  textFieldNullable: String
+  textFieldWithDefault: String
+
+  """text_field_with_description"""
+  textFieldWithDescription: String
+  urlFieldRequired: URL
+  urlFieldNullable: URL
+  urlFieldWithDefault: URL
+
+  """url_field_with_description"""
+  urlFieldWithDescription: URL
+  genericIpAddressFieldRequired: IPv4
+  genericIpAddressFieldNullable: IPv4
+  genericIpAddressFieldWithDefault: IPv4
+  ipAddressFieldRequired: IP
+  ipAddressFieldNullable: IP
+  ipAddressFieldWithDefault: IP
+  uuidFieldRequired: UUID
+  uuidFieldNullable: UUID
+  uuidFieldWithDefault: UUID
+
+  """uuid_field_with_description"""
+  uuidFieldWithDescription: UUID
+  foreignKeyFieldRequired: ID
+  foreignKeyFieldNullable: ID
+
+  """foreign_key_field_with_description"""
+  foreignKeyFieldWithDescription: ID
+  foreignKeyFieldWithoutRelatedName: ID
+  oneToOneFieldRequired: ID
+  oneToOneFieldNullable: ID
+
+  """one_to_one_field_with_description"""
+  oneToOneFieldWithDescription: ID
+  oneToOneFieldWithoutRelatedName: ID
+
+  """The content type"""
+  contentType: ID
+
+  """The object id"""
+  objectId: PositiveInt
+  manyToManyFieldRequired: [ID]
+  manyToManyFieldNullable: [ID]
+
+  """many_to_many_field_with_description"""
+  manyToManyFieldWithDescription: [ID]
+  manyToManyFieldWithoutRelatedName: [ID]
+}
+
+"""BinaryArray is used to convert a Django BinaryField to the string form"""
+scalar Binary
+
+"""An enumeration."""
+enum TestsModelAChoiceFieldRequiredChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+"""An enumeration."""
+enum TestsModelAChoiceFieldNullableChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+"""An enumeration."""
+enum TestsModelAChoiceFieldWithDefaultChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+"""An enumeration."""
+enum TestsModelAChoiceFieldWithDescriptionChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+"""
+The `Date` scalar type represents a Date
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Date
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar DateTime
+
+"""
+The `Time` scalar type represents a Time value as
+specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Time
+
+"""The `Decimal` scalar type represents a python Decimal."""
+scalar Decimal
+
+"""
+Duration fields in Django are stored as timedelta in Python,
+and as a duration in the Database. We will represent them as
+a total number of seconds in GraphQL.
+"""
+scalar Duration
+
+"""
+A field whose value conforms to the standard
+internet email address format as specified in
+HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+"""
+scalar Email
+
+"""Integers that will have a value of 0 or more."""
+scalar PositiveInt
+
+"""
+The `BigInt` scalar type represents non-fractional whole numeric values.
+`BigInt` is not constrained to 32-bit like the `Int` type and thus is a less
+compatible type.
+"""
+scalar BigInt
+
+"""
+Slug is a newspaper term. A slug is a short label for something, containing only letters, numbers, underscores or hyphens. They’re generally used in URLs.
+"""
+scalar Slug
+
+"""
+A field whose value conforms to the standard URL format as specified in RFC3986: https://www.ietf.org/rfc/rfc3986.txt.
+"""
+scalar URL
+
+"""
+A field whose value is a IPv4 address: https://en.wikipedia.org/wiki/IPv4.
+"""
+scalar IPv4
+
+"""
+A field whose value is either an IPv4 or IPv6 address: https://en.wikipedia.org/wiki/IP_address.
+"""
+scalar IP
+
+"""
+Leverages the internal Python implementation of UUID (uuid.UUID) to provide native UUID objects
+in fields, resolvers and input.
+"""
+scalar UUID
+
+type Query {
+  readModelH(where: FilterModelHInput!): ModelHType
+  listModelHs: [ModelHType!]
+  searchModelHs(where: FilterModelHInput, orderBy: OrderByModelHInput, paginationConfig: PaginationConfigInput): ModelHPaginatedType
+  readModelG(where: FilterModelGInput!): ModelGType
+  listModelGs: [ModelGType!]
+  searchModelGs(where: FilterModelGInput, orderBy: OrderByModelGInput, paginationConfig: PaginationConfigInput): ModelGPaginatedType
+  readModelF(where: FilterModelFInput!): ModelFType
+  listModelFs: [ModelFType!]
+  searchModelFs(where: FilterModelFInput, orderBy: OrderByModelFInput, paginationConfig: PaginationConfigInput): ModelFPaginatedType
+  readModelE(where: FilterModelEInput!): ModelEType
+  listModelEs: [ModelEType!]
+  searchModelEs(where: FilterModelEInput, orderBy: OrderByModelEInput, paginationConfig: PaginationConfigInput): ModelEPaginatedType
+  readModelD(where: FilterModelDInput!): ModelDType
+  listModelDs: [ModelDType!]
+  searchModelDs(where: FilterModelDInput, orderBy: OrderByModelDInput, paginationConfig: PaginationConfigInput): ModelDPaginatedType
+  readModelC(where: FilterModelCInput!): ModelCType
+  listModelCs: [ModelCType!]
+  searchModelCs(where: FilterModelCInput, orderBy: OrderByModelCInput, paginationConfig: PaginationConfigInput): ModelCPaginatedType
+  readModelB(where: FilterModelBInput!): ModelBType
+  listModelBs: [ModelBType!]
+  searchModelBs(where: FilterModelBInput, orderBy: OrderByModelBInput, paginationConfig: PaginationConfigInput): ModelBPaginatedType
+  readModelA(where: FilterModelAInput!): ModelAType
+  listModelAs: [ModelAType!]
+  searchModelAs(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+}
+
+type ModelHType {
+  id: ID
+  name: String
+  foreignKeyField: ModelGType
+  fkFieldCustom: PositiveInt
+  oneToOneField: ModelGType
+  paginatedManyToManyField(where: FilterModelGInput, orderBy: OrderByModelGInput, paginationConfig: PaginationConfigInput): ModelGPaginatedType
+  genericForeignKey: ModelHGenericForeignKeyUnionType
+}
+
+type ModelGType {
+  extraFieldObjectType: String
+  id: ID
+  name: String
+  paginatedForeignKeyHRelated(where: FilterModelHInput, orderBy: OrderByModelHInput, paginationConfig: PaginationConfigInput): ModelHPaginatedType
+  oneToOneHRelated: ModelHType
+  paginatedManyToManyHRelated(where: FilterModelHInput, orderBy: OrderByModelHInput, paginationConfig: PaginationConfigInput): ModelHPaginatedType
+}
+
+type ModelHPaginatedType implements PaginationInterface {
+  objects: [ModelHType]
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+"""Defines a GraphQL Interface for pagination-related attributes."""
+interface PaginationInterface {
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+input FilterModelHInput {
+  id: IDFilter
+  name: StringFilter
+  foreignKeyField: FilterModelGInput
+  fkFieldCustom: PositiveIntFilter
+  oneToOneField: FilterModelGInput
+  manyToManyField: FilterModelGInput
+  AND: [FilterModelHInput]
+  OR: [FilterModelHInput]
+  NOT: FilterModelHInput
+}
+
+input IDFilter {
+  exact: ID
+  iexact: ID
+  gt: ID
+  gte: ID
+  lt: ID
+  lte: ID
+  in: [ID]
+  contains: ID
+  icontains: ID
+  startswith: ID
+  istartswith: ID
+  endswith: ID
+  iendswith: ID
+  range: [ID]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input StringFilter {
+  exact: String
+  iexact: String
+  gt: String
+  gte: String
+  lt: String
+  lte: String
+  in: [String]
+  contains: String
+  icontains: String
+  startswith: String
+  istartswith: String
+  endswith: String
+  iendswith: String
+  range: [String]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input FilterModelGInput {
+  extraFieldFilterInputObjectType: String
+  id: IDFilter
+  name: StringFilter
+  foreignKeyHRelated: FilterModelHInput
+  oneToOneHRelated: FilterModelHInput
+  manyToManyHRelated: FilterModelHInput
+  AND: [FilterModelGInput]
+  OR: [FilterModelGInput]
+  NOT: FilterModelGInput
+}
+
+input PositiveIntFilter {
+  exact: PositiveInt
+  iexact: PositiveInt
+  gt: PositiveInt
+  gte: PositiveInt
+  lt: PositiveInt
+  lte: PositiveInt
+  in: [PositiveInt]
+  contains: PositiveInt
+  icontains: PositiveInt
+  startswith: PositiveInt
+  istartswith: PositiveInt
+  endswith: PositiveInt
+  iendswith: PositiveInt
+  range: [PositiveInt]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input OrderByModelHInput {
+  id: OrderEnum
+  name: OrderStringEnum
+  foreignKeyField: OrderByModelGInput
+  fkFieldCustom: OrderEnum
+  oneToOneField: OrderByModelGInput
+}
+
+enum OrderEnum {
+  ASC
+  DESC
+}
+
+enum OrderStringEnum {
+  ASC
+  DESC
+  IASC
+  IDESC
+}
+
+input OrderByModelGInput {
+  extraFieldOrderByInputObjectType: String
+  id: OrderEnum
+  name: OrderStringEnum
+  oneToOneHRelated: OrderByModelHInput
+}
+
+input PaginationConfigInput {
+  page: Int = 1
+  itemsPerPage: IntOrAll = "All"
+}
+
+"""The page size can be int or 'All'"""
+scalar IntOrAll
+
+type ModelGPaginatedType implements PaginationInterface {
+  objects: [ModelGType]
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+union ModelHGenericForeignKeyUnionType = ModelAType | ModelBType | ModelCType | ModelDType | ModelEType | ModelFType | ModelGType | ModelHType
+
+type ModelAType {
+  id: ID
+  binaryFieldRequired: Binary!
+  binaryFieldNotEditable: Binary!
+  binaryFieldNullable: Binary
+  binaryFieldWithDefault: Binary
+
+  """binary_field_with_description"""
+  binaryFieldWithDescription: Binary!
+  booleanFieldRequired: Boolean!
+  booleanFieldNotEditable: Boolean!
+  booleanFieldNullable: Boolean
+  booleanFieldWithDefault: Boolean
+
+  """boolean_field_with_description"""
+  booleanFieldWithDescription: Boolean!
+  charFieldRequired: String!
+  charFieldNotEditable: String!
+  charFieldNullable: String
+  charFieldWithDefault: String
+
+  """char_field_with_description"""
+  charFieldWithDescription: String!
+  choiceFieldRequired: TestsModelAChoiceFieldRequiredChoices!
+  choiceFieldNotEditable: TestsModelAChoiceFieldNotEditableChoices!
+  choiceFieldNullable: TestsModelAChoiceFieldNullableChoices
+  choiceFieldWithDefault: TestsModelAChoiceFieldWithDefaultChoices
+
+  """choice_field_with_description"""
+  choiceFieldWithDescription: TestsModelAChoiceFieldWithDescriptionChoices!
+  dateFieldRequired: Date!
+  dateFieldNotEditable: Date!
+  dateFieldNullable: Date
+  dateFieldWithDefault: Date
+
+  """date_field_with_description"""
+  dateFieldWithDescription: Date!
+  dateTimeFieldRequired: DateTime!
+  dateTimeFieldNotEditable: DateTime!
+  dateTimeFieldNullable: DateTime
+  dateTimeFieldWithDefault: DateTime
+
+  """date_time_field_with_description"""
+  dateTimeFieldWithDescription: DateTime!
+  timeFieldRequired: Time!
+  timeFieldNotEditable: Time!
+  timeFieldNullable: Time
+  timeFieldWithDefault: Time
+
+  """time_field_with_description"""
+  timeFieldWithDescription: Time!
+  decimalFieldRequired: Decimal!
+  decimalFieldNotEditable: Decimal!
+  decimalFieldNullable: Decimal
+  decimalFieldWithDefault: Decimal
+
+  """decimal_field_with_description"""
+  decimalFieldWithDescription: Decimal!
+  durationFieldRequired: Duration!
+  durationFieldNotEditable: Duration!
+  durationFieldNullable: Duration
+  durationFieldWithDefault: Duration
+
+  """duration_field_with_description"""
+  durationFieldWithDescription: Duration!
+  emailFieldRequired: Email!
+  emailFieldNotEditable: Email!
+  emailFieldNullable: Email
+  emailFieldWithDefault: Email
+
+  """email_field_with_description"""
+  emailFieldWithDescription: Email!
+  floatFieldRequired: Float!
+  floatFieldNotEditable: Float!
+  floatFieldNullable: Float
+  floatFieldWithDefault: Float
+
+  """float_field_with_description"""
+  floatFieldWithDescription: Float!
+  integerFieldRequired: Int!
+  integerFieldNotEditable: Int!
+  integerFieldNullable: Int
+  integerFieldWithDefault: Int
+
+  """integer_field_with_description"""
+  integerFieldWithDescription: Int!
+  positiveIntegerFieldRequired: PositiveInt!
+  positiveIntegerFieldNotEditable: PositiveInt!
+  positiveIntegerFieldNullable: PositiveInt
+  positiveIntegerFieldWithDefault: PositiveInt
+
+  """positive_integer_field_with_description"""
+  positiveIntegerFieldWithDescription: PositiveInt!
+  smallIntegerFieldRequired: Int!
+  smallIntegerFieldNotEditable: Int!
+  smallIntegerFieldNullable: Int
+  smallIntegerFieldWithDefault: Int
+
+  """small_integer_field_with_description"""
+  smallIntegerFieldWithDescription: Int!
+  positiveSmallIntegerFieldRequired: Int!
+  positiveSmallIntegerFieldNotEditable: Int!
+  positiveSmallIntegerFieldNullable: Int
+  positiveSmallIntegerFieldWithDefault: Int
+
+  """positive_small_integer_field_with_description"""
+  positiveSmallIntegerFieldWithDescription: Int!
+  bigIntegerFieldRequired: BigInt!
+  bigIntegerFieldNotEditable: BigInt!
+  bigIntegerFieldNullable: BigInt
+  bigIntegerFieldWithDefault: BigInt
+
+  """big_integer_field_with_description"""
+  bigIntegerFieldWithDescription: BigInt!
+  positiveBigIntegerFieldRequired: BigInt!
+  positiveBigIntegerFieldNotEditable: BigInt!
+  positiveBigIntegerFieldNullable: BigInt
+  positiveBigIntegerFieldWithDefault: BigInt
+
+  """positive_big_integer_field_with_description"""
+  positiveBigIntegerFieldWithDescription: BigInt!
+  slugFieldRequired: Slug!
+  slugFieldNotEditable: Slug!
+  slugFieldNullable: Slug
+  slugFieldWithDefault: Slug
+
+  """slug_field_with_description"""
+  slugFieldWithDescription: Slug!
+  textFieldRequired: String!
+  textFieldNotEditable: String!
+  textFieldNullable: String
+  textFieldWithDefault: String
+
+  """text_field_with_description"""
+  textFieldWithDescription: String!
+  urlFieldRequired: URL!
+  urlFieldNotEditable: URL!
+  urlFieldNullable: URL
+  urlFieldWithDefault: URL
+
+  """url_field_with_description"""
+  urlFieldWithDescription: URL!
+  genericIpAddressFieldRequired: IPv4!
+  genericIpAddressFieldNotEditable: IPv4!
+  genericIpAddressFieldNullable: IPv4
+  genericIpAddressFieldWithDefault: IPv4
+  ipAddressFieldRequired: IP!
+  ipAddressFieldNotEditable: IP!
+  ipAddressFieldNullable: IP
+  ipAddressFieldWithDefault: IP
+  uuidFieldRequired: UUID!
+  uuidFieldNotEditable: UUID!
+  uuidFieldNullable: UUID
+  uuidFieldWithDefault: UUID
+
+  """uuid_field_with_description"""
+  uuidFieldWithDescription: UUID!
+  foreignKeyFieldRequired: ModelAType!
+  foreignKeyFieldNullable: ModelAType
+
+  """foreign_key_field_with_description"""
+  foreignKeyFieldWithDescription: ModelAType!
+  foreignKeyFieldWithoutRelatedName: ModelAType!
+  oneToOneFieldRequired: ModelAType!
+  oneToOneFieldNullable: ModelAType
+
+  """one_to_one_field_with_description"""
+  oneToOneFieldWithDescription: ModelAType!
+  oneToOneFieldWithoutRelatedName: ModelAType!
+
+  """The object id"""
+  objectId: PositiveInt
+  paginatedManyToManyFieldRequired(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+  paginatedManyToManyFieldNullable(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+
+  """many_to_many_field_with_description"""
+  paginatedManyToManyFieldWithDescription(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+  paginatedManyToManyFieldWithoutRelatedName(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+  genericForeignKeyField: ModelAGenericForeignKeyFieldUnionType
+  paginatedGenericRelationField(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+  paginatedForeignKeyRelated(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+  paginatedForeignKeyNullableRelated(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+
+  """foreign_key_field_with_description"""
+  paginatedForeignKeyWithDescriptionRelated(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+  oneToOneRelated: ModelAType
+  oneToOneNullableRelated: ModelAType
+  oneToOneWithDescriptionRelated: ModelAType
+  paginatedManyToManyRelated(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+  paginatedManyToManyNullableRelated(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+
+  """many_to_many_field_with_description"""
+  paginatedManyToManyWithDescriptionRelated(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+  genericRelationRelated: ModelAType
+  paginatedForeignKeyBRelated(where: FilterModelBInput, orderBy: OrderByModelBInput, paginationConfig: PaginationConfigInput): ModelBPaginatedType
+  oneToOneBRelated: ModelBType
+  paginatedManyToManyBRelated(where: FilterModelBInput, orderBy: OrderByModelBInput, paginationConfig: PaginationConfigInput): ModelBPaginatedType
+}
+
+"""An enumeration."""
+enum TestsModelAChoiceFieldNotEditableChoices {
+  """A"""
+  A
+
+  """B"""
+  B
+}
+
+type ModelAPaginatedType implements PaginationInterface {
+  objects: [ModelAType]
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+input FilterModelAInput {
+  id: IDFilter
+  booleanFieldRequired: BooleanFilter
+  booleanFieldNotEditable: BooleanFilter
+  booleanFieldNullable: BooleanFilter
+  booleanFieldWithDefault: BooleanFilter
+  booleanFieldWithDescription: BooleanFilter
+  charFieldRequired: StringFilter
+  charFieldNotEditable: StringFilter
+  charFieldNullable: StringFilter
+  charFieldWithDefault: StringFilter
+  charFieldWithDescription: StringFilter
+  choiceFieldRequired: StringFilter
+  choiceFieldNotEditable: StringFilter
+  choiceFieldNullable: StringFilter
+  choiceFieldWithDefault: StringFilter
+  choiceFieldWithDescription: StringFilter
+  dateFieldRequired: DateFilter
+  dateFieldNotEditable: DateFilter
+  dateFieldNullable: DateFilter
+  dateFieldWithDefault: DateFilter
+  dateFieldWithDescription: DateFilter
+  dateTimeFieldRequired: DateTimeFilter
+  dateTimeFieldNotEditable: DateTimeFilter
+  dateTimeFieldNullable: DateTimeFilter
+  dateTimeFieldWithDefault: DateTimeFilter
+  dateTimeFieldWithDescription: DateTimeFilter
+  timeFieldRequired: TimeFilter
+  timeFieldNotEditable: TimeFilter
+  timeFieldNullable: TimeFilter
+  timeFieldWithDefault: TimeFilter
+  timeFieldWithDescription: TimeFilter
+  decimalFieldRequired: DecimalFilter
+  decimalFieldNotEditable: DecimalFilter
+  decimalFieldNullable: DecimalFilter
+  decimalFieldWithDefault: DecimalFilter
+  decimalFieldWithDescription: DecimalFilter
+  durationFieldRequired: DurationFilter
+  durationFieldNotEditable: DurationFilter
+  durationFieldNullable: DurationFilter
+  durationFieldWithDefault: DurationFilter
+  durationFieldWithDescription: DurationFilter
+  emailFieldRequired: EmailFilter
+  emailFieldNotEditable: EmailFilter
+  emailFieldNullable: EmailFilter
+  emailFieldWithDefault: EmailFilter
+  emailFieldWithDescription: EmailFilter
+  floatFieldRequired: FloatFilter
+  floatFieldNotEditable: FloatFilter
+  floatFieldNullable: FloatFilter
+  floatFieldWithDefault: FloatFilter
+  floatFieldWithDescription: FloatFilter
+  integerFieldRequired: IntFilter
+  integerFieldNotEditable: IntFilter
+  integerFieldNullable: IntFilter
+  integerFieldWithDefault: IntFilter
+  integerFieldWithDescription: IntFilter
+  positiveIntegerFieldRequired: PositiveIntFilter
+  positiveIntegerFieldNotEditable: PositiveIntFilter
+  positiveIntegerFieldNullable: PositiveIntFilter
+  positiveIntegerFieldWithDefault: PositiveIntFilter
+  positiveIntegerFieldWithDescription: PositiveIntFilter
+  smallIntegerFieldRequired: IntFilter
+  smallIntegerFieldNotEditable: IntFilter
+  smallIntegerFieldNullable: IntFilter
+  smallIntegerFieldWithDefault: IntFilter
+  smallIntegerFieldWithDescription: IntFilter
+  positiveSmallIntegerFieldRequired: IntFilter
+  positiveSmallIntegerFieldNotEditable: IntFilter
+  positiveSmallIntegerFieldNullable: IntFilter
+  positiveSmallIntegerFieldWithDefault: IntFilter
+  positiveSmallIntegerFieldWithDescription: IntFilter
+  bigIntegerFieldRequired: BigIntFilter
+  bigIntegerFieldNotEditable: BigIntFilter
+  bigIntegerFieldNullable: BigIntFilter
+  bigIntegerFieldWithDefault: BigIntFilter
+  bigIntegerFieldWithDescription: BigIntFilter
+  positiveBigIntegerFieldRequired: BigIntFilter
+  positiveBigIntegerFieldNotEditable: BigIntFilter
+  positiveBigIntegerFieldNullable: BigIntFilter
+  positiveBigIntegerFieldWithDefault: BigIntFilter
+  positiveBigIntegerFieldWithDescription: BigIntFilter
+  slugFieldRequired: SlugFilter
+  slugFieldNotEditable: SlugFilter
+  slugFieldNullable: SlugFilter
+  slugFieldWithDefault: SlugFilter
+  slugFieldWithDescription: SlugFilter
+  textFieldRequired: StringFilter
+  textFieldNotEditable: StringFilter
+  textFieldNullable: StringFilter
+  textFieldWithDefault: StringFilter
+  textFieldWithDescription: StringFilter
+  urlFieldRequired: URLFilter
+  urlFieldNotEditable: URLFilter
+  urlFieldNullable: URLFilter
+  urlFieldWithDefault: URLFilter
+  urlFieldWithDescription: URLFilter
+  genericIpAddressFieldRequired: IPFilter
+  genericIpAddressFieldNotEditable: IPFilter
+  genericIpAddressFieldNullable: IPFilter
+  genericIpAddressFieldWithDefault: IPFilter
+  ipAddressFieldRequired: IPv4Filter
+  ipAddressFieldNotEditable: IPv4Filter
+  ipAddressFieldNullable: IPv4Filter
+  ipAddressFieldWithDefault: IPv4Filter
+  uuidFieldRequired: UUIDFilter
+  uuidFieldNotEditable: UUIDFilter
+  uuidFieldNullable: UUIDFilter
+  uuidFieldWithDefault: UUIDFilter
+  uuidFieldWithDescription: UUIDFilter
+  foreignKeyFieldRequired: FilterModelAInput
+  foreignKeyFieldNullable: FilterModelAInput
+  foreignKeyFieldWithDescription: FilterModelAInput
+  foreignKeyFieldWithoutRelatedName: FilterModelAInput
+  objectId: PositiveIntFilter
+  manyToManyFieldRequired: FilterModelAInput
+  manyToManyFieldNullable: FilterModelAInput
+  manyToManyFieldWithDescription: FilterModelAInput
+  manyToManyFieldWithoutRelatedName: FilterModelAInput
+  genericRelationField: FilterModelAInput
+  foreignKeyRelated: FilterModelAInput
+  foreignKeyNullableRelated: FilterModelAInput
+  foreignKeyWithDescriptionRelated: FilterModelAInput
+  oneToOneRelated: FilterModelAInput
+  oneToOneNullableRelated: FilterModelAInput
+  oneToOneWithDescriptionRelated: FilterModelAInput
+  manyToManyRelated: FilterModelAInput
+  manyToManyNullableRelated: FilterModelAInput
+  manyToManyWithDescriptionRelated: FilterModelAInput
+  foreignKeyBRelated: FilterModelBInput
+  oneToOneBRelated: FilterModelBInput
+  manyToManyBRelated: FilterModelBInput
+  AND: [FilterModelAInput]
+  OR: [FilterModelAInput]
+  NOT: FilterModelAInput
+}
+
+input BooleanFilter {
+  exact: Boolean
+  iexact: Boolean
+  gt: Boolean
+  gte: Boolean
+  lt: Boolean
+  lte: Boolean
+  in: [Boolean]
+  contains: Boolean
+  icontains: Boolean
+  startswith: Boolean
+  istartswith: Boolean
+  endswith: Boolean
+  iendswith: Boolean
+  range: [Boolean]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input DateFilter {
+  exact: Date
+  iexact: Date
+  gt: Date
+  gte: Date
+  lt: Date
+  lte: Date
+  in: [Date]
+  contains: Date
+  icontains: Date
+  startswith: Date
+  istartswith: Date
+  endswith: Date
+  iendswith: Date
+  range: [Date]
+  isnull: Boolean
+  regex: String
+  iregex: String
+  year: Date
+  month: Date
+  day: Date
+  weekDay: Date
+  isoWeekDay: Date
+  week: Date
+  isoYear: Date
+  quarter: Date
+}
+
+input DateTimeFilter {
+  exact: DateTime
+  iexact: DateTime
+  gt: DateTime
+  gte: DateTime
+  lt: DateTime
+  lte: DateTime
+  in: [DateTime]
+  contains: DateTime
+  icontains: DateTime
+  startswith: DateTime
+  istartswith: DateTime
+  endswith: DateTime
+  iendswith: DateTime
+  range: [DateTime]
+  isnull: Boolean
+  regex: String
+  iregex: String
+  year: DateTime
+  month: DateTime
+  day: DateTime
+  weekDay: DateTime
+  isoWeekDay: DateTime
+  week: DateTime
+  isoYear: DateTime
+  quarter: DateTime
+  hour: DateTime
+  minute: DateTime
+  second: DateTime
+  date: DateTime
+  time: DateTime
+}
+
+input TimeFilter {
+  exact: Time
+  iexact: Time
+  gt: Time
+  gte: Time
+  lt: Time
+  lte: Time
+  in: [Time]
+  contains: Time
+  icontains: Time
+  startswith: Time
+  istartswith: Time
+  endswith: Time
+  iendswith: Time
+  range: [Time]
+  isnull: Boolean
+  regex: String
+  iregex: String
+  hour: Time
+  minute: Time
+  second: Time
+}
+
+input DecimalFilter {
+  exact: Decimal
+  iexact: Decimal
+  gt: Decimal
+  gte: Decimal
+  lt: Decimal
+  lte: Decimal
+  in: [Decimal]
+  contains: Decimal
+  icontains: Decimal
+  startswith: Decimal
+  istartswith: Decimal
+  endswith: Decimal
+  iendswith: Decimal
+  range: [Decimal]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input DurationFilter {
+  exact: Duration
+  iexact: Duration
+  gt: Duration
+  gte: Duration
+  lt: Duration
+  lte: Duration
+  in: [Duration]
+  contains: Duration
+  icontains: Duration
+  startswith: Duration
+  istartswith: Duration
+  endswith: Duration
+  iendswith: Duration
+  range: [Duration]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input EmailFilter {
+  exact: Email
+  iexact: Email
+  gt: Email
+  gte: Email
+  lt: Email
+  lte: Email
+  in: [Email]
+  contains: Email
+  icontains: Email
+  startswith: Email
+  istartswith: Email
+  endswith: Email
+  iendswith: Email
+  range: [Email]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input FloatFilter {
+  exact: Float
+  iexact: Float
+  gt: Float
+  gte: Float
+  lt: Float
+  lte: Float
+  in: [Float]
+  contains: Float
+  icontains: Float
+  startswith: Float
+  istartswith: Float
+  endswith: Float
+  iendswith: Float
+  range: [Float]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input IntFilter {
+  exact: Int
+  iexact: Int
+  gt: Int
+  gte: Int
+  lt: Int
+  lte: Int
+  in: [Int]
+  contains: Int
+  icontains: Int
+  startswith: Int
+  istartswith: Int
+  endswith: Int
+  iendswith: Int
+  range: [Int]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input BigIntFilter {
+  exact: BigInt
+  iexact: BigInt
+  gt: BigInt
+  gte: BigInt
+  lt: BigInt
+  lte: BigInt
+  in: [BigInt]
+  contains: BigInt
+  icontains: BigInt
+  startswith: BigInt
+  istartswith: BigInt
+  endswith: BigInt
+  iendswith: BigInt
+  range: [BigInt]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input SlugFilter {
+  exact: Slug
+  iexact: Slug
+  gt: Slug
+  gte: Slug
+  lt: Slug
+  lte: Slug
+  in: [Slug]
+  contains: Slug
+  icontains: Slug
+  startswith: Slug
+  istartswith: Slug
+  endswith: Slug
+  iendswith: Slug
+  range: [Slug]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input URLFilter {
+  exact: URL
+  iexact: URL
+  gt: URL
+  gte: URL
+  lt: URL
+  lte: URL
+  in: [URL]
+  contains: URL
+  icontains: URL
+  startswith: URL
+  istartswith: URL
+  endswith: URL
+  iendswith: URL
+  range: [URL]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input IPFilter {
+  exact: IP
+  iexact: IP
+  gt: IP
+  gte: IP
+  lt: IP
+  lte: IP
+  in: [IP]
+  contains: IP
+  icontains: IP
+  startswith: IP
+  istartswith: IP
+  endswith: IP
+  iendswith: IP
+  range: [IP]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input IPv4Filter {
+  exact: IPv4
+  iexact: IPv4
+  gt: IPv4
+  gte: IPv4
+  lt: IPv4
+  lte: IPv4
+  in: [IPv4]
+  contains: IPv4
+  icontains: IPv4
+  startswith: IPv4
+  istartswith: IPv4
+  endswith: IPv4
+  iendswith: IPv4
+  range: [IPv4]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input UUIDFilter {
+  exact: UUID
+  iexact: UUID
+  gt: UUID
+  gte: UUID
+  lt: UUID
+  lte: UUID
+  in: [UUID]
+  contains: UUID
+  icontains: UUID
+  startswith: UUID
+  istartswith: UUID
+  endswith: UUID
+  iendswith: UUID
+  range: [UUID]
+  isnull: Boolean
+  regex: String
+  iregex: String
+}
+
+input FilterModelBInput {
+  id: IDFilter
+  foreignKeyField: FilterModelAInput
+  oneToOneField: FilterModelAInput
+  manyToManyField: FilterModelAInput
+  AND: [FilterModelBInput]
+  OR: [FilterModelBInput]
+  NOT: FilterModelBInput
+}
+
+input OrderByModelAInput {
+  id: OrderEnum
+  booleanFieldRequired: OrderEnum
+  booleanFieldNotEditable: OrderEnum
+  booleanFieldNullable: OrderEnum
+  booleanFieldWithDefault: OrderEnum
+  booleanFieldWithDescription: OrderEnum
+  charFieldRequired: OrderStringEnum
+  charFieldNotEditable: OrderStringEnum
+  charFieldNullable: OrderStringEnum
+  charFieldWithDefault: OrderStringEnum
+  charFieldWithDescription: OrderStringEnum
+  choiceFieldRequired: OrderStringEnum
+  choiceFieldNotEditable: OrderStringEnum
+  choiceFieldNullable: OrderStringEnum
+  choiceFieldWithDefault: OrderStringEnum
+  choiceFieldWithDescription: OrderStringEnum
+  dateFieldRequired: OrderEnum
+  dateFieldNotEditable: OrderEnum
+  dateFieldNullable: OrderEnum
+  dateFieldWithDefault: OrderEnum
+  dateFieldWithDescription: OrderEnum
+  dateTimeFieldRequired: OrderEnum
+  dateTimeFieldNotEditable: OrderEnum
+  dateTimeFieldNullable: OrderEnum
+  dateTimeFieldWithDefault: OrderEnum
+  dateTimeFieldWithDescription: OrderEnum
+  timeFieldRequired: OrderEnum
+  timeFieldNotEditable: OrderEnum
+  timeFieldNullable: OrderEnum
+  timeFieldWithDefault: OrderEnum
+  timeFieldWithDescription: OrderEnum
+  decimalFieldRequired: OrderEnum
+  decimalFieldNotEditable: OrderEnum
+  decimalFieldNullable: OrderEnum
+  decimalFieldWithDefault: OrderEnum
+  decimalFieldWithDescription: OrderEnum
+  durationFieldRequired: OrderEnum
+  durationFieldNotEditable: OrderEnum
+  durationFieldNullable: OrderEnum
+  durationFieldWithDefault: OrderEnum
+  durationFieldWithDescription: OrderEnum
+  emailFieldRequired: OrderStringEnum
+  emailFieldNotEditable: OrderStringEnum
+  emailFieldNullable: OrderStringEnum
+  emailFieldWithDefault: OrderStringEnum
+  emailFieldWithDescription: OrderStringEnum
+  floatFieldRequired: OrderEnum
+  floatFieldNotEditable: OrderEnum
+  floatFieldNullable: OrderEnum
+  floatFieldWithDefault: OrderEnum
+  floatFieldWithDescription: OrderEnum
+  integerFieldRequired: OrderEnum
+  integerFieldNotEditable: OrderEnum
+  integerFieldNullable: OrderEnum
+  integerFieldWithDefault: OrderEnum
+  integerFieldWithDescription: OrderEnum
+  positiveIntegerFieldRequired: OrderEnum
+  positiveIntegerFieldNotEditable: OrderEnum
+  positiveIntegerFieldNullable: OrderEnum
+  positiveIntegerFieldWithDefault: OrderEnum
+  positiveIntegerFieldWithDescription: OrderEnum
+  smallIntegerFieldRequired: OrderEnum
+  smallIntegerFieldNotEditable: OrderEnum
+  smallIntegerFieldNullable: OrderEnum
+  smallIntegerFieldWithDefault: OrderEnum
+  smallIntegerFieldWithDescription: OrderEnum
+  positiveSmallIntegerFieldRequired: OrderEnum
+  positiveSmallIntegerFieldNotEditable: OrderEnum
+  positiveSmallIntegerFieldNullable: OrderEnum
+  positiveSmallIntegerFieldWithDefault: OrderEnum
+  positiveSmallIntegerFieldWithDescription: OrderEnum
+  bigIntegerFieldRequired: OrderEnum
+  bigIntegerFieldNotEditable: OrderEnum
+  bigIntegerFieldNullable: OrderEnum
+  bigIntegerFieldWithDefault: OrderEnum
+  bigIntegerFieldWithDescription: OrderEnum
+  positiveBigIntegerFieldRequired: OrderEnum
+  positiveBigIntegerFieldNotEditable: OrderEnum
+  positiveBigIntegerFieldNullable: OrderEnum
+  positiveBigIntegerFieldWithDefault: OrderEnum
+  positiveBigIntegerFieldWithDescription: OrderEnum
+  slugFieldRequired: OrderStringEnum
+  slugFieldNotEditable: OrderStringEnum
+  slugFieldNullable: OrderStringEnum
+  slugFieldWithDefault: OrderStringEnum
+  slugFieldWithDescription: OrderStringEnum
+  textFieldRequired: OrderStringEnum
+  textFieldNotEditable: OrderStringEnum
+  textFieldNullable: OrderStringEnum
+  textFieldWithDefault: OrderStringEnum
+  textFieldWithDescription: OrderStringEnum
+  urlFieldRequired: OrderStringEnum
+  urlFieldNotEditable: OrderStringEnum
+  urlFieldNullable: OrderStringEnum
+  urlFieldWithDefault: OrderStringEnum
+  urlFieldWithDescription: OrderStringEnum
+  genericIpAddressFieldRequired: OrderStringEnum
+  genericIpAddressFieldNotEditable: OrderStringEnum
+  genericIpAddressFieldNullable: OrderStringEnum
+  genericIpAddressFieldWithDefault: OrderStringEnum
+  ipAddressFieldRequired: OrderStringEnum
+  ipAddressFieldNotEditable: OrderStringEnum
+  ipAddressFieldNullable: OrderStringEnum
+  ipAddressFieldWithDefault: OrderStringEnum
+  uuidFieldRequired: OrderEnum
+  uuidFieldNotEditable: OrderEnum
+  uuidFieldNullable: OrderEnum
+  uuidFieldWithDefault: OrderEnum
+  uuidFieldWithDescription: OrderEnum
+  foreignKeyFieldRequired: OrderByModelAInput
+  foreignKeyFieldNullable: OrderByModelAInput
+  foreignKeyFieldWithDescription: OrderByModelAInput
+  foreignKeyFieldWithoutRelatedName: OrderByModelAInput
+  objectId: OrderEnum
+  oneToOneRelated: OrderByModelAInput
+  oneToOneNullableRelated: OrderByModelAInput
+  oneToOneWithDescriptionRelated: OrderByModelAInput
+  oneToOneBRelated: OrderByModelBInput
+}
+
+input OrderByModelBInput {
+  id: OrderEnum
+  foreignKeyField: OrderByModelAInput
+  oneToOneField: OrderByModelAInput
+}
+
+union ModelAGenericForeignKeyFieldUnionType = ModelAType | ModelBType | ModelCType | ModelDType | ModelEType | ModelFType | ModelGType | ModelHType
+
+type ModelBType {
+  id: ID
+  foreignKeyField: ModelAType!
+  oneToOneField: ModelAType!
+  paginatedManyToManyField(where: FilterModelAInput, orderBy: OrderByModelAInput, paginationConfig: PaginationConfigInput): ModelAPaginatedType
+}
+
+type ModelCType {
+  id: ID
+  charField: String!
+  integerField: Int
+  booleanField: Boolean
+  dateTimeField: DateTime
+  jsonField: JSONString
+  fileField: String
+  oneToOneField: ModelDType
+  isActive: Boolean
+  paginatedManyToManyField(where: FilterModelDInput, orderBy: OrderByModelDInput, paginationConfig: PaginationConfigInput): ModelDPaginatedType
+  paginatedForeignKeyDRelated(where: FilterModelDInput, orderBy: OrderByModelDInput, paginationConfig: PaginationConfigInput): ModelDPaginatedType
+}
+
+"""
+Allows use of a JSON String for input / output from the GraphQL schema.
+
+Use of this type is *not recommended* as you lose the benefits of having a defined, static
+schema (one of the key benefits of GraphQL).
+"""
+scalar JSONString
+
+type ModelDType {
+  id: ID
+  foreignKeyField: ModelCType
+  oneToOneCRelated: ModelCType
+  paginatedManyToManyCRelated(where: FilterModelCInput, orderBy: OrderByModelCInput, paginationConfig: PaginationConfigInput): ModelCPaginatedType
+  paginatedForeignKeyERelated(where: FilterModelEInput, orderBy: OrderByModelEInput, paginationConfig: PaginationConfigInput): ModelEPaginatedType
+}
+
+type ModelCPaginatedType implements PaginationInterface {
+  objects: [ModelCType]
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+input FilterModelCInput {
+  id: IDFilter
+  charField: StringFilter
+  integerField: IntFilter
+  booleanField: BooleanFilter
+  dateTimeField: DateTimeFilter
+  jsonField: JSONStringFilter
+  fileField: StringFilter
+  oneToOneField: FilterModelDInput
+  isActive: BooleanFilter
+  manyToManyField: FilterModelDInput
+  foreignKeyDRelated: FilterModelDInput
+  AND: [FilterModelCInput]
+  OR: [FilterModelCInput]
+  NOT: FilterModelCInput
+}
+
+input JSONStringFilter {
+  exact: JSONString
+  iexact: JSONString
+  gt: JSONString
+  gte: JSONString
+  lt: JSONString
+  lte: JSONString
+  in: [JSONString]
+  contains: JSONString
+  icontains: JSONString
+  startswith: JSONString
+  istartswith: JSONString
+  endswith: JSONString
+  iendswith: JSONString
+  range: [JSONString]
+  isnull: Boolean
+  regex: String
+  iregex: String
+  containedBy: JSONString
+  hasKey: JSONString
+  hasKeys: JSONString
+  hasAnyKeys: JSONString
+}
+
+input FilterModelDInput {
+  id: IDFilter
+  foreignKeyField: FilterModelCInput
+  oneToOneCRelated: FilterModelCInput
+  manyToManyCRelated: FilterModelCInput
+  foreignKeyERelated: FilterModelEInput
+  AND: [FilterModelDInput]
+  OR: [FilterModelDInput]
+  NOT: FilterModelDInput
+}
+
+input FilterModelEInput {
+  id: IDFilter
+  foreignKeyFieldDeep: FilterModelDInput
+  AND: [FilterModelEInput]
+  OR: [FilterModelEInput]
+  NOT: FilterModelEInput
+}
+
+input OrderByModelCInput {
+  id: OrderEnum
+  charField: OrderStringEnum
+  integerField: OrderEnum
+  booleanField: OrderEnum
+  dateTimeField: OrderEnum
+  fileField: OrderEnum
+  oneToOneField: OrderByModelDInput
+  isActive: OrderEnum
+}
+
+input OrderByModelDInput {
+  id: OrderEnum
+  foreignKeyField: OrderByModelCInput
+  oneToOneCRelated: OrderByModelCInput
+}
+
+type ModelEPaginatedType implements PaginationInterface {
+  objects: [ModelEType]
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+type ModelEType {
+  id: ID
+  foreignKeyFieldDeep: ModelDType
+}
+
+input OrderByModelEInput {
+  id: OrderEnum
+  foreignKeyFieldDeep: OrderByModelDInput
+}
+
+type ModelDPaginatedType implements PaginationInterface {
+  objects: [ModelDType]
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+type ModelFType {
+  id: ID
+  name: String
+  foreignKeyField: ModelEType
+}
+
+type ModelBPaginatedType implements PaginationInterface {
+  objects: [ModelBType]
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+input FilterModelFInput {
+  id: IDFilter
+  name: StringFilter
+  foreignKeyField: FilterModelEInput
+  AND: [FilterModelFInput]
+  OR: [FilterModelFInput]
+  NOT: FilterModelFInput
+}
+
+type ModelFPaginatedType implements PaginationInterface {
+  objects: [ModelFType]
+  total: Int
+  page: Int
+  pages: Int
+  hasNext: Boolean
+  hasPrev: Boolean
+  indexStart: Int
+  indexEnd: Int
+}
+
+input OrderByModelFInput {
+  id: OrderEnum
+  name: OrderStringEnum
+  foreignKeyField: OrderByModelEInput
+}
+
+type Mutation {
+  createModelHs(input: [CreateModelHInput!]!): CreateModelHsPayload
+  updateModelHs(input: [UpdateModelHInput!]!): UpdateModelHsPayload
+  deleteModelHs(where: FilterModelHInput!): DeleteModelHsPayload
+  deactivateModelHs(where: FilterModelHInput!): DeactivateModelHsPayload
+  activateModelHs(where: FilterModelHInput!): ActivateModelHsPayload
+  createModelGs(input: [CreateModelGInput!]!): CreateModelGsPayload
+  updateModelGs(input: [UpdateModelGInput!]!): UpdateModelGsPayload
+  deleteModelGs(where: FilterModelGInput!): DeleteModelGsPayload
+  deactivateModelGs(where: FilterModelGInput!): DeactivateModelGsPayload
+  activateModelGs(where: FilterModelGInput!): ActivateModelGsPayload
+  createModelFs(input: [CreateModelFInput!]!): CreateModelFsPayload
+  updateModelFs(input: [UpdateModelFInput!]!): UpdateModelFsPayload
+  deleteModelFs(where: FilterModelFInput!): DeleteModelFsPayload
+  deactivateModelFs(where: FilterModelFInput!): DeactivateModelFsPayload
+  activateModelFs(where: FilterModelFInput!): ActivateModelFsPayload
+  createModelEs(input: [CreateModelEInput!]!): CreateModelEsPayload
+  updateModelEs(input: [UpdateModelEInput!]!): UpdateModelEsPayload
+  deleteModelEs(where: FilterModelEInput!): DeleteModelEsPayload
+  deactivateModelEs(where: FilterModelEInput!): DeactivateModelEsPayload
+  activateModelEs(where: FilterModelEInput!): ActivateModelEsPayload
+  createModelDs(input: [CreateModelDInput!]!): CreateModelDsPayload
+  updateModelDs(input: [UpdateModelDInput!]!): UpdateModelDsPayload
+  deleteModelDs(where: FilterModelDInput!): DeleteModelDsPayload
+  deactivateModelDs(where: FilterModelDInput!): DeactivateModelDsPayload
+  activateModelDs(where: FilterModelDInput!): ActivateModelDsPayload
+  createModelCs(input: [CreateModelCInput!]!): CreateModelCsPayload
+  updateModelCs(input: [UpdateModelCInput!]!): UpdateModelCsPayload
+  deleteModelCs(where: FilterModelCInput!): DeleteModelCsPayload
+  deactivateModelCs(where: FilterModelCInput!): DeactivateModelCsPayload
+  activateModelCs(where: FilterModelCInput!): ActivateModelCsPayload
+  createModelBs(input: [CreateModelBInput!]!): CreateModelBsPayload
+  updateModelBs(input: [UpdateModelBInput!]!): UpdateModelBsPayload
+  deleteModelBs(where: FilterModelBInput!): DeleteModelBsPayload
+  deactivateModelBs(where: FilterModelBInput!): DeactivateModelBsPayload
+  activateModelBs(where: FilterModelBInput!): ActivateModelBsPayload
+  createModelAs(input: [CreateModelAInput!]!): CreateModelAsPayload
+  updateModelAs(input: [UpdateModelAInput!]!): UpdateModelAsPayload
+  deleteModelAs(where: FilterModelAInput!): DeleteModelAsPayload
+  deactivateModelAs(where: FilterModelAInput!): DeactivateModelAsPayload
+  activateModelAs(where: FilterModelAInput!): ActivateModelAsPayload
+}
+
+type CreateModelHsPayload {
+  objects: [ModelHType]
+  errorsReport: [ErrorCollectionType]
+}
+
+"""
+Represents a collection of errors associated with an object.
+
+Attributes:
+    object_position (str): The position of the object.
+    errors (List[ErrorType]): A list of ErrorType objects representing the errors.
+
+Methods:
+    from_errors(cls, object_position, errors): Creates an instance of ErrorCollectionType from the given object position and errors.
+"""
+type ErrorCollectionType {
+  objectPosition: String
+  errors: [ErrorType]
+}
+
+"""Represents an error type with a field and a list of error messages."""
+type ErrorType {
+  field: String!
+  messages: [String!]!
+}
+
+input CreateModelHInput {
+  name: String
+  foreignKeyField: ModelGInput
+  ctFieldCustom: ID
+  fkFieldCustom: PositiveInt
+  oneToOneField: ModelGInput
+  manyToManyField: ModelGConnectInput
+  genericForeignKey: GenericForeignKeyInput
+}
+
+input ModelGInput {
+  extraFieldInputObjectType: String
+  id: ID
+  name: String
+}
+
+input ModelGConnectInput {
+  connect: [ModelGInput!]
+}
+
+input GenericForeignKeyInput {
+  appLabel: String!
+  model: String!
+  object: GenericScalar
+}
+
+"""
+The `GenericScalar` scalar type represents a generic
+GraphQL scalar value that could be:
+String, Boolean, Int, Float, List or Object.
+"""
+scalar GenericScalar
+
+type UpdateModelHsPayload {
+  objects: [ModelHType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input UpdateModelHInput {
+  id: ID!
+  name: String
+  foreignKeyField: ModelGInput
+  ctFieldCustom: ID
+  fkFieldCustom: PositiveInt
+  oneToOneField: ModelGInput
+  manyToManyField: ModelGConnectDisconnectInput
+  genericForeignKey: GenericForeignKeyInput
+}
+
+input ModelGConnectDisconnectInput {
+  connect: [ModelGInput!]
+  disconnect: [FilterModelGInput!]
+}
+
+type DeleteModelHsPayload {
+  objects: [ModelHType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+
+type DeactivateModelHsPayload {
+  objects: [ModelHType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type ActivateModelHsPayload {
+  objects: [ModelHType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type CreateModelGsPayload {
+  objects: [ModelGType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input CreateModelGInput {
+  extraFieldCreateInputObjectType: Int
+  name: String
+}
+
+type UpdateModelGsPayload {
+  objects: [ModelGType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input UpdateModelGInput {
+  extraFieldUpdateInputObjectType: Boolean
+  id: ID!
+  name: String
+}
+
+type DeleteModelGsPayload {
+  objects: [ModelGType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+
+type DeactivateModelGsPayload {
+  objects: [ModelGType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type ActivateModelGsPayload {
+  objects: [ModelGType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type CreateModelFsPayload {
+  objects: [ModelFType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input CreateModelFInput {
+  name: String
+  foreignKeyField: ID
+}
+
+type UpdateModelFsPayload {
+  objects: [ModelFType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input UpdateModelFInput {
+  id: ID!
+  name: String
+  foreignKeyField: ID
+}
+
+type DeleteModelFsPayload {
+  objects: [ModelFType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+
+type DeactivateModelFsPayload {
+  objects: [ModelFType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type ActivateModelFsPayload {
+  objects: [ModelFType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type CreateModelEsPayload {
+  objects: [ModelEType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input CreateModelEInput {
+  foreignKeyFieldDeep: ID
+}
+
+type UpdateModelEsPayload {
+  objects: [ModelEType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input UpdateModelEInput {
+  id: ID!
+  foreignKeyFieldDeep: ID
+}
+
+type DeleteModelEsPayload {
+  objects: [ModelEType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+
+type DeactivateModelEsPayload {
+  objects: [ModelEType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type ActivateModelEsPayload {
+  objects: [ModelEType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type CreateModelDsPayload {
+  objects: [ModelDType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input CreateModelDInput {
+  foreignKeyField: ID
+}
+
+type UpdateModelDsPayload {
+  objects: [ModelDType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input UpdateModelDInput {
+  id: ID!
+  foreignKeyField: ID
+}
+
+type DeleteModelDsPayload {
+  objects: [ModelDType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+
+type DeactivateModelDsPayload {
+  objects: [ModelDType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type ActivateModelDsPayload {
+  objects: [ModelDType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type CreateModelCsPayload {
+  objects: [ModelCType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input CreateModelCInput {
+  charField: String!
+  integerField: Int = 1
+  booleanField: Boolean
+  dateTimeField: DateTime
+  jsonField: JSONString
+  fileField: Upload
+  oneToOneField: ID
+  isActive: Boolean = true
+  manyToManyField: [ID]
+}
+
+"""
+Create scalar that ignores normal serialization/deserialization, since
+that will be handled by the multipart request spec
+"""
+scalar Upload
+
+type UpdateModelCsPayload {
+  objects: [ModelCType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input UpdateModelCInput {
+  id: ID!
+  charField: String
+  integerField: Int
+  booleanField: Boolean
+  dateTimeField: DateTime
+  jsonField: JSONString
+  fileField: Upload
+  oneToOneField: ID
+  isActive: Boolean
+  manyToManyField: [ID]
+}
+
+type DeleteModelCsPayload {
+  objects: [ModelCType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+
+type DeactivateModelCsPayload {
+  objects: [ModelCType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type ActivateModelCsPayload {
+  objects: [ModelCType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type CreateModelBsPayload {
+  objects: [ModelBType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input CreateModelBInput {
+  foreignKeyField: ID!
+  oneToOneField: ID!
+  manyToManyField: [ID]!
+}
+
+type UpdateModelBsPayload {
+  objects: [ModelBType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input UpdateModelBInput {
+  id: ID!
+  foreignKeyField: ID
+  oneToOneField: ID
+  manyToManyField: [ID]
+}
+
+type DeleteModelBsPayload {
+  objects: [ModelBType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+
+type DeactivateModelBsPayload {
+  objects: [ModelBType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type ActivateModelBsPayload {
+  objects: [ModelBType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type CreateModelAsPayload {
+  objects: [ModelAType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input CreateModelAInput {
+  binaryFieldRequired: Binary!
+  binaryFieldNullable: Binary
+  binaryFieldWithDefault: Binary = "CA=="
+
+  """binary_field_with_description"""
+  binaryFieldWithDescription: Binary!
+  booleanFieldRequired: Boolean!
+  booleanFieldNullable: Boolean
+  booleanFieldWithDefault: Boolean = true
+
+  """boolean_field_with_description"""
+  booleanFieldWithDescription: Boolean!
+  charFieldRequired: String!
+  charFieldNullable: String
+  charFieldWithDefault: String = "char_field_with_default"
+
+  """char_field_with_description"""
+  charFieldWithDescription: String!
+  choiceFieldRequired: TestsModelAChoiceFieldRequiredChoices!
+  choiceFieldNullable: TestsModelAChoiceFieldNullableChoices
+  choiceFieldWithDefault: TestsModelAChoiceFieldWithDefaultChoices = A
+
+  """choice_field_with_description"""
+  choiceFieldWithDescription: TestsModelAChoiceFieldWithDescriptionChoices!
+  dateFieldRequired: Date!
+  dateFieldNullable: Date
+
+  """date_field_with_description"""
+  dateFieldWithDescription: Date!
+  dateTimeFieldRequired: DateTime!
+  dateTimeFieldNullable: DateTime
+
+  """date_time_field_with_description"""
+  dateTimeFieldWithDescription: DateTime!
+  timeFieldRequired: Time!
+  timeFieldNullable: Time
+
+  """time_field_with_description"""
+  timeFieldWithDescription: Time!
+  decimalFieldRequired: Decimal!
+  decimalFieldNullable: Decimal
+  decimalFieldWithDefault: Decimal = "0"
+
+  """decimal_field_with_description"""
+  decimalFieldWithDescription: Decimal!
+  durationFieldRequired: Duration!
+  durationFieldNullable: Duration
+  durationFieldWithDefault: Duration
+
+  """duration_field_with_description"""
+  durationFieldWithDescription: Duration!
+  emailFieldRequired: Email!
+  emailFieldNullable: Email
+  emailFieldWithDefault: Email = "emailField@withDefault.com"
+
+  """email_field_with_description"""
+  emailFieldWithDescription: Email!
+  floatFieldRequired: Float!
+  floatFieldNullable: Float
+  floatFieldWithDefault: Float = 0
+
+  """float_field_with_description"""
+  floatFieldWithDescription: Float!
+  integerFieldRequired: Int!
+  integerFieldNullable: Int
+  integerFieldWithDefault: Int = 0
+
+  """integer_field_with_description"""
+  integerFieldWithDescription: Int!
+  positiveIntegerFieldRequired: PositiveInt!
+  positiveIntegerFieldNullable: PositiveInt
+  positiveIntegerFieldWithDefault: PositiveInt = 0
+
+  """positive_integer_field_with_description"""
+  positiveIntegerFieldWithDescription: PositiveInt!
+  smallIntegerFieldRequired: Int!
+  smallIntegerFieldNullable: Int
+  smallIntegerFieldWithDefault: Int = 0
+
+  """small_integer_field_with_description"""
+  smallIntegerFieldWithDescription: Int!
+  positiveSmallIntegerFieldRequired: Int!
+  positiveSmallIntegerFieldNullable: Int
+  positiveSmallIntegerFieldWithDefault: Int = 0
+
+  """positive_small_integer_field_with_description"""
+  positiveSmallIntegerFieldWithDescription: Int!
+  bigIntegerFieldRequired: BigInt!
+  bigIntegerFieldNullable: BigInt
+  bigIntegerFieldWithDefault: BigInt = 0
+
+  """big_integer_field_with_description"""
+  bigIntegerFieldWithDescription: BigInt!
+  positiveBigIntegerFieldRequired: BigInt!
+  positiveBigIntegerFieldNullable: BigInt
+  positiveBigIntegerFieldWithDefault: BigInt = 0
+
+  """positive_big_integer_field_with_description"""
+  positiveBigIntegerFieldWithDescription: BigInt!
+  slugFieldRequired: Slug!
+  slugFieldNullable: Slug
+  slugFieldWithDefault: Slug = "slug_field_with_default"
+
+  """slug_field_with_description"""
+  slugFieldWithDescription: Slug!
+  textFieldRequired: String!
+  textFieldNullable: String
+  textFieldWithDefault: String = "text_field_with_default"
+
+  """text_field_with_description"""
+  textFieldWithDescription: String!
+  urlFieldRequired: URL!
+  urlFieldNullable: URL
+  urlFieldWithDefault: URL = "https://url_field_with_default.com"
+
+  """url_field_with_description"""
+  urlFieldWithDescription: URL!
+  genericIpAddressFieldRequired: IPv4!
+  genericIpAddressFieldNullable: IPv4
+  genericIpAddressFieldWithDefault: IPv4 = "127.0.0.1"
+  ipAddressFieldRequired: IP!
+  ipAddressFieldNullable: IP
+  ipAddressFieldWithDefault: IP = "127.0.0.1"
+  uuidFieldRequired: UUID!
+  uuidFieldNullable: UUID
+  uuidFieldWithDefault: UUID
+
+  """uuid_field_with_description"""
+  uuidFieldWithDescription: UUID!
+  foreignKeyFieldRequired: ID!
+  foreignKeyFieldNullable: ID
+
+  """foreign_key_field_with_description"""
+  foreignKeyFieldWithDescription: ID!
+  foreignKeyFieldWithoutRelatedName: ID!
+  oneToOneFieldRequired: ID!
+  oneToOneFieldNullable: ID
+
+  """one_to_one_field_with_description"""
+  oneToOneFieldWithDescription: ID!
+  oneToOneFieldWithoutRelatedName: ID!
+
+  """The content type"""
+  contentType: ID
+
+  """The object id"""
+  objectId: PositiveInt
+  manyToManyFieldRequired: [ID]!
+  manyToManyFieldNullable: [ID]
+
+  """many_to_many_field_with_description"""
+  manyToManyFieldWithDescription: [ID]!
+  manyToManyFieldWithoutRelatedName: [ID]!
+}
+
+type UpdateModelAsPayload {
+  objects: [ModelAType]
+  errorsReport: [ErrorCollectionType]
+}
+
+input UpdateModelAInput {
+  id: ID!
+  binaryFieldRequired: Binary
+  binaryFieldNullable: Binary
+  binaryFieldWithDefault: Binary
+
+  """binary_field_with_description"""
+  binaryFieldWithDescription: Binary
+  booleanFieldRequired: Boolean
+  booleanFieldNullable: Boolean
+  booleanFieldWithDefault: Boolean
+
+  """boolean_field_with_description"""
+  booleanFieldWithDescription: Boolean
+  charFieldRequired: String
+  charFieldNullable: String
+  charFieldWithDefault: String
+
+  """char_field_with_description"""
+  charFieldWithDescription: String
+  choiceFieldRequired: TestsModelAChoiceFieldRequiredChoices
+  choiceFieldNullable: TestsModelAChoiceFieldNullableChoices
+  choiceFieldWithDefault: TestsModelAChoiceFieldWithDefaultChoices
+
+  """choice_field_with_description"""
+  choiceFieldWithDescription: TestsModelAChoiceFieldWithDescriptionChoices
+  dateFieldRequired: Date
+  dateFieldNullable: Date
+
+  """date_field_with_description"""
+  dateFieldWithDescription: Date
+  dateTimeFieldRequired: DateTime
+  dateTimeFieldNullable: DateTime
+
+  """date_time_field_with_description"""
+  dateTimeFieldWithDescription: DateTime
+  timeFieldRequired: Time
+  timeFieldNullable: Time
+
+  """time_field_with_description"""
+  timeFieldWithDescription: Time
+  decimalFieldRequired: Decimal
+  decimalFieldNullable: Decimal
+  decimalFieldWithDefault: Decimal
+
+  """decimal_field_with_description"""
+  decimalFieldWithDescription: Decimal
+  durationFieldRequired: Duration
+  durationFieldNullable: Duration
+  durationFieldWithDefault: Duration
+
+  """duration_field_with_description"""
+  durationFieldWithDescription: Duration
+  emailFieldRequired: Email
+  emailFieldNullable: Email
+  emailFieldWithDefault: Email
+
+  """email_field_with_description"""
+  emailFieldWithDescription: Email
+  floatFieldRequired: Float
+  floatFieldNullable: Float
+  floatFieldWithDefault: Float
+
+  """float_field_with_description"""
+  floatFieldWithDescription: Float
+  integerFieldRequired: Int
+  integerFieldNullable: Int
+  integerFieldWithDefault: Int
+
+  """integer_field_with_description"""
+  integerFieldWithDescription: Int
+  positiveIntegerFieldRequired: PositiveInt
+  positiveIntegerFieldNullable: PositiveInt
+  positiveIntegerFieldWithDefault: PositiveInt
+
+  """positive_integer_field_with_description"""
+  positiveIntegerFieldWithDescription: PositiveInt
+  smallIntegerFieldRequired: Int
+  smallIntegerFieldNullable: Int
+  smallIntegerFieldWithDefault: Int
+
+  """small_integer_field_with_description"""
+  smallIntegerFieldWithDescription: Int
+  positiveSmallIntegerFieldRequired: Int
+  positiveSmallIntegerFieldNullable: Int
+  positiveSmallIntegerFieldWithDefault: Int
+
+  """positive_small_integer_field_with_description"""
+  positiveSmallIntegerFieldWithDescription: Int
+  bigIntegerFieldRequired: BigInt
+  bigIntegerFieldNullable: BigInt
+  bigIntegerFieldWithDefault: BigInt
+
+  """big_integer_field_with_description"""
+  bigIntegerFieldWithDescription: BigInt
+  positiveBigIntegerFieldRequired: BigInt
+  positiveBigIntegerFieldNullable: BigInt
+  positiveBigIntegerFieldWithDefault: BigInt
+
+  """positive_big_integer_field_with_description"""
+  positiveBigIntegerFieldWithDescription: BigInt
+  slugFieldRequired: Slug
+  slugFieldNullable: Slug
+  slugFieldWithDefault: Slug
+
+  """slug_field_with_description"""
+  slugFieldWithDescription: Slug
+  textFieldRequired: String
+  textFieldNullable: String
+  textFieldWithDefault: String
+
+  """text_field_with_description"""
+  textFieldWithDescription: String
+  urlFieldRequired: URL
+  urlFieldNullable: URL
+  urlFieldWithDefault: URL
+
+  """url_field_with_description"""
+  urlFieldWithDescription: URL
+  genericIpAddressFieldRequired: IPv4
+  genericIpAddressFieldNullable: IPv4
+  genericIpAddressFieldWithDefault: IPv4
+  ipAddressFieldRequired: IP
+  ipAddressFieldNullable: IP
+  ipAddressFieldWithDefault: IP
+  uuidFieldRequired: UUID
+  uuidFieldNullable: UUID
+  uuidFieldWithDefault: UUID
+
+  """uuid_field_with_description"""
+  uuidFieldWithDescription: UUID
+  foreignKeyFieldRequired: ID
+  foreignKeyFieldNullable: ID
+
+  """foreign_key_field_with_description"""
+  foreignKeyFieldWithDescription: ID
+  foreignKeyFieldWithoutRelatedName: ID
+  oneToOneFieldRequired: ID
+  oneToOneFieldNullable: ID
+
+  """one_to_one_field_with_description"""
+  oneToOneFieldWithDescription: ID
+  oneToOneFieldWithoutRelatedName: ID
+
+  """The content type"""
+  contentType: ID
+
+  """The object id"""
+  objectId: PositiveInt
+  manyToManyFieldRequired: [ID]
+  manyToManyFieldNullable: [ID]
+
+  """many_to_many_field_with_description"""
+  manyToManyFieldWithDescription: [ID]
+  manyToManyFieldWithoutRelatedName: [ID]
+}
+
+type DeleteModelAsPayload {
+  objects: [ModelAType]
+  errorsReport: [ErrorCollectionType]
+  success: Boolean
+}
+
+type DeactivateModelAsPayload {
+  objects: [ModelAType]
+  errorsReport: [ErrorCollectionType]
+}
+
+type ActivateModelAsPayload {
+  objects: [ModelAType]
+  errorsReport: [ErrorCollectionType]
+}

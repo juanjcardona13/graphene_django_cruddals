@@ -10,8 +10,7 @@ dev-setup:
 
 .PHONY: tests ## Run unit tests
 tests:
-	PYTHONPATH=. pytest tests --ignore=tests/integration --cov=graphene_django_cruddals -vv
-	cd tests/integration && pip install -r requirements.txt && ./manage.py test
+	PYTHONPATH=. pytest tests --cov=graphene_django_cruddals -vv
 
 .PHONY: format ## Format code
 format:
@@ -20,11 +19,3 @@ format:
 .PHONY: lint ## Lint code
 lint:
 	ruff graphene_django_cruddals tests
-
-.PHONY: docs ## Generate docs
-docs: dev-setup
-	cd docs && make install && make html
-
-.PHONY: docs-live ## Generate docs with live reloading
-docs-live: dev-setup
-	cd docs && make install && make livehtml

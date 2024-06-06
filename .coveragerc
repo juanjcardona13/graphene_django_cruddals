@@ -1,2 +1,2 @@
 [run]
-omit = */tests/*,
+omit = */tests/*, graphene_django_cruddals/scalars_type/*, graphene_django_cruddals/converters/compat.py

@@ -1,0 +1,1084 @@
+
+//region ============= TESTS
+
+#region ============= MODELA
+
+query readModelA($where: FilterModelAInput! ) {
+    readModelA(where: $where ) {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELA
+
+query listModelAs {
+    listModelAs {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELA
+
+query searchModelAs($where: FilterModelAInput $orderBy: OrderByModelAInput $paginationConfig: PaginationConfigInput ) {
+    searchModelAs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig ) {
+        total
+        page
+        pages
+        hasNext
+        hasPrev
+        indexStartObj
+        indexEndObj
+        objects {
+            id
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELA
+
+mutation createModelAs($input: [CreateModelAInput!]! ) {
+    createModelAs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELA
+
+mutation updateModelAs($input: [UpdateModelAInput!]! ) {
+    updateModelAs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELA
+
+mutation deleteModelAs($where: FilterModelAInput! ) {
+    deleteModelAs(where: $where ) {
+        success
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELA
+
+mutation deactivateModelAs($where: FilterModelAInput! ) {
+    deactivateModelAs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELA
+
+mutation activateModelAs($where: FilterModelAInput! ) {
+    activateModelAs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELB
+
+query readModelB($where: FilterModelBInput! ) {
+    readModelB(where: $where ) {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELB
+
+query listModelBs {
+    listModelBs {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELB
+
+query searchModelBs($where: FilterModelBInput $orderBy: OrderByModelBInput $paginationConfig: PaginationConfigInput ) {
+    searchModelBs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig ) {
+        total
+        page
+        pages
+        hasNext
+        hasPrev
+        indexStartObj
+        indexEndObj
+        objects {
+            id
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELB
+
+mutation createModelBs($input: [CreateModelBInput!]! ) {
+    createModelBs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELB
+
+mutation updateModelBs($input: [UpdateModelBInput!]! ) {
+    updateModelBs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELB
+
+mutation deleteModelBs($where: FilterModelBInput! ) {
+    deleteModelBs(where: $where ) {
+        success
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELB
+
+mutation deactivateModelBs($where: FilterModelBInput! ) {
+    deactivateModelBs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELB
+
+mutation activateModelBs($where: FilterModelBInput! ) {
+    activateModelBs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELC
+
+query readModelC($where: FilterModelCInput! ) {
+    readModelC(where: $where ) {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELC
+
+query listModelCs {
+    listModelCs {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELC
+
+query searchModelCs($where: FilterModelCInput $orderBy: OrderByModelCInput $paginationConfig: PaginationConfigInput ) {
+    searchModelCs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig ) {
+        total
+        page
+        pages
+        hasNext
+        hasPrev
+        indexStartObj
+        indexEndObj
+        objects {
+            id
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELC
+
+mutation createModelCs($input: [CreateModelCInput!]! ) {
+    createModelCs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELC
+
+mutation updateModelCs($input: [UpdateModelCInput!]! ) {
+    updateModelCs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELC
+
+mutation deleteModelCs($where: FilterModelCInput! ) {
+    deleteModelCs(where: $where ) {
+        success
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELC
+
+mutation deactivateModelCs($where: FilterModelCInput! ) {
+    deactivateModelCs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELC
+
+mutation activateModelCs($where: FilterModelCInput! ) {
+    activateModelCs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELD
+
+query readModelD($where: FilterModelDInput! ) {
+    readModelD(where: $where ) {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELD
+
+query listModelDs {
+    listModelDs {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELD
+
+query searchModelDs($where: FilterModelDInput $orderBy: OrderByModelDInput $paginationConfig: PaginationConfigInput ) {
+    searchModelDs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig ) {
+        total
+        page
+        pages
+        hasNext
+        hasPrev
+        indexStartObj
+        indexEndObj
+        objects {
+            id
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELD
+
+mutation createModelDs($input: [CreateModelDInput!]! ) {
+    createModelDs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELD
+
+mutation updateModelDs($input: [UpdateModelDInput!]! ) {
+    updateModelDs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELD
+
+mutation deleteModelDs($where: FilterModelDInput! ) {
+    deleteModelDs(where: $where ) {
+        success
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELD
+
+mutation deactivateModelDs($where: FilterModelDInput! ) {
+    deactivateModelDs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELD
+
+mutation activateModelDs($where: FilterModelDInput! ) {
+    activateModelDs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELE
+
+query readModelE($where: FilterModelEInput! ) {
+    readModelE(where: $where ) {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELE
+
+query listModelEs {
+    listModelEs {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELE
+
+query searchModelEs($where: FilterModelEInput $orderBy: OrderByModelEInput $paginationConfig: PaginationConfigInput ) {
+    searchModelEs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig ) {
+        total
+        page
+        pages
+        hasNext
+        hasPrev
+        indexStartObj
+        indexEndObj
+        objects {
+            id
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELE
+
+mutation createModelEs($input: [CreateModelEInput!]! ) {
+    createModelEs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELE
+
+mutation updateModelEs($input: [UpdateModelEInput!]! ) {
+    updateModelEs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELE
+
+mutation deleteModelEs($where: FilterModelEInput! ) {
+    deleteModelEs(where: $where ) {
+        success
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELE
+
+mutation deactivateModelEs($where: FilterModelEInput! ) {
+    deactivateModelEs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELE
+
+mutation activateModelEs($where: FilterModelEInput! ) {
+    activateModelEs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELF
+
+query readModelF($where: FilterModelFInput! ) {
+    readModelF(where: $where ) {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELF
+
+query listModelFs {
+    listModelFs {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELF
+
+query searchModelFs($where: FilterModelFInput $orderBy: OrderByModelFInput $paginationConfig: PaginationConfigInput ) {
+    searchModelFs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig ) {
+        total
+        page
+        pages
+        hasNext
+        hasPrev
+        indexStartObj
+        indexEndObj
+        objects {
+            id
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELF
+
+mutation createModelFs($input: [CreateModelFInput!]! ) {
+    createModelFs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELF
+
+mutation updateModelFs($input: [UpdateModelFInput!]! ) {
+    updateModelFs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELF
+
+mutation deleteModelFs($where: FilterModelFInput! ) {
+    deleteModelFs(where: $where ) {
+        success
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELF
+
+mutation deactivateModelFs($where: FilterModelFInput! ) {
+    deactivateModelFs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELF
+
+mutation activateModelFs($where: FilterModelFInput! ) {
+    activateModelFs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELG
+
+query readModelG($where: FilterModelGInput! ) {
+    readModelG(where: $where ) {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELG
+
+query listModelGs {
+    listModelGs {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELG
+
+query searchModelGs($where: FilterModelGInput $orderBy: OrderByModelGInput $paginationConfig: PaginationConfigInput ) {
+    searchModelGs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig ) {
+        total
+        page
+        pages
+        hasNext
+        hasPrev
+        indexStartObj
+        indexEndObj
+        objects {
+            id
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELG
+
+mutation createModelGs($input: [CreateModelGInput!]! ) {
+    createModelGs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELG
+
+mutation updateModelGs($input: [UpdateModelGInput!]! ) {
+    updateModelGs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELG
+
+mutation deleteModelGs($where: FilterModelGInput! ) {
+    deleteModelGs(where: $where ) {
+        success
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELG
+
+mutation deactivateModelGs($where: FilterModelGInput! ) {
+    deactivateModelGs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELG
+
+mutation activateModelGs($where: FilterModelGInput! ) {
+    activateModelGs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELH
+
+query readModelH($where: FilterModelHInput! ) {
+    readModelH(where: $where ) {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELH
+
+query listModelHs {
+    listModelHs {
+        id
+    }
+}
+
+#endregion
+
+#region ============= MODELH
+
+query searchModelHs($where: FilterModelHInput $orderBy: OrderByModelHInput $paginationConfig: PaginationConfigInput ) {
+    searchModelHs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig ) {
+        total
+        page
+        pages
+        hasNext
+        hasPrev
+        indexStartObj
+        indexEndObj
+        objects {
+            id
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELH
+
+mutation createModelHs($input: [CreateModelHInput!]! ) {
+    createModelHs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELH
+
+mutation updateModelHs($input: [UpdateModelHInput!]! ) {
+    updateModelHs(input: $input ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELH
+
+mutation deleteModelHs($where: FilterModelHInput! ) {
+    deleteModelHs(where: $where ) {
+        success
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELH
+
+mutation deactivateModelHs($where: FilterModelHInput! ) {
+    deactivateModelHs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+#region ============= MODELH
+
+mutation activateModelHs($where: FilterModelHInput! ) {
+    activateModelHs(where: $where ) {
+        objects {
+            id
+        }
+        errorsReport {
+            objectPosition
+            errors {
+                field
+                messages
+            }
+        }
+    }
+}
+
+#endregion
+
+//endregion

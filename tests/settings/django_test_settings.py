@@ -13,7 +13,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "graphene_django",
-    # "graphene_django_cruddals.tests",
+    "tests",
     # "tests.test_project",
 ]
 
@@ -32,3 +32,6 @@ TEMPLATES = [
 # GRAPHENE = {"SCHEMA": "tests.schema.schema"}
 
 ROOT_URLCONF = "tests.settings.urls"
+
+
+USE_TZ = True

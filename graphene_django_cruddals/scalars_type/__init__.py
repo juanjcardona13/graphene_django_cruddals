@@ -106,10 +106,12 @@ class PositiveInt(graphene.Scalar):
             raise GraphQLError(f"{type} cannot be less than 0")
         return value
 
-    def serialize(self, value):
+    @staticmethod
+    def serialize(value):
         return PositiveInt.process_value(value, "PositiveInt")
 
-    def parse_value(self, value):
+    @staticmethod
+    def parse_value(value):
         return PositiveInt.process_value(value, "PositiveInt")
 
     @staticmethod
