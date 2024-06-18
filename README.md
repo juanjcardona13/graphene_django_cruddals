@@ -338,69 +338,73 @@ enum OrderStringEnum {
 
 
 
-|                        Feature                                         |     Status          |                 Comments              |
-| -----------------------------------------------------------------------| :-----------------: | :-----------------------------------: |
-| Generate `ObjectType` from Django model                                |         ✅          |        Pending for documentation      |
-| Generate `InputObjectType` from Django model                           |         ✅          |        Pending for documentation      |
-| Generate `Fields` from Django model                                    |         ✅          |        Pending for documentation      |
-| Generate `InputFields` from Django model                               |         ✅          |        Pending for documentation      |
-| Generate `Arguments` from Django model                                 |         ✅          |        Pending for documentation      |
-| Generate `Mutations` from Django model                                 |         ✅          |        Pending for documentation      |
-| Generate `Queries` from Django model                                   |         ✅          |        Pending for documentation      |
-| Generate `resolvers` from Django model                                 |         ✅          |        Pending for documentation      |
-| Generate `Create` operation for a Django model                         |         ✅          |        Pending for documentation      |
-| Generate `Read` operation for a Django model                           |         ✅          |        Pending for documentation      |
-| Generate `Update` operation for a Django model                         |         ✅          |        Pending for documentation      |
-| Generate `Delete` operation for a Django model                         |         ✅          |        Pending for documentation      |
-| Generate `Deactivate` operation for a Django model                     |         ✅          |        Pending for documentation      |
-| Generate `Activate` operation for a Django model                       |         ✅          |        Pending for documentation      |
-| Generate `List` operation for a Django model                           |         ✅          |        Pending for documentation      |
-| Generate `Search` operation for a Django model                         |         〰️          |        Pending for documentation      |
-| Generate each operation, all to be performed `massively`               |         〰️          |        Pending for documentation      |
-| Handle `null` and `blank` attribute of Django model                    |         〰️          |        Pending for documentation      |
-| Handle `editable` attribute of Django model                            |         〰️          |        Pending for documentation      |
-| Handle `help_text` attribute of Django model                           |         〰️          |        Pending for documentation      |
-| Handle `default` attribute of Django model                             |         〰️          |        Pending for documentation      |
-| Handle `choices` attribute of Django model                             |         〰️          |        Pending for documentation      |
-| Handle `OneToOneField` field of Django model                           |         〰️          |        Pending for documentation      |
-| Handle `OneToOneRel` field of Django model                             |         〰️          |        Pending for documentation      |
-| Handle `ManyToManyField` field of Django model                         |         〰️          |        Pending for documentation      |
-| Handle `ManyToManyRel` field of Django model                           |         〰️          |        Pending for documentation      |
-| Handle `ForeignKey` field of Django model                              |         〰️          |        Pending for documentation      |
-| Handle `ManyToOneRel` field of Django model                            |         〰️          |        Pending for documentation      |
-| Handle `GenericForeignKey` field of Django model                       |         〰️          |        Pending for documentation      |
-| Handle `GenericRel` field of Django model                              |         〰️          |        Pending for documentation      |
-| Handle `FileField` and `ImageField` fields of Django Model             |         〰️          |        Pending for documentation      |
-| Handle `JSONField` field of Django model                               |         〰️          |        Pending for documentation      |
-| Allowing nested mutations at any depth level                           |         〰️          |        Pending for documentation      |
-| Allowing nested queries at any depth level                             |         〰️          |        Pending for documentation      |
-| Handle pagination of query results                                     |         〰️          |        Pending for documentation      |
-| Handle sorting of query results                                        |         〰️          |        Pending for documentation      |
-| Handle advanced search                                                 |         〰️          |        Pending for documentation      |
-| Handle advanced search with `AND` operator                             |         〰️          |        Pending for documentation      |
-| Handle advanced search with `OR` operator                              |         〰️          |        Pending for documentation      |
-| Handle advanced search with `NOT` operator                             |         〰️          |        Pending for documentation      |
-| Handle advanced search with `relational fields` operator               |         〰️          |        Pending for documentation      |
-| Providing a friendly and comprehensive list of errors                  |         〰️          |        Pending for documentation      |
-| Allow use the ObjectTypes generated from the models                    |         〰️          |        Pending for documentation      |
-| Allow customizing the `ObjectType` generated by CRUDDALS               |         〰️          |        Pending for documentation      |
-| Allow customizing the `InputObjectType` generated by CRUDDALS          |         〰️          |        Pending for documentation      |
-| Allow customizing the `Fields` generated by CRUDDALS                   |         〰️          |        Pending for documentation      |
-| Allow customizing the `InputFields` generated by CRUDDALS              |         〰️          |        Pending for documentation      |
-| Allow customizing the `Arguments` generated by CRUDDALS                |         〰️          |        Pending for documentation      |
-| Allow customizing the `Mutations` generated by CRUDDALS                |         〰️          |        Pending for documentation      |
-| Allow customizing the `Queries` generated by CRUDDALS                  |         〰️          |        Pending for documentation      |
-| Allow customizing the `resolvers` generated by CRUDDALS                |         〰️          |        Pending for documentation      |
-| Generate all operations at the `model`, `app`, or `project` **level**  |         〰️          |        Pending for documentation      |
-| Files for consuming the GraphQL API with any JavaScript client         |         〰️          |        Pending for documentation      |
-| File with the queries and mutations for with GraphiQL                  |         〰️          |        Pending for documentation      |
-| File with the entire GraphQL schema generated                          |         〰️          |        Pending for documentation      |
-| Handle transactions in mutations                                       |         ❌          |        Pending for documentation      |
-| Handle directives in queries and mutations                             |         ❌          |        Pending for documentation      |
-| Handle subscriptions                                                   |         ❌          |        Pending for documentation      |
-| Optimized queries and mutations                                        |         ❌          |        Pending for documentation      |
-| Generate Types for TypeScript                                          |         ❌          |        Pending for documentation      |
-| Generate validators for Zod, Yup, others                               |         ❌          |        Pending for documentation      |
+|                        Feature                                         |     Status          |                 Comments              | If you are coming from a REST ecosystem then could be translated as:                              |
+| -----------------------------------------------------------------------| :-----------------: | :-----------------------------------: | --------------------------------------------------------------------------------------------------|
+| Generate `ObjectType` from Django model                                |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `entity` from model                                               |
+| Generate `InputObjectType` from Django model                           |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `DTO` from model                                                  |
+| Generate `Fields` from Django model                                    |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `properties` from model                                           |
+| Generate `InputFields` from Django model                               |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `request bodies` from model                                       |
+| Generate `Arguments` from Django model                                 |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `query parameters` from model                                     |
+| Generate `Mutations` from Django model                                 |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `controllers` from model                                          |
+| Generate `Queries` from Django model                                   |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `routes` from model                                               |
+| Generate `resolvers` from Django model                                 |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `services` from model                                             |
+| Generate `Create` operation for a Django model                         |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `Create` operation for a model                                    |
+| Generate `Read` operation for a Django model                           |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `Read` operation for a model                                      |
+| Generate `Update` operation for a Django model                         |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `Update` operation for a model                                    |
+| Generate `Delete` operation for a Django model                         |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `Delete` operation for a model                                    |
+| Generate `Deactivate` operation for a Django model                     |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `Deactivate` operation for a model                                |
+| Generate `Activate` operation for a Django model                       |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `Activate` operation for a model                                  |
+| Generate `List` operation for a Django model                           |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `List` operation for a model                                      |
+| Generate `Search` operation for a Django model                         |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate `Search` operation for a model                                    |
+| Generate each operation, all to be performed `massively`               |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate each operation, all to be performed `massively`                   |
+| Handle `null` and `blank` attribute of Django model                    |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `nullable` and `optional` attribute of model                        |
+| Handle `editable` attribute of Django model                            |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `editable` attribute of model                                       |
+| Handle `help_text` attribute of Django model                           |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `description` attribute of model                                    |
+| Handle `default` attribute of Django model                             |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `default` attribute of model                                        |
+| Handle `choices` attribute of Django model                             |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `choices` attribute of model                                        |
+| Handle `OneToOneField` field of Django model                           |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `OneToOne` relationship of model                                    |
+| Handle `OneToOneRel` field of Django model                             |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `OneToOne` relationship of model                                    |
+| Handle `ManyToManyField` field of Django model                         |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `OneToMany` relationship of model                                   |
+| Handle `ManyToManyRel` field of Django model                           |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `ManyToMany` relationship of model                                  |
+| Handle `ForeignKey` field of Django model                              |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `ForeignKey` relationship of model                                  |
+| Handle `ManyToOneRel` field of Django model                            |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `ManyToOne` relationship of model                                   |
+| Handle `GenericForeignKey` field of Django model                       |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `GenericForeignKey` relationship of model                           |
+| Handle `GenericRel` field of Django model                              |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `GenericRelation` of model                                          |
+| Handle `FileField` and `ImageField` fields of Django Model             |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `File` and `Image` fields of model                                  |
+| Handle `JSONField` field of Django model                               |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle `JSON` field of model                                               |
+| Allowing nested mutations at any depth level                           |         ✅          |        Pending for documentation      | Equivalent in REST to: Allowing nested operations at any depth level                              |
+| Allowing nested queries at any depth level                             |         ✅          |        Pending for documentation      | Equivalent in REST to: Allowing nested queries at any depth level                                 |
+| Handle pagination of query results                                     |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle pagination of query results                                         |
+| Handle sorting of query results                                        |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle sorting of query results                                            |
+| Handle advanced search                                                 |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle advanced search                                                     |
+| Handle advanced search with `AND` operator                             |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle advanced search with `AND` operator                                 |
+| Handle advanced search with `OR` operator                              |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle advanced search with `OR` operator                                  |
+| Handle advanced search with `NOT` operator                             |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle advanced search with `NOT` operator                                 |
+| Handle advanced search with `relational fields` operator               |         ✅          |        Pending for documentation      | Equivalent in REST to: Handle advanced search with `relational fields` operator                   |
+| Providing a friendly and comprehensive list of errors                  |         ✅          |        Pending for documentation      | Equivalent in REST to: Providing a friendly and comprehensive list of errors                      |
+| Allow use the ObjectTypes generated from the models                    |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow use of entities generated from the models                            |
+| Allow customizing the `ObjectType` generated by CRUDDALS               |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow customizing the `entity` generated by CRUDDALS                       |
+| Allow customizing the `InputObjectType` generated by CRUDDALS          |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow customizing the `DTO` generated by CRUDDALS                          |
+| Allow customizing the `Fields` generated by CRUDDALS                   |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow customizing the `properties` generated by CRUDDALS                   |
+| Allow customizing the `InputFields` generated by CRUDDALS              |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow customizing the `request bodies` generated by CRUDDALS               |
+| Allow customizing the `Arguments` generated by CRUDDALS                |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow customizing the `query parameters` generated by CRUDDALS             |
+| Allow customizing the `Mutations` generated by CRUDDALS                |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow customizing the `controllers` generated by CRUDDALS                  |
+| Allow customizing the `Queries` generated by CRUDDALS                  |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow customizing the `routes` generated by CRUDDALS                       |
+| Allow customizing the `resolvers` generated by CRUDDALS                |         ✅          |        Pending for documentation      | Equivalent in REST to: Allow customizing the `services` generated by CRUDDALS                     |
+| Generate all operations at the `model`, `app`, or `project` **level**  |         ✅          |        Pending for documentation      | Equivalent in REST to: Generate all operations at the `model`, `module`, or `project` **level**   |
+| Files for consuming the GraphQL API with any JavaScript client         |         ✅          |        Pending for documentation      | Equivalent in REST to: Files for consuming the REST API with any JavaScript client                |
+| File with the queries and mutations for with GraphiQL                  |         ✅          |        Pending for documentation      | Equivalent in REST to: File with the routes and controllers for Postman                           |
+| File with the entire GraphQL schema generated                          |         ✅          |        Pending for documentation      | Equivalent in REST to: File with the entire REST schema generated                                 |
+| Handle transactions in mutations                                       |         ❌          |        Pending for documentation      | Equivalent in REST to: Handle transactions in controllers                                         |
+| Handle directives in queries and mutations                             |         ❌          |        Pending for documentation      | Equivalent in REST to: Handle directives in routes and controllers                                |
+| Handle subscriptions                                                   |         ❌          |        Pending for documentation      | Equivalent in REST to: Handle subscriptions                                                       |
+| Optimized queries and mutations                                        |         ❌          |        Pending for documentation      | Equivalent in REST to: Optimized queries and controllers                                          |
+| Generate Types for TypeScript                                          |         ❌          |        Pending for documentation      | Equivalent in REST to: Generate Types for TypeScript                                              |
+| Generate validators for Zod, Yup, others                               |         ❌          |        Pending for documentation      | Equivalent in REST to: Generate validators for Zod, Yup, others                                   |
+
+
+
+
 
 
 
