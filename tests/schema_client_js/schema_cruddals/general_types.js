@@ -4,8 +4,8 @@ export const PaginatedType = `
   pages
   hasNext
   hasPrev
-  indexStartObj
-  indexEndObj
+  indexStart
+  indexEnd
 `;
 export const ErrorCollectionType = `
   objectPosition

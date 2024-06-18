@@ -448,8 +448,8 @@ def build_search(app_name, model_name, model_name_plural, queries):
                         pages
                         hasNext
                         hasPrev
-                        indexStartObj
-                        indexEndObj
+                        indexStart
+                        indexEnd
                         objects {{
                             id
                         }}
@@ -487,7 +487,7 @@ def build_search(app_name, model_name, model_name_plural, queries):
 def build_file_general_types():
     with open(f"{PATH_CLIENT}/general_types.js", "w+") as file:
         file.write(
-            "export const PaginatedType = `\n  total\n  page\n  pages\n  hasNext\n  hasPrev\n  indexStartObj\n  indexEndObj\n`;\n"
+            "export const PaginatedType = `\n  total\n  page\n  pages\n  hasNext\n  hasPrev\n  indexStart\n  indexEnd\n`;\n"
         )
         file.write(
             "export const ErrorCollectionType = `\n  objectPosition\n  errors {\n    field\n    messages\n }\n`;\n"
@@ -511,11 +511,14 @@ def build_file_test_in_graphiql():
     for app_name, models in globals()["global_cruddals_strings"].items():
         internal_text_for_graphiql = ""
         for model_name, strings_cruddals in models.items():
+            internal_model_text_for_graphiql = ""
             for string in strings_cruddals.values():
                 if string:
-                    internal_text_for_graphiql += f"\n#region ============= {model_name.upper()}\n{string}\n#endregion\n"
+                    internal_model_text_for_graphiql += f"{string}"
+            if internal_model_text_for_graphiql:
+                internal_text_for_graphiql += f"\n#region ============= {model_name.upper()}\n{internal_model_text_for_graphiql}\n#endregion\n"
         if internal_text_for_graphiql:
-            text_for_graphiql += f"\n//region ============= {app_name.upper()}\n{internal_text_for_graphiql}\n//endregion\n"
+            text_for_graphiql += f"\n#region ============= {app_name.upper()}\n{internal_text_for_graphiql}\n#endregion\n"
     with open(f"{PATH_CLIENT}/test_in_graphiql.gql", "w+", encoding="utf-8") as file:
         text_for_graphiql = textwrap.dedent(text_for_graphiql)
         file.write(text_for_graphiql)

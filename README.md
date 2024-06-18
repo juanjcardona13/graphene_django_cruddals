@@ -246,8 +246,8 @@ type QuestionPaginatedType implements PaginationInterface {
   pages: Int
   hasNext: Boolean
   hasPrev: Boolean
-  indexStartObj: Int
-  indexEndObj: Int
+  indexStart: Int
+  indexEnd: Int
   objects: [QuestionType!]
 }
 # - Payload the mutations
@@ -292,8 +292,8 @@ interface PaginationInterface {
   pages: Int
   hasNext: Boolean
   hasPrev: Boolean
-  indexStartObj: Int
-  indexEndObj: Int
+  indexStart: Int
+  indexEnd: Int
 }
 
 
