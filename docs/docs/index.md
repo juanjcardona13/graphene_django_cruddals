@@ -17,13 +17,13 @@ If you're seeking to streamline your Django models into a robust GraphQL API cap
 
 ***GET STARTED***
 
-- [🏁 Quick Start](GET STARTED/Quick-Start.md)
-    - [Install](GET STARTED/Quick-Start.md#install)
-    - [Setup](GET STARTED/Quick-Start.md#setup)
+- [🏁 Quick Start](GET-STARTED/Quick-Start.md)
+    - [Install](GET-STARTED/Quick-Start.md#install)
+    - [Setup](GET-STARTED/Quick-Start.md#setup)
 
-- [⚙️ Installation](GET STARTED/Installation.md#installation-step-by-step)
-    - [prerequisites](GET STARTED/Installation.md#prerequisites)
-    - [How to Install CRUDDALS](GET STARTED/Installation.md#graphene-django-cruddals)
+- [⚙️ Installation](GET-STARTED/Installation.md#installation-step-by-step)
+    - [Prerequisites](GET-STARTED/Installation.md#prerequisites)
+    - [How to Install CRUDDALS](GET-STARTED/Installation.md#graphene-django-cruddals)
 
 ***GUIDE TUTORIALS***
 
@@ -31,7 +31,8 @@ If you're seeking to streamline your Django models into a robust GraphQL API cap
 - [🎓 Advance Usage](GUIDE-TUTORIALS/Advance-Usage.md)
 - [🌟 Features](GUIDE-TUTORIALS/Features.md)
 
-***API***
+***API REFERENCE***
 
-[ 🛠️ Custom Types](API/Custom-Types.md)
-
+- [🛠️ DjangoModelCruddals Class](API-REFERENCE/django-model-cruddals.md)
+- [🛠️ DjangoAppCruddals Class](API-REFERENCE/django-app-cruddals.md)
+- [🛠️ DjangoProjectCruddals Class](API-REFERENCE/django-project-cruddals.md)

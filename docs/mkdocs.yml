@@ -8,7 +8,11 @@ edit_uri: tree/main/docs/docs
 
 plugins:
   - search
-  - mkdocstrings
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          paths: [..]
 
 extra:
   edit_on_github: true
@@ -23,17 +27,18 @@ markdown_extensions:
 nav:
   - Home: index.md
   - GET STARTED:
-    -  🏁 Quick Start: GET STARTED/Quick-Start.md
-    - ⚙️ Installation: GET STARTED/Installation.md
+    -  🏁 Quick Start: GET-STARTED/Quick-Start.md
+    -  ⚙️ Installation: GET-STARTED/Installation.md
 
   - GUIDE TUTORIALS:
     -  💡 Basic Usage: GUIDE-TUTORIALS/Basic-Usage.md
     -  🎓 Advance Usage: GUIDE-TUTORIALS/Advance-Usage.md
     -  🌟 Features: GUIDE-TUTORIALS/Features.md
 
-  - API:
-    -  🛠️ Custom Types: API/Custom-Types.md
-
+  - API REFERENCE:
+    -  🛠️ Django Model : API-REFERENCE/django-model-cruddals.md
+    -  🛠️ Django App : API-REFERENCE/django-app-cruddals.md
+    -  🛠️ Django Project : API-REFERENCE/django-project-cruddals.md
 
 
 

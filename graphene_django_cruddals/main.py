@@ -67,14 +67,108 @@ def convert_model_to_model_form(
     return ModelForm
 
 
-class DjangoCruddalsModel(CruddalsModel):
+def get_cruddals_config_for_model(
+    model: DjangoModel,
+    cls,
+    model_form_class,
+    registry,
+    prefix,
+    suffix,
+    cruddals_interfaces,
+    exclude_cruddals_interfaces,
+    field_for_activate_deactivate,
+):
+    return CruddalsBuilderConfig(
+        model=model,
+        pascal_case_name=model.__name__,
+        get_fields_for_output=cls.get_fields_for_output,
+        output_field_converter_function=convert_django_field_with_choices_to_output,
+        get_fields_for_input=cls.get_fields_for_input,
+        input_field_converter_function=cls.input_field_converter_function,
+        get_fields_for_create_input=cls.get_fields_for_create_input,
+        create_input_field_converter_function=cls.create_input_field_converter_function,
+        get_fields_for_update_input=cls.get_fields_for_update_input,
+        update_input_field_converter_function=cls.update_input_field_converter_function,
+        get_fields_for_filter=cls.get_fields_for_filter,
+        filter_field_converter_function=convert_django_field_without_choices_to_filter_input,
+        get_fields_for_order_by=cls.get_fields_for_order_by,
+        order_by_field_converter_function=convert_django_field_without_choices_to_order_by_input,
+        create_resolver=lambda root, info, **kwargs: default_create_update_resolver(
+            model, model_form_class, registry, root, info, **kwargs
+        ),
+        read_resolver=lambda root, info, **kwargs: default_read_field_resolver(
+            model, registry, model._default_manager, root, info, **kwargs
+        ),
+        update_resolver=lambda root, info, **kwargs: default_update_resolver(
+            model, model_form_class, registry, root, info, **kwargs
+        ),
+        delete_resolver=lambda root, info, **kwargs: default_delete_field_resolver(
+            model, root, info, **kwargs
+        ),
+        deactivate_resolver=lambda root,
+        info,
+        **kwargs: default_deactivate_field_resolver(
+            model, field_for_activate_deactivate, root, info, **kwargs
+        ),
+        activate_resolver=lambda root, info, **kwargs: default_activate_field_resolver(
+            model, field_for_activate_deactivate, root, info, **kwargs
+        ),
+        list_resolver=lambda root, info, **kwargs: default_list_field_resolver(
+            None, model._default_manager, root, info, **kwargs
+        ),
+        search_resolver=lambda root, info, **kwargs: default_search_field_resolver(
+            model,
+            registry,
+            None,
+            model._default_manager,
+            root,
+            info,
+            **kwargs,
+        ),
+        field_for_activate_deactivate=field_for_activate_deactivate,
+        plural_pascal_case_name=transform_string(
+            model._meta.verbose_name_plural or "", "PascalCase"
+        ),
+        prefix=prefix,
+        suffix=suffix,
+        cruddals_interfaces=cruddals_interfaces,
+        exclude_cruddals_interfaces=exclude_cruddals_interfaces,
+        registry=registry,
+    )
+
+
+class DjangoModelCruddals(CruddalsModel):
+    """
+    A class that provides CRUDDALS (Create, Read, Update, Delete, Deactivate, Activate, List, Search) operations for Django models.
+
+    This class is designed to be used as a base class for GraphQL types representing Django models.
+    It provides methods for generating input and output fields, as well as conversion functions for
+    handling Django model fields.
+
+    Args:
+        model (DjangoModel): The Django model class to be used for CRUDDALS operations.
+        config (CruddalsBuilderConfig, optional): The configuration object for customizing the behavior of the CRUDDALS operations. Defaults to None, in which case a default configuration will be used.
+        functions (Tuple[FunctionType, ...], optional): A tuple of functions (Create, Read, Update, Delete, Deactivate, Activate, List, Search) to be included in the generated GraphQL Schema. Defaults to None, in which case all functions will be included.
+        exclude_functions (Tuple[FunctionType, ...], optional): A tuple of functions to be excluded from the generated GraphQL Schema. Defaults to None.
+        prefix (str, optional): A prefix to be added to the generated GraphQL Types name. Defaults to "", in which case the model name will be used as is.
+        suffix (str, optional): A suffix to be added to the generated GraphQL Types name. Defaults to "", in which case the model name will be used as is.
+        cruddals_interfaces (Tuple[Type[Any], ...], optional): A tuple of additional Cruddals interfaces to be implemented by the generated GraphQL Schema. Defaults to ().
+        exclude_cruddals_interfaces (Tuple[str, ...], optional): A tuple of interface names to be excluded from the generated GraphQL Schema. Defaults to ().
+        registry (RegistryGlobal, optional): The global registry object to be used for registering the generated GraphQL Schema. Defaults to None, in which case a global registry will be used.
+        field_for_activate_deactivate (str, optional): The name of the field used for activating/deactivating the model. Defaults to "is_active".
+
+    Raises:
+        AssertionError: If the `model` argument is not provided.
+
+    """
+
     @classmethod
     def __init_subclass_with_meta__(
         cls,
-        config: Optional[CruddalsBuilderConfig] = None,
-        functions: Optional[Tuple[FunctionType, ...]] = None,
-        exclude_functions: Optional[Tuple[FunctionType, ...]] = None,
-        model: Union[DjangoModel, None] = None,
+        model: DjangoModel,
+        config: Union[CruddalsBuilderConfig, None] = None,
+        functions: Union[Tuple[FunctionType, ...], None] = None,
+        exclude_functions: Union[Tuple[FunctionType, ...], None] = None,
         prefix: str = "",
         suffix: str = "",
         cruddals_interfaces: Tuple[Type[Any], ...] = (),
@@ -83,7 +177,7 @@ class DjangoCruddalsModel(CruddalsModel):
         field_for_activate_deactivate: str = "is_active",
         **kwargs,
     ):
-        assert model, "model is required for CruddalsModel"
+        assert model, "model is required for DjangoModelCruddals"
 
         model_form_class = convert_model_to_model_form(
             model=model,
@@ -95,68 +189,16 @@ class DjangoCruddalsModel(CruddalsModel):
             registry = get_global_registry()
 
         if not config:
-            config = CruddalsBuilderConfig(
-                model=model,
-                pascal_case_name=model.__name__,
-                get_fields_for_output=cls.get_fields_for_output,
-                output_field_converter_function=convert_django_field_with_choices_to_output,
-                get_fields_for_input=cls.get_fields_for_input,
-                input_field_converter_function=cls.input_field_converter_function,
-                get_fields_for_create_input=cls.get_fields_for_create_input,
-                create_input_field_converter_function=cls.create_input_field_converter_function,
-                get_fields_for_update_input=cls.get_fields_for_update_input,
-                update_input_field_converter_function=cls.update_input_field_converter_function,
-                get_fields_for_filter=cls.get_fields_for_filter,
-                filter_field_converter_function=convert_django_field_without_choices_to_filter_input,
-                get_fields_for_order_by=cls.get_fields_for_order_by,
-                order_by_field_converter_function=convert_django_field_without_choices_to_order_by_input,
-                create_resolver=lambda root,
-                info,
-                **kwargs: default_create_update_resolver(
-                    model, model_form_class, registry, root, info, **kwargs
-                ),
-                read_resolver=lambda root, info, **kwargs: default_read_field_resolver(
-                    model, registry, model._default_manager, root, info, **kwargs
-                ),
-                update_resolver=lambda root, info, **kwargs: default_update_resolver(
-                    model, model_form_class, registry, root, info, **kwargs
-                ),
-                delete_resolver=lambda root,
-                info,
-                **kwargs: default_delete_field_resolver(model, root, info, **kwargs),
-                deactivate_resolver=lambda root,
-                info,
-                **kwargs: default_deactivate_field_resolver(
-                    model, field_for_activate_deactivate, root, info, **kwargs
-                ),
-                activate_resolver=lambda root,
-                info,
-                **kwargs: default_activate_field_resolver(
-                    model, field_for_activate_deactivate, root, info, **kwargs
-                ),
-                list_resolver=lambda root, info, **kwargs: default_list_field_resolver(
-                    None, model._default_manager, root, info, **kwargs
-                ),
-                search_resolver=lambda root,
-                info,
-                **kwargs: default_search_field_resolver(
-                    model,
-                    registry,
-                    None,
-                    model._default_manager,
-                    root,
-                    info,
-                    **kwargs,
-                ),
-                field_for_activate_deactivate=field_for_activate_deactivate,
-                plural_pascal_case_name=transform_string(
-                    model._meta.verbose_name_plural or "", "PascalCase"
-                ),
-                prefix=prefix,
-                suffix=suffix,
-                cruddals_interfaces=cruddals_interfaces,
-                exclude_cruddals_interfaces=exclude_cruddals_interfaces,
-                registry=registry,
+            config = get_cruddals_config_for_model(
+                model,
+                cls,
+                model_form_class,
+                registry,
+                prefix,
+                suffix,
+                cruddals_interfaces,
+                exclude_cruddals_interfaces,
+                field_for_activate_deactivate,
             )
 
         super().__init_subclass_with_meta__(
@@ -296,7 +338,7 @@ class BuilderCruddalsApp:
             )
             cruddals_model = build_class(
                 name=f"{Model.__name__}Cruddals",
-                bases=(DjangoCruddalsModel,),
+                bases=(DjangoModelCruddals,),
                 attrs={"Meta": cruddals_model_meta},
             )
 
@@ -349,7 +391,7 @@ class BuilderCruddalsApp:
             ), f"'models' should be tuple received {type(include_models)}"
 
 
-class DjangoCruddalsApp(SubclassWithMeta):
+class DjangoAppCruddals(SubclassWithMeta):
     Query = None
     Mutation = None
     schema = None
@@ -371,7 +413,7 @@ class DjangoCruddalsApp(SubclassWithMeta):
         settings_for_model=None,
         **kwargs,
     ):
-        assert app_name, "app_name is required for DjangoCruddalsApp"
+        assert app_name, "app_name is required for DjangoAppCruddals"
         validate_list_func_cruddals(functions, exclude_functions)
 
         [setattr(cls, attr, None) for attr in ["Query", "Mutation", "schema", "meta"]]
@@ -410,7 +452,7 @@ class AppSettings(NamedTuple):
     settings_for_model: dict = {}
 
 
-class DjangoCruddalsProject(SubclassWithMeta):
+class DjangoProjectCruddals(SubclassWithMeta):
     """
     A base class for defining GraphQL schemas for Django apps in a project using Cruddals.
 
@@ -585,7 +627,7 @@ class DjangoCruddalsProject(SubclassWithMeta):
         )
         AppCruddals = build_class(
             name=f"{_app_name}AppCruddals",
-            bases=(DjangoCruddalsApp,),
+            bases=(DjangoAppCruddals,),
             attrs={"Meta": MetaAppCruddals},
         )
 

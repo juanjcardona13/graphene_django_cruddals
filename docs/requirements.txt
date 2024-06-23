@@ -5,19 +5,20 @@ colorama==0.4.6
 Django==5.0.3
 ghp-import==2.1.0
 graphene==3.3
+graphene-cruddals==0.2.7
 graphene-django==3.2.0
-graphene-django-cruddals @ git+https://github.com/juanjcardona13/graphene_django_cruddals.git@main
+graphene-django-cruddals==0.1.2
 graphql-core==3.2.3
 graphql-relay==3.2.0
-griffe==0.42.1
+griffe==0.47.0
 Jinja2==3.1.3
 Markdown==3.5.2
 MarkupSafe==2.1.5
 mergedeep==1.3.4
 mkdocs==1.5.3
 mkdocs-autorefs==1.0.1
-mkdocstrings==0.24.1
-mkdocstrings-python==1.9.0
+mkdocstrings==0.25.1
+mkdocstrings-python==1.10.5
 mypy==1.9.0
 mypy-extensions==1.0.0
 packaging==24.0

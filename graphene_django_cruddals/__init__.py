@@ -55,9 +55,9 @@ from .converters.utils import (
 from .main import (
     AppSettings,
     BuilderCruddalsApp,
-    DjangoCruddalsApp,
-    DjangoCruddalsModel,
-    DjangoCruddalsProject,
+    DjangoAppCruddals,
+    DjangoModelCruddals,
+    DjangoProjectCruddals,
 )
 from .resolvers.main import (
     default_activate_field_resolver,
@@ -187,9 +187,9 @@ __all__ = [
     "create_relation_model_objects",
     "obj_to_modify_have_generic_foreign_key_input",
     "get_data_for_generic_foreign_key",
-    "DjangoCruddalsModel",
+    "DjangoModelCruddals",
     "BuilderCruddalsApp",
-    "DjangoCruddalsApp",
+    "DjangoAppCruddals",
     "AppSettings",
-    "DjangoCruddalsProject",
+    "DjangoProjectCruddals",
 ]

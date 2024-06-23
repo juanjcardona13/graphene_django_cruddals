@@ -2,30 +2,30 @@ from graphene_cruddals import CruddalsRelationField
 
 import graphene
 from graphene_django_cruddals.main import (
-    DjangoCruddalsApp,
-    DjangoCruddalsModel,
-    DjangoCruddalsProject,
+    DjangoAppCruddals,
+    DjangoModelCruddals,
+    DjangoProjectCruddals,
 )
 
 from .models import ModelA, ModelB, ModelC, ModelD, ModelE, ModelF, ModelG, ModelH
 
 
-class CruddalsModelA(DjangoCruddalsModel):
+class CruddalsModelA(DjangoModelCruddals):
     class Meta:
         model = ModelA
 
 
-class CruddalsModelB(DjangoCruddalsModel):
+class CruddalsModelB(DjangoModelCruddals):
     class Meta:
         model = ModelB
 
 
-class CruddalsModelC(DjangoCruddalsModel):
+class CruddalsModelC(DjangoModelCruddals):
     class Meta:
         model = ModelC
 
 
-class CruddalsModelD(DjangoCruddalsModel):
+class CruddalsModelD(DjangoModelCruddals):
     class Meta:
         model = ModelD
 
@@ -39,12 +39,12 @@ class CustomResolverModelF:
             return {"id": 1, "foreign_key_field_deep": None}
 
 
-class CruddalsModelE(DjangoCruddalsModel):
+class CruddalsModelE(DjangoModelCruddals):
     class Meta:
         model = ModelE
 
 
-class CruddalsModelF(DjangoCruddalsModel):
+class CruddalsModelF(DjangoModelCruddals):
     class Meta:
         model = ModelF
         cruddals_interfaces = (CustomResolverModelF,)
@@ -70,7 +70,7 @@ class ExtraFieldsModelG:
         extra_field_order_by_input_object_type = graphene.String()
 
 
-class CruddalsModelG(DjangoCruddalsModel):
+class CruddalsModelG(DjangoModelCruddals):
     class Meta:
         model = ModelG
         cruddals_interfaces = (ExtraFieldsModelG,)
@@ -90,7 +90,7 @@ class FieldRelationModelH:
         many_to_many_field = CruddalsRelationField()
 
 
-class CruddalsModelH(DjangoCruddalsModel):
+class CruddalsModelH(DjangoModelCruddals):
     class Meta:
         model = ModelH
         cruddals_interfaces = (FieldRelationModelH,)
@@ -131,7 +131,7 @@ schema = graphene.Schema(
 )
 
 
-class SchemaCruddalsApp(DjangoCruddalsApp):
+class SchemaCruddalsApp(DjangoAppCruddals):
     class Meta:
         app_name = "tests"
         models = (
@@ -162,7 +162,7 @@ app_schema = graphene.Schema(
 )
 
 
-class SchemaCruddalsProject(DjangoCruddalsProject):
+class SchemaCruddalsProject(DjangoProjectCruddals):
     class Meta:
         apps = ("tests",)
         settings_for_app = {
