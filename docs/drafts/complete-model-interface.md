@@ -15,7 +15,7 @@ class ExampleModelInterface:
         # another fields with their resolvers
 
         @classmethod
-        def get_queryset(cls, queryset, info): # This method is special and is used to modify the queryset before it is returned, receives 3 arguments (cls, queryset:QuerySet de Django, info), return queryset
+        def get_objects(cls, queryset, info): # This method is special and is used to modify the queryset before it is returned, receives 3 arguments (cls, queryset:QuerySet de Django, info), return queryset
             return queryset
 
     class InputObjectType:
@@ -76,13 +76,10 @@ class ExampleModelInterface:
 
     class CreateField:
         class Meta:
-            modify_input_argument = {
-                "name": "input",
-                "required": True,
-                "description": "",
-                "hidden": False,
-            }
-            extra_arguments = {}
+            # For modify the input argument, only can modify the InputObjectType through the CreateInputObjectType
+            extra_arguments = {
+              # "key": str (used how name), "value": graphene.Argument
+            } # This dict add new arguments to the mutation
 
         def pre_mutate(*args, **kwargs):
             return (*args, kwargs)
