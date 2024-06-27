@@ -54,6 +54,12 @@ class ExtraFieldsModelG:
     class ObjectType:
         extra_field_object_type = graphene.String()
 
+        @classmethod
+        def get_objects(cls_object_type, objects, info, **kwargs):
+            new_obj_g = ModelG(name="MODEL G FROM GET OBJECTS")
+            new_obj_g.save()
+            return ModelG.objects.filter(name="MODEL G FROM GET OBJECTS")
+
     class InputObjectType:
         extra_field_input_object_type = graphene.String()
 

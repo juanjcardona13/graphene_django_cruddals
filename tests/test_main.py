@@ -1002,6 +1002,44 @@ objs_to_create_type_g = [
 # endregion
 
 
+class TestInternalGetObjectsModelG(SchemaTestCase):
+    def test_get_objects_model_g(self):
+        client = Client()
+
+        variables = {"input": [{"name": "MODEL G NAME"}]}
+        expected_response = {
+            "data": {
+                "createModelGs": {
+                    "objects": [
+                        {
+                            "id": "1",
+                            "name": "MODEL G NAME",
+                            "paginatedForeignKeyHRelated": {"objects": []},
+                        },
+                    ],
+                    "errorsReport": None,
+                }
+            }
+        }
+        response = client.query(create_model_g_mutation, variables=variables).json()
+        self.verify_response(response, expected_response, message="CREATE ModelG")
+
+        # region READ ModelC
+        variables = {"where": {"id": {"exact": "1"}}}
+        expected_response = {
+            "data": {
+                "readModelG": {
+                    "id": "2",
+                    "name": "MODEL G FROM GET OBJECTS",
+                    "paginatedForeignKeyHRelated": {"objects": []},
+                }
+            }
+        }
+        response = client.query(read_model_g_query, variables=variables).json()
+        self.verify_response(response, expected_response, message="READ ModelG")
+        # endregion
+
+
 class CruddalsModelSchemaTestResolvers(SchemaTestCase):
     def test_cruddals_model_c(self):
         client = Client()
