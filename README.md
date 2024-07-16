@@ -8,8 +8,8 @@
 Turn your Django-models into a complete GraphQL API with all CRUD operations  
 
 [![PyPI](https://img.shields.io/pypi/v/graphene-django-cruddals?style=flat-&color=00559c&label=pypi&logo=python&logoColor=white)](https://pypi.org/project/graphene-django-cruddals/)
-[![GitHub License](https://img.shields.io/github/license/juanjcardona13/graphene_django_cruddals?color=4c1)](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE)  
-[![Codecov](https://img.shields.io/codecov/c/gh/juanjcardona13/graphene_django_cruddals)](https://app.codecov.io/gh/juanjcardona13/graphene_django_cruddals)  
+[![GitHub License](https://img.shields.io/github/license/juanjcardona13/graphene_django_cruddals?color=4c1)](https://github.com/juanjcardona13/graphene_django_cruddals/blob/main/LICENSE)
+[![Codecov](https://img.shields.io/codecov/c/gh/juanjcardona13/graphene_django_cruddals)](https://app.codecov.io/gh/juanjcardona13/graphene_django_cruddals)
 [![Documentation Status](https://readthedocs.org/projects/graphene-django-cruddals/badge/?version=latest)](https://graphene-django-cruddals.readthedocs.io/en/latest/?badge=latest)
 
 ![CRUDDALS Gif](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExem14OGIwMXU5c3h0NTlndnp5M2t6dWc1aGZsY2s3YWZ0cGtzNmRmNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lRweacGyr3Q9n48duZ/giphy.gif)  
