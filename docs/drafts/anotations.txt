@@ -1,0 +1,55 @@
+  - pymdownx.details
+  - pymdownx.emoji
+  - pymdownx.tasklist
+  - pymdownx.magiclink
+  - pymdownx.tilde
+  - pymdownx.caret
+  - pymdownx.smartsymbols
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.progressbar
+
+
+
+
+
+
+    """
+    A class that provides CRUDDALS (Create, Read, Update, Delete, Deactivate, Activate, List, Search) operations for Django models.
+
+    This class is designed to be used as a base class for defining GraphQL schemas for Django models.
+    GraphQL types and resolvers are generated automatically based on the provided Django model.
+
+    """
+
+
+    """
+      Parameters:
+          model (DjangoModel): The Django model class to be used for CRUDDALS operations.
+          config (Optional[CruddalsBuilderConfig]): The configuration object for customizing the behavior of the CRUDDALS operations. Defaults to None, in which case a default configuration will be used.
+          functions (Tuple[FunctionType, ...], optional): A tuple of functions (Create, Read, Update, Delete, Deactivate, Activate, List, Search) to be included in the generated GraphQL Schema. Defaults to None, in which case all functions will be included.
+          exclude_functions (Tuple[FunctionType, ...], optional): A tuple of functions to be excluded from the generated GraphQL Schema. Defaults to None.
+          prefix (str, optional): A prefix to be added to the generated GraphQL Types name. Defaults to "", in which case the model name will be used as is.
+          suffix (str, optional): A suffix to be added to the generated GraphQL Types name. Defaults to "", in which case the model name will be used as is.
+          cruddals_interfaces (Tuple[Type[Any], ...], optional): A tuple of additional Cruddals interfaces to be implemented by the generated GraphQL Schema. Defaults to ().
+          exclude_cruddals_interfaces (Tuple[str, ...], optional): A tuple of interface names to be excluded from the generated GraphQL Schema. Defaults to ().
+          registry (RegistryGlobal, optional): The global registry object to be used for registering the generated GraphQL Schema. Defaults to None, in which case a global registry will be used.
+          field_for_activate_deactivate (str, optional): The name of the field used for activating/deactivating the model. Defaults to "is_active".
+
+      Raises:
+          AssertionError: If the `model` argument is not provided.
+    """
+
+
+
+Attributes:
+Args:
+Parameters:
+
+
+
+
+La subclase o clase secundaria debe definir una clase `Meta` con los atributos que se describen a continuación para el método de clase especial
+

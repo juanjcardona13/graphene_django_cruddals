@@ -1,6 +1,14 @@
 site_name: Graphene Django CRUDDALS
 
-theme: readthedocs
+# readthedocs theme
+# mkdocs
+
+docs_dir: docs
+
+theme:
+  name: material
+  color_mode: auto
+  user_color_mode_toggle: true
 
 repo_url: https://github.com/juanjcardona13/graphene_django_cruddals
 
@@ -17,12 +25,24 @@ plugins:
 extra:
   edit_on_github: true
 
+extra_css:
+  - css/extra.css
+
+extra_javascript:
+  - js/extra.js
+
 markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight
+  - pymdownx.extra
+  - codehilite:
+      guess_lang: false
   - toc:
       permalink: true
       baselevel: 1
       separator: "-"
-
 
 nav:
   - Home: index.md
@@ -39,13 +59,3 @@ nav:
     -  🛠️ Django Model : API-REFERENCE/django-model-cruddals.md
     -  🛠️ Django App : API-REFERENCE/django-app-cruddals.md
     -  🛠️ Django Project : API-REFERENCE/django-project-cruddals.md
-
-
-
-
-
-
-
-
-
-

@@ -139,27 +139,63 @@ def get_cruddals_config_for_model(
 
 class DjangoModelCruddals(CruddalsModel):
     """
-    A class that provides CRUDDALS (Create, Read, Update, Delete, Deactivate, Activate, List, Search) operations for Django models.
+    A base class to generating a GraphQL schema with CRUDDALS operations for a **Django model** using Cruddals.
 
-    This class is designed to be used as a base class for GraphQL types representing Django models.
-    It provides methods for generating input and output fields, as well as conversion functions for
-    handling Django model fields.
+    This class is designed to be used as a base class for Django models.
+    GraphQL types and resolvers are generated automatically based on the provided Django model.
 
-    Args:
-        model (DjangoModel): The Django model class to be used for CRUDDALS operations.
-        config (CruddalsBuilderConfig, optional): The configuration object for customizing the behavior of the CRUDDALS operations. Defaults to None, in which case a default configuration will be used.
-        functions (Tuple[FunctionType, ...], optional): A tuple of functions (Create, Read, Update, Delete, Deactivate, Activate, List, Search) to be included in the generated GraphQL Schema. Defaults to None, in which case all functions will be included.
-        exclude_functions (Tuple[FunctionType, ...], optional): A tuple of functions to be excluded from the generated GraphQL Schema. Defaults to None.
-        prefix (str, optional): A prefix to be added to the generated GraphQL Types name. Defaults to "", in which case the model name will be used as is.
-        suffix (str, optional): A suffix to be added to the generated GraphQL Types name. Defaults to "", in which case the model name will be used as is.
-        cruddals_interfaces (Tuple[Type[Any], ...], optional): A tuple of additional Cruddals interfaces to be implemented by the generated GraphQL Schema. Defaults to ().
-        exclude_cruddals_interfaces (Tuple[str, ...], optional): A tuple of interface names to be excluded from the generated GraphQL Schema. Defaults to ().
-        registry (RegistryGlobal, optional): The global registry object to be used for registering the generated GraphQL Schema. Defaults to None, in which case a global registry will be used.
-        field_for_activate_deactivate (str, optional): The name of the field used for activating/deactivating the model. Defaults to "is_active".
+    To use this class, define a subclass and include a `Meta` class with the required attributes.
 
-    Raises:
-        AssertionError: If the `model` argument is not provided.
+    Example Usage:
+    --------------
 
+
+    === "Only Required Arguments"
+        ```python
+        from graphene_django_cruddals import DjangoModelCruddals
+        from your_django_app.models import YourModel
+
+        class YourModelCruddals(DjangoModelCruddals):
+            class Meta:
+                model = YourModel
+                ... # Other options
+        ```
+    === "With Optional Arguments"
+        ```python
+        from graphene_django_cruddals import DjangoModelCruddals
+        from your_django_app.models import YourModel
+
+        class YourModelCruddals(DjangoModelCruddals):
+            class Meta:
+                model = YourModel
+                functions = ("create", "read", "update", "delete", "deactivate", "activate", "list", "search")
+                # exclude_functions = ("create",)
+                prefix = "New"
+                suffix = "Suffix"
+                cruddals_interfaces = (CustomCruddalsInterface,)
+                # exclude_cruddals_interfaces = ("CustomCruddalsInterface",)
+                # registry = your_registry
+                field_for_activate_deactivate = "is_enabled"
+        ```
+
+    Meta Class Options:
+    -------------------
+
+    Note:
+        These options can also be seen below in the definition of `__init_subclass_with_meta__` method.
+
+    ```markdown
+    *model (DjangoModel):* The Django model class to be used for generating CRUDDALS operations.
+    *config (CruddalsBuilderConfig, optional):* Configuration object for customizing the behavior of the CRUDDALS operations. Defaults and recommended to None.
+    *functions (Tuple[FunctionType, ...], optional):* A tuple of functions ('create', 'read', 'update', 'delete', 'deactivate', 'activate', 'list', 'search') to be included in the generated GraphQL Schema. Defaults to None.
+    *exclude_functions (Tuple[FunctionType, ...], optional):* A tuple of functions to be excluded from the generated GraphQL Schema. Defaults to None.
+    *prefix (str, optional):* A prefix to be added to the generated GraphQL Types name. Defaults to "".
+    *suffix (str, optional):* A suffix to be added to the generated GraphQL Types name. Defaults to "".
+    *cruddals_interfaces (Tuple[Type[Any], ...], optional):* A tuple of additional Cruddals interfaces to be implemented by the generated GraphQL Schema. Defaults to ().
+    *exclude_cruddals_interfaces (Tuple[str, ...], optional):* A tuple of interface names to be excluded if `DjangoAppCruddals` or `DjangoProjectCruddals` is used. Defaults to ().
+    *registry (RegistryGlobal, optional):* The global registry object to be used for registering the generated GraphQL Schema. Defaults to None.
+    *field_for_activate_deactivate (str, optional):* The name of the field used for activating/deactivating the object. Defaults to "is_active".
+    ```
     """
 
     @classmethod
@@ -177,6 +213,24 @@ class DjangoModelCruddals(CruddalsModel):
         field_for_activate_deactivate: str = "is_active",
         **kwargs,
     ):
+        """
+        This method is called automatically when a subclass with a `Meta` class is defined. There is no need to call this method directly.
+
+        Args:
+            model (DjangoModel): The Django model class to be used for generate CRUDDALS operations.
+            config (CruddalsBuilderConfig, optional): The configuration object for customizing the behavior of the CRUDDALS operations. Defaults and recommended to None.
+            functions (Tuple[FunctionType, ...], optional): A tuple of strings with the name of functions ('create', 'read', 'update', 'delete', 'deactivate', 'activate', 'list', 'search') to be included in the generated GraphQL Schema. Defaults to None, in which case all functions will be included.
+            exclude_functions (Tuple[FunctionType, ...], optional): A tuple of functions to be excluded from the generated GraphQL Schema. Defaults to None.
+            prefix (str, optional): A prefix to be added to the generated GraphQL Types name. Defaults to "", in which case the model name will be used as is.
+            suffix (str, optional): A suffix to be added to the generated GraphQL Types name. Defaults to "", in which case the model name will be used as is.
+            cruddals_interfaces (Tuple[Type[Any], ...], optional): A tuple of additional Cruddals interfaces to be implemented by the generated GraphQL Schema. Defaults to ().
+            exclude_cruddals_interfaces (Tuple[str, ...], optional): A tuple of interface names to be excluded from the generated GraphQL Schema. Defaults to ().
+            registry (RegistryGlobal, optional): The global registry object to be used for registering the generated GraphQL Schema. Defaults to None, in which case a global registry will be used.
+            field_for_activate_deactivate (str, optional): The name of the field used for activating/deactivating the object. Defaults to "is_active".
+
+        Raises:
+            AssertionError: If the `model` argument is not provided.
+        """
         assert model, "model is required for DjangoModelCruddals"
 
         model_form_class = convert_model_to_model_form(
@@ -392,6 +446,88 @@ class BuilderCruddalsApp:
 
 
 class DjangoAppCruddals(SubclassWithMeta):
+    """
+
+    A base class for defining GraphQL schemas for a **Django app** using Cruddals.
+
+    This class provides methods to dynamically create GraphQL schemas for each model in the app based on provided settings.
+
+    This class is a wrapper around `DjangoModelCruddals` to generate GraphQL schema for each model in the app, avoiding the need to define a subclass for each model.
+    Otherwise this approach yet allow customizing the behavior of the generated GraphQL schema for each model with the same attributes as `DjangoModelCruddals` but in a dictionary format.
+
+    Attributes:
+        app_name (str): Name of the Django app for which the schema will be generated.
+        schema: The generated GraphQL schema for the app.
+        Query: The combined Query object for the app.
+        Mutation: The combined Mutation object for the app.
+        meta: A dictionary with the name of the models as keys and the generated classes as values.
+
+    To use this class, define a subclass and include a `Meta` class with the required attributes.
+
+    Example Usage:
+    --------------
+
+    === "Only Required Arguments"
+
+        ```python
+        from graphene_django_cruddals import DjangoAppCruddals
+
+        class YourAppCruddals(DjangoAppCruddals):
+            class Meta:
+                app_name = "your_app"
+        ```
+    === "With Optional Arguments"
+
+        ```python
+        from graphene_django_cruddals import DjangoAppCruddals
+
+        class YourAppCruddals(DjangoAppCruddals):
+            class Meta:
+                app_name = "your_app"
+                models = ("YourModel1", "YourModel2")
+                # exclude_models = ("YourModel1",)
+                prefix = "New"
+                suffix = "Suffix"
+                cruddals_interfaces = (CustomCruddalsInterface,)
+                functions = ("create", "read", "update", "delete", "deactivate", "activate", "list", "search")
+                # exclude_functions = ("create",)
+                settings_for_model = {
+                    "YourModel1": {
+                        "functions": ("create", "read", "update", "delete", "deactivate", "activate", "list", "search"),
+                        # "exclude_functions": ("create",),
+                        "prefix": "New",
+                        "suffix": "Suffix",
+                        "cruddals_interfaces": (CustomCruddalsInterfaceForYourModel1,),
+                        # "exclude_cruddals_interfaces": ("CustomCruddalsInterface",),
+                        "field_for_activate_deactivate": "is_enabled",
+                    },
+                    "YourModel2": {
+                        # ...
+                    },
+                }
+        ```
+
+    Meta Class Options:
+    -------------------
+
+    Note:
+        These options can also be seen below in the definition of `__init_subclass_with_meta__` method.
+
+    ```markdown
+    *app_name (str):* Name of the Django app for which the schema will be generated.
+    *models (Tuple[str, ...], optional):* Names of the models to include in the generated GraphQL Schema. Defaults to None, in which case all models in the app will be included.
+    *exclude_models (Tuple[str, ...], optional):* Names of the models to exclude from the generated GraphQL Schema. Defaults to None.
+    *prefix (str, optional):* A prefix to be added to the generated GraphQL Types name. Defaults to "".
+    *suffix (str, optional):* A suffix to be added to the generated GraphQL Types name. Defaults to "".
+    *cruddals_interfaces (Tuple[Type[Any], ...], optional):* A tuple of additional Cruddals interfaces to be implemented by the generated GraphQL Schema. Defaults to ().
+    *exclude_cruddals_interfaces (Tuple[str, ...], optional):* A tuple of interface names to be excluded if `DjangoProjectCruddals` is used. Defaults to ().
+    *functions (Tuple[FunctionType, ...], optional):* A tuple of functions ('create', 'read', 'update', 'delete', 'deactivate', 'activate', 'list', 'search') to be included in the generated GraphQL Schema. Defaults to None.
+    *exclude_functions (Tuple[FunctionType, ...], optional):* A tuple of functions to be excluded from the generated GraphQL Schema. Defaults to None.
+    *settings_for_model (Dict[str, Any], optional):* A dictionary with the name of the models as keys and a dictionary with the settings for each model as values for overriding the default settings of the generated GraphQL Schema. Defaults to {}.
+    ```
+
+    """
+
     Query = None
     Mutation = None
     schema = None
@@ -413,6 +549,27 @@ class DjangoAppCruddals(SubclassWithMeta):
         settings_for_model=None,
         **kwargs,
     ):
+        """
+        Initialize the subclass with meta settings and dynamically create GraphQL schemas for the app.
+        This method is called automatically when a subclass with a `Meta` class is defined. There is no need to call this method directly.
+
+        Args:
+            app_name (str): Name of the Django app for which the schema will be generated.
+            models (tuple): Names of the models to include in the generated GraphQL Schema. Defaults to None, in which case all models in the app will be included.
+            exclude_models (tuple): Names of the models to exclude from the generated GraphQL Schema. Defaults to None.
+            prefix (str): A prefix to be added to the generated GraphQL Types name. Defaults to "".
+            suffix (str): A suffix to be added to the generated GraphQL Types name. Defaults to "".
+            cruddals_interfaces (tuple): A tuple of additional Cruddals interfaces to be implemented by the generated GraphQL Schema. Defaults to ().
+            exclude_cruddals_interfaces (tuple): A tuple of interface names to be excluded if `DjangoProjectCruddals` is used. Defaults to ().
+            functions (tuple): Functions to include in the schemas can be "create", "read", "update", "delete", "deactivate", "activate", "list", "search" .
+            exclude_functions (tuple): Functions to exclude from schema generation.
+            settings_for_model (dict): A dictionary with the name of the models as keys and a dictionary with the settings for each model as values for overriding the default settings of the generated GraphQL Schema. Defaults to {}.
+            **kwargs: Additional keyword arguments.
+
+        Raises:
+            AssertionError: If the `app_name` argument is not provided.
+
+        """
         assert app_name, "app_name is required for DjangoAppCruddals"
         validate_list_func_cruddals(functions, exclude_functions)
 
@@ -442,29 +599,93 @@ class DjangoAppCruddals(SubclassWithMeta):
         super().__init_subclass_with_meta__(**kwargs)
 
 
-class AppSettings(NamedTuple):
-    exclude_models: Union[tuple, None] = None
-    models: Union[tuple, None] = None
-    cruddals_interfaces: tuple = ()
-    exclude_cruddals_interfaces: tuple = ()
-    functions: tuple = ()
-    exclude_functions: tuple = ()
-    settings_for_model: dict = {}
-
-
 class DjangoProjectCruddals(SubclassWithMeta):
     """
-    A base class for defining GraphQL schemas for Django apps in a project using Cruddals.
+    A base class for defining GraphQL schemas for a **Django project** using Cruddals.
 
-    This class provides methods to dynamically create GraphQL schemas for each app in the project
-    based on provided settings.
+    This class provides methods to dynamically create GraphQL schemas for each app in the project based on provided settings.
+
+    This class is a wrapper around `DjangoAppCruddals` to generate GraphQL schema for each app in the project, avoiding the need to define a subclass for each app.
+    Otherwise this approach yet allow customizing the behavior of the generated GraphQL schema for each app with the same attributes as `DjangoAppCruddals` but in a dictionary format.
 
     Attributes:
-        apps (str or tuple or dict): Names of Django apps for which schemas will be generated.
-            Defaults to "__all__", meaning all apps in the project.
+        apps (Union[Literal["__all__"], Tuple[str, ...]]): Names of Django apps for which schemas will be generated. Defaults to "__all__", meaning all apps in the project.
         schema: The generated GraphQL schema for the project.
         Query: The combined Query object for the project.
         Mutation: The combined Mutation object for the project.
+        meta: A dictionary with the name of the apps as keys and the generated classes as values.
+
+    To use this class, define a subclass and include a `Meta` class with the required attributes.
+
+    Example Usage:
+    --------------
+
+    === "Only Required Arguments"
+
+        ```python
+        from graphene_django_cruddals import DjangoProjectCruddals
+
+        class YourProjectCruddals(DjangoProjectCruddals):
+            class Meta:
+                apps = "__all__"
+        ```
+    === "With Optional Arguments"
+
+        ```python
+        from graphene_django_cruddals import DjangoProjectCruddals
+
+        class YourProjectCruddals(DjangoProjectCruddals):
+            class Meta:
+                apps = ("your_app1", "your_app2")
+                # exclude_apps = ("your_app1",)
+                cruddals_interfaces = (CustomCruddalsInterface,)
+                # exclude_cruddals_interfaces = ("CustomCruddalsInterface",)
+                settings_for_app = {
+                    "your_app1": {
+                        "models": ("YourModel1", "YourModel2"),
+                        # "exclude_models": ("YourModel1",),
+                        "prefix": "New",
+                        "suffix": "Suffix",
+                        "cruddals_interfaces": (CustomCruddalsInterfaceForYourApp1,),
+                        # "exclude_cruddals_interfaces": ("CustomCruddalsInterface",),
+                        "functions": ("create", "read", "update", "delete", "deactivate", "activate", "list", "search"),
+                        # "exclude_functions": ("create",),
+                        "settings_for_model": {
+                            "YourModel1": {
+                                "functions": ("create", "read", "update", "delete", "deactivate", "activate", "list", "search"),
+                                # "exclude_functions": ("create",),
+                                "prefix": "New",
+                                "suffix": "Suffix",
+                                "cruddals_interfaces": (CustomCruddalsInterfaceForYourModel1,),
+                                # "exclude_cruddals_interfaces": ("CustomCruddalsInterface",),
+                                "field_for_activate_deactivate": "is_enabled",
+                            },
+                            "YourModel2": {
+                                # ...
+                            },
+                        },
+                    },
+                    "your_app2": {
+                        # ...
+                    },
+                }
+        ```
+
+    Meta Class Options:
+    -------------------
+
+    Note:
+        These options can also be seen below in the definition of `__init_subclass_with_meta__` method.
+
+    ```markdown
+    *apps (Union[Literal["__all__"], Tuple[str, ...]]):* Names of Django apps for which schemas will be generated. Defaults to "__all__", meaning all apps in the project.
+    *exclude_apps (Tuple[str, ...]):* Names of apps to exclude from schema generation. Defaults to ().
+    *cruddals_interfaces (Tuple[Type[Any], ...], optional):* A tuple of additional Cruddals interfaces to be implemented by the generated GraphQL Schema. Defaults to ().
+    *settings_for_app (Dict[str, Any], optional):* A dictionary with the name of the apps as keys and a dictionary with the settings for each app as values for overriding the default settings of the generated GraphQL Schema. Defaults to {}.
+    *functions (Tuple[FunctionType, ...], optional):* Functions to include in the schemas can be "create", "read", "update", "delete", "deactivate", "activate", "list", "search" .
+    *exclude_functions (Tuple[FunctionType, ...], optional):* Functions to exclude from schema generation. Defaults to ().
+    ```
+
     """
 
     apps: Union[Literal["__all__"], Tuple[str, ...]] = "__all__"
@@ -636,3 +857,35 @@ class DjangoProjectCruddals(SubclassWithMeta):
         else:
             cls.meta.update({_app_name: AppCruddals})
         return AppCruddals
+
+
+class ModelSettings(NamedTuple):
+    model: DjangoModel
+    config: CruddalsBuilderConfig
+    functions: tuple = ()
+    exclude_functions: tuple = ()
+    prefix: str = ""
+    suffix: str = ""
+    cruddals_interfaces: tuple = ()
+    exclude_cruddals_interfaces: tuple = ()
+    registry: Union[RegistryGlobal, None] = None
+    field_for_activate_deactivate: str = "is_active"
+
+
+class AppSettings(NamedTuple):
+    exclude_models: Union[tuple, None] = None
+    models: Union[tuple, None] = None
+    cruddals_interfaces: tuple = ()
+    exclude_cruddals_interfaces: tuple = ()
+    functions: tuple = ()
+    exclude_functions: tuple = ()
+    settings_for_model: dict = {}
+
+
+class ProjectSettings(NamedTuple):
+    apps: Union[Literal["__all__"], Tuple[str, ...]] = "__all__"
+    exclude_apps: tuple = ()
+    cruddals_interfaces: tuple = ()
+    settings_for_app: dict = {}
+    functions: tuple = ()
+    exclude_functions: tuple = ()
