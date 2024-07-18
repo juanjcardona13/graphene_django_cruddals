@@ -1,19 +1,32 @@
 site_name: Graphene Django CRUDDALS
-
-# readthedocs theme
-# mkdocs
-
-docs_dir: docs
-
+site_description: Graphene Django CRUDDALS Convert your Django models into a complete GraphQL API with all CRUD operations + DALS operations (Activate, Deactivate, List, Search)
 theme:
   name: material
-  color_mode: auto
-  user_color_mode_toggle: true
+  logo: img/logoFullWhite.svg
+  favicon: img/logoWhite.png
+  language: en
+  palette:
+    - media: "(prefers-color-scheme)"
+      primary: deep orange
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep orange
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to system preference
 
+repo_name: juanjcardona13/graphene_django_cruddals
 repo_url: https://github.com/juanjcardona13/graphene_django_cruddals
-
 edit_uri: tree/main/docs/docs
-
 plugins:
   - search
   - mkdocstrings:
@@ -59,3 +72,8 @@ nav:
     -  🛠️ Django Model : API-REFERENCE/django-model-cruddals.md
     -  🛠️ Django App : API-REFERENCE/django-app-cruddals.md
     -  🛠️ Django Project : API-REFERENCE/django-project-cruddals.md
+
+docs_dir: docs
+
+# readthedocs theme
+# mkdocs

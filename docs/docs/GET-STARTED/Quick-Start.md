@@ -15,6 +15,6 @@ Hey there! Ready to start your project with graphene_django_cruddals? Awesome! I
 ## Setup
 
 Once you've installed the package, you'll be ready to start! You **don't need to worry** about any additional configurations.
-Want to see it in action? Head over to the [Basic Usage](/GUIDE-TUTORIALS/Basic-Usage) section to experience its first usage 🚀.
+Want to see it in action? Head over to the [Basic Usage](../GUIDE-TUTORIALS/Basic-Usage.md) section to experience its first usage 🚀.
 
 
