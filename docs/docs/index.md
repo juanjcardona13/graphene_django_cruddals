@@ -7,7 +7,7 @@ graphene-django-cruddals is a **library** for [Django] that extends [Graphene-dj
 
 First time using graphene-django-cruddals? We suggest starting with the [Quick-Start] to quickly set up your development environment and begin using the library in your project. Additionally, we recommend exploring the main documentation for [Graphene-django] to familiarize yourself with the basic utilities it offers.
 
-[Quick-Start]:/GET%20STARTED/Quick-Start/
+[Quick-Start]:GET-STARTED/Quick-Start.md
 [Graphene-django]:https://docs.graphene-python.org/projects/django/en/latest/#
 [Django]: https://www.djangoproject.com/
 

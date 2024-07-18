@@ -9,7 +9,7 @@ For installing graphene_django_cruddals, just run this command in your shell
 
 ## ℹ️ Basic usage
 
-To use it, simply create a new class that inherits "`CruddalsModel`"
+To use it, simply create a new class that inherits "`DjangoModelCruddals`"
 Suppose we have the following model.
 
 ```python
@@ -31,7 +31,7 @@ Suppose we have the following model.
 Then we can create a complete CRUD+DALS with the following code
 
 ```python
-class CruddalsRestaurant(CruddalsModel):
+class CruddalsRestaurant(DjangoModelCruddals):
     class Meta:
         model = Restaurant
 ```

@@ -1,28 +1,18 @@
 ## 💡 Basic usage
 
-To use it, simply create a new class that inherits "`CruddalsModel`"
+To use it, simply create a new class that inherits "`DjangoModelCruddals`"
 Suppose we have the following model.
 
 ```python
   class Restaurant(models.Model):
-    name = models.CharField(
-        max_length=100,
-        help_text='The name of the restaurant'
-    )
-    slug = models.SlugField(
-        help_text='The slug of the restaurant',
-        blank=True,
-        null=True,
-        unique=True,
-        editable=False,
-        max_length=100
-    )
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
 ```
 
 Then we can create a complete CRUD+DALS with the following code
 
 ```python
-class CruddalsRestaurant(CruddalsModel):
+class CruddalsRestaurant(DjangoModelCruddals):
     class Meta:
         model = Restaurant
 ```

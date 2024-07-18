@@ -51,7 +51,7 @@ pip install graphene-django-cruddals
 
 ## <a name="usage">👩‍💻 Usage</a> 
 
-To use it, simply create a new class that inherits "`CruddalsModel`"
+To use it, simply create a new class that inherits "`DjangoModelCruddals`"
 Suppose we have the following models.
 
 ```python
@@ -72,7 +72,7 @@ class Choice(models.Model):
 Then we can create a complete CRUD+DALS for the models `Question` with the following code
 
 ```python
-class CruddalsQuestion(CruddalsModel):
+class CruddalsQuestion(DjangoModelCruddals):
     class Meta:
         model = Question
 ```
