@@ -60,18 +60,18 @@ markdown_extensions:
 nav:
   - Home: index.md
   - GET STARTED:
-    -  🏁 Quick Start: GET-STARTED/Quick-Start.md
-    -  ⚙️ Installation: GET-STARTED/Installation.md
+    -  🏁 Quick Start: get-started/quick-start.md
+    -  ⚙️ Installation: get-started/installation.md
 
   - GUIDE TUTORIALS:
-    -  💡 Basic Usage: GUIDE-TUTORIALS/Basic-Usage.md
-    -  🎓 Advance Usage: GUIDE-TUTORIALS/Advance-Usage.md
-    -  🌟 Features: GUIDE-TUTORIALS/Features.md
+    -  💡 Basic Usage: guide-tutorials/basic-usage.md
+    -  🎓 Advance Usage: guide-tutorials/advance-usage.md
+    -  🌟 Features: guide-tutorials/features.md
 
   - API REFERENCE:
-    -  🛠️ Django Model : API-REFERENCE/django-model-cruddals.md
-    -  🛠️ Django App : API-REFERENCE/django-app-cruddals.md
-    -  🛠️ Django Project : API-REFERENCE/django-project-cruddals.md
+    -  🛠️ Django Model : api-reference/django-model-cruddals.md
+    -  🛠️ Django App : api-reference/django-app-cruddals.md
+    -  🛠️ Django Project : api-reference/django-project-cruddals.md
 
 docs_dir: docs
 

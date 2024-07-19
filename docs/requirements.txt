@@ -1,6 +1,7 @@
 aniso8601==9.0.1
 asgiref==3.8.1
 Babel==2.15.0
+black==24.4.2
 certifi==2024.7.4
 charset-normalizer==3.3.2
 click==8.1.7

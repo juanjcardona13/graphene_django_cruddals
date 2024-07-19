@@ -564,7 +564,7 @@ class DjangoAppCruddals(SubclassWithMeta):
             functions (tuple): Functions to include in the schemas can be "create", "read", "update", "delete", "deactivate", "activate", "list", "search" .
             exclude_functions (tuple): Functions to exclude from schema generation.
             settings_for_model (dict): A dictionary with the name of the models as keys and a dictionary with the settings for each model as values for overriding the default settings of the generated GraphQL Schema. Defaults to {}.
-            **kwargs: Additional keyword arguments.
+            **kwargs (dict) : Additional keyword arguments.
 
         Raises:
             AssertionError: If the `app_name` argument is not provided.
