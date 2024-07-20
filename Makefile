@@ -14,8 +14,8 @@ tests:
 
 .PHONY: format ## Format code
 format:
-	ruff format graphene_django_cruddals tests setup.py
+	ruff format graphene_django_cruddals tests setup.py docs
 
 .PHONY: lint ## Lint code
 lint:
-	ruff graphene_django_cruddals tests
+	ruff graphene_django_cruddals tests docs
