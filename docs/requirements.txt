@@ -9,7 +9,7 @@ colorama==0.4.6
 Django==5.0.3
 ghp-import==2.1.0
 graphene==3.3
-graphene-cruddals==0.2.7
+graphene-cruddals==0.2.11
 graphene-django==3.2.0
 graphene-django-cruddals==0.1.2
 graphql-core==3.2.3

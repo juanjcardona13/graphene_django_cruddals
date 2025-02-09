@@ -55,7 +55,7 @@ setup(
     ],
     keywords="api graphql crud graphene graphene-django cruddals",
     packages=find_packages(exclude=["tests", "examples", "examples.*"]),
-    install_requires=["graphene-django>=3.0.0", "graphene-cruddals"],
+    install_requires=["graphene-django>=3.0.0", "graphene-cruddals>=0.2.11"],
     setup_requires=["pytest-runner"],
     tests_require=tests_require,
     extras_require={

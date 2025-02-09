@@ -20,12 +20,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install tox
-    - name: Set Python for pre-commit
-      run: echo "PRE_COMMIT_HOME=$(python3.10 -m site --user-base)/pre-commit" >> $GITHUB_ENV
     - name: Run pre-commit 💅
-      run: |
-        pre-commit clean
-        pre-commit autoupdate
-        tox
+      run: tox
       env:
         TOXENV: pre-commit
