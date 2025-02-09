@@ -130,10 +130,7 @@ def default_read_field_resolver(
         queryset = maybe_queryset(django_object_type.get_objects(queryset, info))
     if queryset is None:
         raise ValueError("The queryset is None")
-    try:
-        return queryset.distinct().get()
-    except model.DoesNotExist:
-        raise model.DoesNotExist
+    return queryset.distinct().get()
 
 
 def default_update_resolver(model, model_form_class, registry, root, info, **args):
