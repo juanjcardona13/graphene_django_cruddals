@@ -416,33 +416,33 @@ class BuilderCruddalsApp:
         settings_for_model,
         app_name,
     ):
-        assert not (
-            exclude_models and include_models
-        ), f"Cannot set both 'exclude_models' and 'models' options on {app_name}."
-        assert isinstance(
-            interfaces_app, (tuple,)
-        ), f"'cruddals_interfaces' should be tuple received {type(interfaces_app)}"
-        assert isinstance(
-            exclude_interfaces_app, (tuple,)
-        ), f"'exclude_cruddals_interfaces' should be tuple received {type(exclude_interfaces_app)}"
-        assert isinstance(
-            functions_app, (tuple,)
-        ), f"'functions' should be tuple received {type(functions_app)}"
-        assert isinstance(
-            exclude_functions_app, (tuple,)
-        ), f"'exclude_functions' should be tuple received {type(exclude_functions_app)}"
-        assert isinstance(
-            settings_for_model, dict
-        ), f"'settings_for_model' should be dict, received {type(settings_for_model)}"
+        assert not (exclude_models and include_models), (
+            f"Cannot set both 'exclude_models' and 'models' options on {app_name}."
+        )
+        assert isinstance(interfaces_app, (tuple,)), (
+            f"'cruddals_interfaces' should be tuple received {type(interfaces_app)}"
+        )
+        assert isinstance(exclude_interfaces_app, (tuple,)), (
+            f"'exclude_cruddals_interfaces' should be tuple received {type(exclude_interfaces_app)}"
+        )
+        assert isinstance(functions_app, (tuple,)), (
+            f"'functions' should be tuple received {type(functions_app)}"
+        )
+        assert isinstance(exclude_functions_app, (tuple,)), (
+            f"'exclude_functions' should be tuple received {type(exclude_functions_app)}"
+        )
+        assert isinstance(settings_for_model, dict), (
+            f"'settings_for_model' should be dict, received {type(settings_for_model)}"
+        )
 
         if exclude_models is not None:
-            assert isinstance(
-                exclude_models, (tuple,)
-            ), f"'exclude_models' should be tuple received {type(exclude_models)}"
+            assert isinstance(exclude_models, (tuple,)), (
+                f"'exclude_models' should be tuple received {type(exclude_models)}"
+            )
         if include_models is not None:
-            assert isinstance(
-                include_models, (tuple,)
-            ), f"'models' should be tuple received {type(include_models)}"
+            assert isinstance(include_models, (tuple,)), (
+                f"'models' should be tuple received {type(include_models)}"
+            )
 
 
 class DjangoAppCruddals(SubclassWithMeta):
