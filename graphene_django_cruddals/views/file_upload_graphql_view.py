@@ -1,4 +1,5 @@
 """Apply multipart request spec to django"""
+
 import json
 
 from graphene_django.views import GraphQLView

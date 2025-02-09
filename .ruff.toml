@@ -1,4 +1,4 @@
-select = [
+lint.select = [
     "E",    # pycodestyle
     "W",    # pycodestyle
     "F",    # pyflake
@@ -8,7 +8,7 @@ select = [
     "UP",   # pyupgrade
 ]
 
-ignore = [
+lint.ignore = [
     "E501",  # line-too-long
     "B017",  # pytest.raises(Exception) should be considered evil
     "B028",  # warnings.warn called without an explicit stacklevel keyword argument
@@ -22,11 +22,11 @@ exclude = [
 
 target-version = "py38"
 
-[per-file-ignores]
+[lint.per-file-ignores]
 # Ignore unused imports (F401) in these files
 "__init__.py" = ["F401"]
 
-[isort]
+[lint.isort]
 known-first-party = ["graphene", "graphene-django"]
 known-local-folder = ["cookbook"]
 combine-as-imports = true

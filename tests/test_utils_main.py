@@ -499,7 +499,7 @@ def complex_model3(simple_model3):
 
 
 def test_get_model_fields_for_output_without_for_object_type(
-    simple_model3_without_relations
+    simple_model3_without_relations,
 ):
     fields = get_model_fields_for_output(simple_model3_without_relations, False)
     expected_fields = {
@@ -511,7 +511,7 @@ def test_get_model_fields_for_output_without_for_object_type(
 
 
 def test_get_model_fields_for_output_with_for_object_type(
-    simple_model3_without_relations
+    simple_model3_without_relations,
 ):
     fields = get_model_fields_for_output(simple_model3_without_relations, True)
     expected_fields = {

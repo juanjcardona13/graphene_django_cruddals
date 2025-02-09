@@ -1,0 +1,388 @@
+System check identified no issues (0 silenced).
+April 17, 2024 - 00:28:14
+Django version 4.2, using settings 'bcs.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/schema.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.10/threading.py", line 953, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/urls.py", line 7, in <module>
+    from .schema import schema
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/schema.py", line 5, in <module>
+    class BcsCruddalsProject(CruddalsProject):
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene/utils/subclass_with_meta.py", line 46, in __init_subclass__
+    super_class.__init_subclass_with_meta__(**options)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1393, in __init_subclass_with_meta__
+    AppSchema = cls._create_app_schema(
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1463, in _create_app_schema
+    class AppSchema(CruddalsApp):
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene/utils/subclass_with_meta.py", line 46, in __init_subclass__
+    super_class.__init_subclass_with_meta__(**options)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1288, in __init_subclass_with_meta__
+    cruddals_of_app = BuilderCruddalsApp(
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1211, in __init__
+    settings_model["interfaces"] = interfaces + settings_model.get(
+TypeError: can only concatenate tuple (not "list") to tuple
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# TODO: Add support to limit_choices_to={'model__in': ('nameModel')},
+# TODO: Add support for custom_resolver in @convert_django_field_to_output.register(GenericForeignKey), Al igual que para el ForeignKey, se debe buscar si el TypeParent tiene un resolve para el campo relacionado
+# TODO: Should name "functions" be changed to "operations" or "fields"?
+# TODO: En "get_list_input_object_type" => Debo de montar un validador que del el object, sea del tipo InputObjectType, correspondiente al del modelo que viene en value_of_field_to_convert.app_label y value_of_field_to_convert.model
+# TODO: En "get_choices" =>translatable description: https://github.com/graphql-python/graphql-core-next/issues/58
+# TODO: Puedo mirar si el nombre de los Payload podrian ser relacionados con los nombres del modelo, If I want that the name of the field is the plural_model_name, I need to change the name of the field to plural_model_name, Missing check impact, eso seria en la funcion get_object_type_payload, cambiar "objects"
+# TODO: en la funcion de "default_final_resolver_with_pre_and_post" de "BaseCruddals", se dejo enviar el "CRUDDALS_RESPONSE" en el kw, Check if leave in kw, info, or new argument
+# TODO: Check if is List(NonNull(ModelObjectType)) or List(ModelObjectType) en la clase ModelListField, en la parte de iniciación del super
+# TODO: Mover la creacion de arguments y el resolve para directamente los operationFields, graphene.Field(type, description, args, resolve, etc) el solo deberia de gestionar todo, buscar la definicion de Field en el codigo de graphene
+# TODO: Revisar el soporte a funciones staticmethods y classmethod
+# TODO: Agregar la posibilidad de actualizar con where, por ejemplo es mas facil para actualizar un campo (por ejemplo fecha) de los registros donde el id va desde el 1 hasta el 100, hacer esto en lo actual seria re tedioso
+# TODO: /home/juanjcardona13/Projects/Personal/CRUDDALS/Back/Python/graphene_django_cruddals/graphene_django_cruddals/converters/for_entity/main.py => Crear las variantes de DjangoObjectType, Seria algo como DjangoInputObjectType, etc
+# TODO: Lo anterior me ayudaria a desacoplar y crear los test de cada funcion desacoplada, para cada operacion
+# TODO: Revisar toda la documentación de "choices" en Django, un choice puede ser una función y mas, compare las diferentes versiones (https://docs.djangoproject.com/en/4.2/ref/models/fields/#choices)(https://docs.djangoproject.com/en/5.0/ref/models/fields/#choices)
+# TODO: Mejorar el nombre para los errores => ErrorsType y ErrorType
+# TODO: Revisar el required en los campos que son choices
+# TODO: VALIDACIONES EN LAS CLASES Y FUNCIONES DE CRUDDALS, MANEJO DE ERRORES EN LAS CLASES Y FUNCIONES DE CRUDDALS
+# TODO: TEST UNITARIOS Y TEST DE INTEGRACIÓN (Debo de hacer una matriz, para saber que voy a testear en el de integración)
+# TODO: !!!DOCUMENTAR!!!
+# TODO: En el paginated interface devolver el itemsPerPage, lo que seria el pageSize
+
+# TODO: En los GenericForeignKey puedo limitar el rango de la union con el attr limit_choices_to
+# TODO: Me falta revisar el UPDATE del GenericForeignKey
+# TODO: Debo de revisar si puedo dejar que modifiquen el where y order_by input en cada función, ya que por obvias razones se va a modificar en todas partes por que solo existe un ModelWhereInput y ModelOrderBy, entonces podría es crear ModelReadWhereInput, ModelDeleteWhereInput, ModelDeactivateWhereInput, etc
+# TODO: Debo de refactorizar la mutacion default para create y update
+# TODO: Pensar en las optimizaciones, graphene_django_crud tiene una función para eso (_queryset_factory_analyze)
+# TODO: Si la persona tiene campos calculados, debería en primer instancia ponerlos en el modelo (por ejemplo: full_name, en el modelo se puede definir)
+# TODO: Uno puede agregar resolvers a los campos del modelo si quiere controlar de manera granular cada campo (???)
+# TODO: Dejar una anotación muy grande con el tema de las validaciones cuando un campo tiene "blank=True", en el archivo "django/db/models/base.py" en las lineas 1269 y 1270
+# TODO: Para las operaciones que son masivas, seria muy bueno dejarle al desarrollador la opcion de habilitar el "bulk" del ORM, y tambien que el se lo pueda dejar al "client"
+
+# TODO: Esta función es muy importante para poder entregar los Types en Queries o Mutations custom
+def get_type_for_model(model):
+    registry = get_global_registry()
+    registries_for_direct_model = registry.get_registry_for_model(Landing)
+    if ( registries_for_direct_model is not None and "object_type" in registries_for_direct_model ):
+        direct_type = registries_for_direct_model["object_type"]
+        return direct_type
+    return None
+# TODO: Graphene Django => DjangoDebug
+# TODO: Dummy data
+# TODO: Test for final user
+# TODO: Give credits for GraphqlView what is of Django
+# TODO:  ArrayField,     CustomField??=> Crear una funcion donde el usuario pueda definir como lo quiere convertir
+    HStoreField,
+    JSONField,
+    PGJSONField,
+    MissingType,
+    RangeField,
+# TODO: limit_choices_to
+# TODO: Choices name CONTROL
+# TODO: Si quiero dejar un campo requerido en el actualizar?
+# TODO: Mejorar el nombre para los ERRORES
+# TODO: ArrayField(models.PositiveSmallIntegerField())
+# TODO: Quitar la dependencia de ModelForm
+# TODO: Poner en la documentación que si un campo tiene un valor por defecto no va a ser requerido
+# TODO: Asi como CruddalsProject llama a CruddalsApp y CruddalsApp llama a CruddalsModel, CruddalsModel podria llamar CreateModel, ReadModel, UpdateModel, DeleteModel, DeactivateModel, ActivateModel, ListModel, SearchModel y estos últimos exponerlos tambien
+
+# TODO: El campo para activarDesactivar debereia de ser customizable (Por ejemplo is_active)
+# TODO: Debo de organizar los converter para que todo sea POO, es decir clases como DjangoObjectType
+# TODO: Debo de cambiar la palabra "paginated" eso esta en pasado y no representa correctamente el Input
+# TODO: Dejar una variable en CruddalsModel que sea types:List[Type[ObjectType]] => Los types (output, input) del modelo
+# TODO: Cambiar la palabra filter por where ???
+
+""" TODO: Poner un ejemplo para esto, podría ser que CRUDDALS se puede unir con cualquier otro schema"""
+# d = CruddalsMenu.query_operation_fields
+# d1 = type(d)
+# e = CruddalsMenu.mutation_operation_fields
+# e1 = type(e)
+# f = CruddalsMenu.meta
+# f1 = type(f)
+
+# print("=========>", d)
+# print("=========>", e)
+# print("=========>", f)
+
+
+
+# TODO: Debo de hacer Test, con los prefix y suffix, por que si se le pone un prefijo al Type, graphene no lo encuentra
+================================
+===
+===  TEST
+===
+================================
+# TODO: Trabajar mucho en los TEST, validar cada campo, su tipo, si es requerido o no, su descripción, etc
+# TODO: Hacer los test del paquete
+# TODO: Test al paquete => Ya se inicio, falta validar las interfaces para modificar el comportamiento, y cada función a mas detalle
+# TODO: Hacer los test para cada funcionalidad que serán parte del paquete
+================================
+===
+===  DESPUÉS
+===
+================================
+# TODO: Revisar si puedo convertir un *args a **kwargs, esto es para que puedan usar las funciones, pre, ., post, como normalmente las usas con parámetros definidos
+# TODO: Poder permitir que cada functions tenga sus args definidos y sus kwargs
+        import inspect
+        sig = inspect.signature(pre_resolve_read)
+        arg_names = list(sig.parameters.keys())
+# TODO: Mejorar el tema de las interfaces, para que no se vuelva un gran contra, ya que se vuelve mágico y confuso una función de cruddals como se esta resolviendo, por donde entra, por donde sale, etc, pensar si se puede usar herencia y la función built-in super()
+# TODO: que pasa si un campo choice se llama Type
+# TODO: Dar la opción para cambiar los nombres de: paginator, Objects, EnumActivarDesactivar, y el nombre de las operaciones
+# TODO: Dar la opción de fields y exclude en el paginator, por si no quieren mostrar el total y etc
+# TODO: validar que no mande modelos excluidos o no agregados (Esto es para las interfaces)
+# TODO: Pensar en las transacciones atómicas, dar la opción de: 1. mutar toda la lista o nada, 2. mutar los que se pueden y reportar los que no, ==> Quien debería de controlar esto?? El usuario o el desarrollador???? => https://docs.graphene-python.org/projects/django/en/latest/mutations/#tying-transactions-to-mutations
+# TODO: Pasar cada función a chat gtp para:
+        1. Documentar
+        2. Validar y encontrar errores
+        3. Validar y mejorar nombres
+# TODO: Generar un archivo con los `inputs` de las queries y mutations para poder testear en graphiql, puede ser que por el tipo de campo genere un dict con un valor de ese tipo
+# TODO: Poder escribir las mutations y queries para el client que NO son de cruddals, en un archivo aparte
+# TODO: Manejar modelos Proxy
+# TODO: Optimizar muchísimo todo
+# TODO: Crear tutorial
+# TODO: Mostrar Campos personalizados por usuario y sus permisos (https://tartiflette.io/docs/tutorial/dynamic-introspection) (django-guardian para ocultar un modelo o campos)
+# TODO: Ocultar en el graphiql según los permisos
+# TODO: Crear documentación, aprender de PEP para poder hacer un paquete, etc
+# TODO: Generar un archivo de 2 posibles ruteos de la aplicación, uno basado en DjangoAdmin y otro basado en las relaciones
+# TODO: Exponer las mutations y queries de una manera muy intuitiva => Crear una función que dado un modelo y una `func [C-R-U-D-D-A-L-S]` devuelva el método
+# TODO: Puedo manejar archivos como 'cruddals_test' y 'cruddals_interface' => En este puedo decir que nombren las clases 'NameModelInterface'
+# TODO: Investigate `FormsSet`
+# TODO: Integrar FastApi o REST Framework?
+# TODO: Decoradores para functions pre-actual-post
+# TODO: Completar lo de los decoradores
+# TODO: Crear un framework independiente (ORM-TRADUCTOR DE CLASES (pydantic, graphene_django, etc) -API)
+# TODO: JSONString en los Types convertirlo a GenericScalar ==> Ponerlo en la documentación de que pueden cmabiarlo a GenericScalar, si quiere que le devuelva en dict
+
+# TODO: que paso con el arreglo de imagenes??
+# TODO: Dar soporte a Modelos con el mismo nombre pero en diferentes apps
+# TODO: Dar soporte a lo que me dijo David
+
+
+
+
+
+
+
+(V)# TODO: Mejorar "fieldsOfModel" en search, debe de mostrar todos los campos y esta ignorando los de solo lectura, o por ejemplo fechas add_now => Para hacer esto me toca crear mi propio `converter`, ya que el de los inputs solo funciona con campos de form, y el de type trae las relaciones
+(V)# TODO: Add support for related_fields
+(V)# TODO: revisar si cambio ese pageSize por itemsPerPage
+(v)# TODO: Add support for Images
+(v)# TODO: Dejar de usar graphene_django
+(v)# TODO: Asi como esta `DjangoListField` y `DjangoPaginatedField`, pueden existir los `CreateField`, `ReadField`, `UpdateField`, `DeleteField`, `DeactivateField`,`ActivateField`,`ListField`,`SearchField`
+(v)# TODO: Unir el settings de graphene_django con el de cruddals_django => A la final se elimino el settings de cruddals, para que sea un paquete menos anclado a Django y adicional no controle nada de Django si no que graphene_django lo siga haciendo
+(v)# TODO: Debo de dejar de usar DjangoObjectType, por lo tanto debo de ver como lo reemplazo, principalmente el método 'get_queryset' => En teoría ya quedo, por que ya no uso el de graphene_django, si no que uno propio para mantener el get_queryset
+(v)# TODO: Quitar graphene_django, y ModelForm, esto me ayudara para las imágenes y las creaciones anidadas, pero aun asi, puedo crear el model form para no perder las validaciones, llamamos el is_valid() => A la final no se hizo por dos razones, ya se pudo manejar las imágenes y adicional fue mejor con el ModelForm trabajar las mutaciones anidadas
+(v)# TODO: Controlar si envían id None, en la función de completar actualizar
+(v)# TODO: Crear todos los scalars para los campos de Django (mirar si se puede de manera dinámica o no, R/=> No se hizo de manera dinámica, para no ligar mas Django)
+(v)# TODO: Crear las mutaciones anidadas
+(v)# TODO: Mirar si puedo obtener los lookup de manera dinámica asi como los tipos de campos de Django
+(v)# TODO: Re-evaluar lo de metadata_cruddals, para dejarle al usuario un método query set => Definitivamente se quito, es mas intuitivo trabajar con el get_queryset
+(v)# TODO: los campos que son lista  en los objectTypes en ves de solo ponerle el plural ponerle plural+paginated
+(v)# TODO: soporte para este campo django.contrib.contenttypes.fields.GenericForeignKey
+(v)# TODO: Cada Type puede tener un classmethod get_queryset para controlar los datos que se resuelven
+(v)# TODO: Actualmente las relaciones se pueden crear uno a (Muchos, uno), trabajar para crear relaciones muchos a (Muchos, uno)
+(v)# TODO: Agregar funcionalidad para quitar arguments (la idea viene principalmente de el search, para yo dejarlo en un login y solo puedan buscar por un parámetro especifico) (Extender: Yo debo de poder personalizar todo)
+(v)# TODO: validar que mande los nombres validos (Esto es para las interfaces) (Ya no, por que pueden personalizar la clase como quiera y cruddals_django solo va a buscar lo que necesita y corresponda)
+(v)# TODO: Validar que el campo `functions` y `exclude_functions` en la clase Meta del modelo a cruddalizar sea una lista, y contenga valores validos
+(v)# TODO: Agregar mutate y override_full_mutate, (resolve y override_full_resolve)
+(v)# TODO: Mejorar el `READ` ya que pueden tener parámetros que son "unique", por los cuales quieran "read"
+(v)# TODO: Mejorar y extender esto "kwargs.update({"metadata_cruddals": {}})" en el search
+(v)# TODO: Revisar el List, siempre muestra todos los datos (es un fallo cuando alguien logueado quiere traer los datos, trae lo de todos) (Se resuelve con el `metadata_cruddals`)
+(v)# TODO: override_total_mutate y mutate no deberían de ir juntos, o envía uno u el otro
+(v)# TODO: Crear una variable en models y apps, para anular configuraciones de alto nivel (Se llama `exclude_interface`, puede enviar el nombre de la clase-interface que quiere excluir)
+(v)# TODO: Poder desactivar de manera global ciertas funciones, por ejemplo si no quiero dejar el list, por lo tanto agregar el exclude functions
+(v)# TODO: Extender el campo `functions` y `exclude_functions` a las clase constructora de la app
+(v)# TODO: Agregar el campo `exclude_functions`
+(v)# TODO: Convertir las funciones de mutate a classmethod, y mirar si los resolve (los resolve no, por son funciones como tal)
+(v)# TODO: Exponer en el archivo __init__, en la variable __all__ los métodos, variables y funciones que son publicas pra el auto import
+(v)# TODO: La función para construir un ModelForm le falta recibir meta parámetros (Extender: debo de revisar Django, DjangoForms, Graphene y Graphene-Django, para asegurarme de que recibo todos los atributos y métodos de cada uno)
+(v)# TODO: en los archivos para el client (queries, mutation, etc) separa por region de app, y region de model
+(v)# TODO: entregar también las queries y mutations para tester en graphiql
+(v)# TODO: Revisar el build_client esta escondiendo los errores de cruddals
+(v)# TODO: No poner en plural los [FunctionModelInput] para los create update
+(v)# TODO: Suffix, same that prefix
+(v)# TODO: Crear función pre y post mutate
+(v)# TODO: Cambiar nombre en la mutación de mutate_and_get_payload a mutate
+(v)# TODO: Pasar metadata, como model, app, y otros a las funciones post and pre???
+(v)# TODO: Debería o no debería de la función actual (resolve,mutate) invocarla yo? y hacer lo mismo que con pre y post? R:// Van haber dos metodos un oque sobrescribe totalmente, y otro que es llamado dentro de para pasar le todo e invocar inclusive las funciones post y pre
+(v)# TODO: Revisar si no ponen verbose_name_plural, y cuando es un nombre compuesto
+(v)# TODO: In settings of Django, for var CRUDDALS, enable:
+    - interfaces ==> for all apps
+    - settings_for_app: {
+        interfaces
+        settings_for_model
+      }
+(v)# TODO: Para los campos que son JSONField del modelo, en el Input de crearActualizar convertirlo a JSONString
+(v)# TODO: Recibir todos los argumentos que puede recibir grpahene y graphene-django, como por ejemplo exlude_fields, etc
+(v)# TODO: Funcion que devuelva las querys y mutation para hacer en graphiql
+(v)# TODO: Mejorar esta función para que me devuelva en una sola linea lo que necesito ==> dict_of_input_fields_ es decir no tener que actualizar el dict
+(v)# TODO: Para los campos que son choices del modelo, en el Input de crearActualizar no esta funcionando, muestra que recibe un String y debería de ser el choice que muestra en el Type (https://www.google.com/search?q=DjangoModelFormMutation+choices&sxsrf=ALiCzsbqDd6QcKZ9JnG7HIbtRqVCeY_FRg%3A1660960419074&ei=oz4AY-6NBP6IwbkP04GOyAQ&ved=0ahUKEwiu647ep9T5AhV-RDABHdOAA0kQ4dUDCA4&uact=5&oq=DjangoModelFormMutation+choices&gs_lcp=Cgdnd3Mtd2l6EAM6BwgAEEcQsAM6BggAEB4QBzoFCAAQkQI6CAguENQCEJECOgQIABANOgYIABAeEA06CAgAEB4QCBANSgQIQRgASgQIRhgAUL0XWPaTAWC6lQFoDXABeACAAc4BiAHaKJIBBjAuMzIuMpgBAKABAcgBCMABAQ&sclient=gws-wiz)
+(v)# TODO: Los campos del input en el schema deberían de aplicar para el crearActualizar
+(v)# TODO: En la query pasar una función que mapee el modelo y yo pueda buscar por calquier campo del modelo sin tener que registrarlo, con exclude field
+(v)# TODO: En el ACTIVAR DESACTIVAR el argumento de opción dejarlo como un choice y con id, trabjar todo con id
+(v)# TODO: Para generar CRUDDALSSchema dividirlo en funciones
+(v)# TODO: Modificar las mutation en el schema_client_js para que por defecto devuelva id, pero yo tambien pueda pedir mas campos (similar a las querys)
+(v)# TODO: Las clases dentro de el "ModelSchema" no deben de repetir el nombre (genera mayor curva de aprendizaje, mejor dejar standar)
+(v)# TODO: El post resolve debería de recibir el return del get paginator
+(v)# TODO: Agregar soporte a recibir un arreglo de modelos a excluir de la App, Ejemplo class AppSchema(CRUDDALSSchema):\n\tclass Meta:\n\t\texluce_models = ['name_model']
+ofInput# TODO: Dar la opción de poder enviar un ModelInput y un ID ==> Se puede enviar una arreglo de objs con campo name y value
+(v)# TODO: Para generar el client js convertirlo en una función padre para quitar las lineas repetidas, Organizar el crear schema_client_js para que sea una sola función y optimizar todo,
+(v)# TODO: Generar el archivo Inputs.js para en el frontend construir los formCrearActualizar => Se genero el archivo schema.gql
+(v)# TODO: Poder tener en el verBuscarListar el pre_resolve, resolve, post_resolve
+(v)# TODO: Para la busqueda avanzada dejar dos parámetros "excluyenteEntreSi" e "incluyenteEntreSi" para controlar el ADN y el OR ==> Ya esta contemplado en la BusquedaAvanzada, cuando envian varios campos y un filtro es un OR y cuando son varios objetos en la busqueda es un AND, Documentar
+(v)# TODO: Dejar un return en pre resolve, para poder tomarlo en el resolve
+(v)# TODO: Montar test
+(v)# TODO: Seperar la logica de get_props
+(v)# TODO: Agregar post, pre, mutate, en CrearActualizar, activarDesactivar, Eliminar
+(v)# TODO: Los ARGUMENTS en las consultas todos deben de ser opcionales, esto es para el actualizar, no es necesario enviar todos los campos, revisar si hay manera de que si enviar id, valide los campos requeridos, de lo contrario no => R// Esto desde la api no es posible se debe de controlar en el back o en el front, pero no en la API
+(v)# TODO: Los campos de Types, InputTypes, convertirlos a que las clases hijas solo tenga lo de ellas mismas, no que tengan lo de las hermanas, eso solo lo debería de tener CRUDDALS
+(v)# TODO: Revisar cual de los dos exactamente son obligatorios, blank o null => R// Es el blank
+(v)# TODO: Como cada función traer un arreglo debo de mirar si viene a crear o actualizar, por que puede ser ambos y validar el permiso correcto
+(v)# TODO: Debo de agregar los "raise" para CRUDDALS, de que por ejemplo no envien pre/post junto con el normal (actual), que no envien fields, con exclude etc
+(v)# TODO: Agregar el campo errors para cada función y organizar el ErrorsType
+(v)# TODO: Migrar todo a ingles
+(v)# TODO: Revisar esta function para los blank y null, y asi no ser obligatorio ponerlo en el modelo, Python/Django/venv/lib/python3.8/site-packages/graphene_django/converter.py => convert_onetoone_field_to_djangomodel
+(v)# TODO: La clase Meta, solo debería de manejar metadatos lo otro (las class, como Type, VerBuscarListar, etc) debería de estar por fuera
+(v)# TODO: Crear nuevas propiedades para el crear actualizar: arguments, arguments_for_model => No es necesario, solo con los arguments por fuera es suficiente
+(v)# TODO: Crear nuevas propiedades para el eliminar: arguments (?)
+(v)# TODO: Construir cliente => Ya se inicio, falta separar por # region ==== APP_NAME # endregion
+(v)# TODO: Que sea mas modularizado, y controlar cuales de CRUDDALS quiero
+(v)# TODO: Los arguments for "create" y "update" deberían de quedar al lado del input, no dentro
+(v)# TODO: El "create" en el input no debería de tener id
+(v)# TODO: El "update" en el input debería de ser obligatorio el id
+(v)# TODO: Debo de organizar los interfaces
+(v)# TODO: Colocar un enum con los filtros de Django, (Esos filtros se deben de importar dinamicamente) R// => No se puede por que los lookup pueden ser custom
+(v)# TODO: Guardar el GLOBAL_CRUDDALS_SCHEMA para poder correr los test
+(v)# TODO: Authentication and Authorizations    -===> Este es manejada por Django GraphQL JWT, Se pueden es poner varios ejemplos de uso y como poder hacer una función global
+(v)# TODO: Separar cada funcionalidad de manera individual
+
+
+
+
+
+
+
+
+
+
+
+
+
+=========
+==IDEAS==
+=========
+------------------------------
+Generadas por GPT
+-------------------------------
+************************************************************
+from fastapi import FastAPI
+from graphene import ObjectType, String, Schema, Mutation
+from pydantic import BaseModel
+
+
+class User(BaseModel):
+    name: str
+    email: str
+
+app = FastAPI()
+
+@app.post("/create_user")
+async def create_user(user_data: User):
+    user_created = '' # ... ORM
+    return user_created
+
+
+class CreateUserMutation(Mutation):
+    class Arguments:
+        user_data = User(required=True)
+
+    user_created = String()
+
+    def mutate(self, info, user_data):
+        user_created = '' # ... ORM
+        return user_created
+
+
+class Mutation(ObjectType):
+    create_user = CreateUserMutation.Field()
+
+
+app.add_route("/graphql", Schema(mutation=Mutation))
+************************************************************
+************************************************************
+GPT => SubModelInterface: define los campos y las relaciones que deben ser proporcionados para crear, actualizar, leer o eliminar submodelos asociados a una instancia existente del modelo. Debe tener un método before_submodel para realizar operaciones previas a la manipulación del submodelo y un método after_submodel para realizar operaciones posteriores a la manipulación del submodelo.
+************************************************************
