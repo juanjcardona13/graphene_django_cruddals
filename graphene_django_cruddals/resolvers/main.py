@@ -129,7 +129,9 @@ def default_read_field_resolver(
     if isinstance(queryset, QuerySet):
         queryset = maybe_queryset(django_object_type.get_objects(queryset, info))
     if queryset is None:
-        raise ValueError("The queryset is None")
+        raise ValueError(
+            "The queryset is None. Ensure that the 'where' clause is correct and the default manager returns a valid queryset."
+        )
     return queryset.distinct().get()
 
 
@@ -224,10 +226,21 @@ def default_search_field_resolver(
         attname, default_value = resolver.args
         if attname.startswith("paginated_"):
             posible_field = attname.replace("paginated_", "", 1)
+            posible_field_with_default_set = posible_field + "_set"
+            posible_field = (
+                posible_field
+                if hasattr(root, posible_field)
+                else posible_field_with_default_set
+            )
             if hasattr(root, posible_field):
                 maybe_manager = getattr(root, posible_field, default_value)
 
         queryset: QuerySet = maybe_queryset(maybe_manager)
+
+    if queryset is None:
+        raise ValueError(
+            "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
+        )
 
     if "where" in args:
         where = args["where"]
