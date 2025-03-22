@@ -1,4 +1,14 @@
-from typing import Any, Dict, Literal, NamedTuple, Optional, Tuple, Type, Union
+from typing import (
+    Any,
+    Dict,
+    Literal,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Type,
+    TypeAlias,
+    Union,
+)
 
 from django.apps import apps as django_apps
 from django.db.models import (
@@ -691,8 +701,8 @@ class DjangoProjectCruddals(SubclassWithMeta):
     apps: Union[Literal["__all__"], Tuple[str, ...]] = "__all__"
     schema: graphene.Schema
 
-    Query: Type[graphene.ObjectType]
-    Mutation: Type[graphene.Mutation]
+    Query: TypeAlias = "graphene.ObjectType"
+    Mutation: TypeAlias = "graphene.Mutation"
 
     meta = None
 
