@@ -1,3 +1,4 @@
+import sys
 from typing import (
     Any,
     Dict,
@@ -6,9 +7,13 @@ from typing import (
     Optional,
     Tuple,
     Type,
-    TypeAlias,
     Union,
 )
+
+if sys.version_info >= (3, 10):
+    from typing import TypeAlias
+else:
+    from typing_extensions import TypeAlias
 
 from django.apps import apps as django_apps
 from django.db.models import (
