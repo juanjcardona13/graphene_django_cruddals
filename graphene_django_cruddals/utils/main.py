@@ -572,9 +572,14 @@ def create_direct_relation_model_objects(
                 actual_reverse_pks_of_direct_obj = list(
                     query_set_actual_objs_related.values_list("pk", flat=True)
                 )
-            obj_to_relate[name_field_relate] = (
-                reverse_pks + actual_reverse_pks_of_direct_obj
-            )
+            if isinstance(obj_to_relate.get(name_field_relate), list):
+                obj_to_relate[name_field_relate] += (
+                    reverse_pks + actual_reverse_pks_of_direct_obj
+                )
+            else:
+                obj_to_relate[name_field_relate] = (
+                    reverse_pks + actual_reverse_pks_of_direct_obj
+                )
     return response_direct_objs
 
 
