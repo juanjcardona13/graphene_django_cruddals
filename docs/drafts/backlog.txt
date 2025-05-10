@@ -94,13 +94,17 @@ TypeError: can only concatenate tuple (not "list") to tuple
 
 
 
+# TODO: Fix no se estan poniendo los help text de las relaciones, esoecificamente no me funciono par aun ForeignKey
+# TODO: Revisar como funciona los choices tengo un problema con las mayusculas, minusculas y la busqueda con exact
+# TODO: Terminar el soporte para ArrayField
+# hay un problema con los campos por default, si los excluyo campos que son requeridos pero tienen valor por defecto, django form no recibe los valores por defecto
 
 
 
 
 
-
-
+# TODO: Convertir el output para cliente en typescript y dar soporte a los dos (js y ts)
+# TODO: Tipar mejor el output, los ObjectTypes, por ejemplo los campos que sean requeridos, ponerlos como requeridos
 # TODO: Add support to limit_choices_to={'model__in': ('nameModel')},
 # TODO: Add support for custom_resolver in @convert_django_field_to_output.register(GenericForeignKey), Al igual que para el ForeignKey, se debe buscar si el TypeParent tiene un resolve para el campo relacionado
 # TODO: Should name "functions" be changed to "operations" or "fields"?
