@@ -78,7 +78,7 @@
           "args": [
             {
               "defaultValue": null,
-              "description": "The URL that specifies the behaviour of this scalar.",
+              "description": "The URL that specifies the behavior of this scalar.",
               "name": "url",
               "type": {
                 "kind": "NON_NULL",
@@ -91,7 +91,7 @@
               }
             }
           ],
-          "description": "Exposes a URL that specifies the behaviour of this scalar.",
+          "description": "Exposes a URL that specifies the behavior of this scalar.",
           "locations": [
             "SCALAR"
           ],

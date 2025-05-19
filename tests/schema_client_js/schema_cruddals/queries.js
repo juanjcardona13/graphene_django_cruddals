@@ -1,9 +1,9 @@
 import gql from "graphql-tag";
 import {PaginatedType, ErrorCollectionType} from "./general_types"
 
-//region ============= TESTS
+// #region ============= APP: tests
 
-//region ============= MODELA
+// #region ============= MODEL: ModelA
 export function readModelA(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -60,7 +60,7 @@ export function searchModelAs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELB
+// #region ============= MODEL: ModelB
 export function readModelB(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -117,7 +117,7 @@ export function searchModelBs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELC
+// #region ============= MODEL: ModelC
 export function readModelC(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -174,7 +174,7 @@ export function searchModelCs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELD
+// #region ============= MODEL: ModelD
 export function readModelD(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -231,7 +231,7 @@ export function searchModelDs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELE
+// #region ============= MODEL: ModelE
 export function readModelE(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -288,7 +288,7 @@ export function searchModelEs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELF
+// #region ============= MODEL: ModelF
 export function readModelF(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -345,7 +345,7 @@ export function searchModelFs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELG
+// #region ============= MODEL: ModelG
 export function readModelG(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -402,7 +402,7 @@ export function searchModelGs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELH
+// #region ============= MODEL: ModelH
 export function readModelH(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {

@@ -1,9 +1,9 @@
 import gql from "graphql-tag";
 import {PaginatedType, ErrorCollectionType} from "./general_types"
 
-//region ============= TESTS
+// #region ============= APP: tests
 
-//region ============= MODELA
+// #region ============= MODEL: ModelA
 export function createModelAs(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -117,7 +117,7 @@ export function activateModelAs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELB
+// #region ============= MODEL: ModelB
 export function createModelBs(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -231,7 +231,7 @@ export function activateModelBs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELC
+// #region ============= MODEL: ModelC
 export function createModelCs(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -345,7 +345,7 @@ export function activateModelCs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELD
+// #region ============= MODEL: ModelD
 export function createModelDs(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -459,7 +459,7 @@ export function activateModelDs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELE
+// #region ============= MODEL: ModelE
 export function createModelEs(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -573,7 +573,7 @@ export function activateModelEs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELF
+// #region ============= MODEL: ModelF
 export function createModelFs(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -687,7 +687,7 @@ export function activateModelFs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELG
+// #region ============= MODEL: ModelG
 export function createModelGs(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {
@@ -801,7 +801,7 @@ export function activateModelGs(fields, extraArgs=[]) {
 };
 //endregion
 
-//region ============= MODELH
+// #region ============= MODEL: ModelH
 export function createModelHs(fields, extraArgs=[]) {
     let varsStr = ""
     for (let newArg of extraArgs) {

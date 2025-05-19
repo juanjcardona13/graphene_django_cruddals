@@ -524,8 +524,18 @@ def build_file_test_in_graphiql():
         file.write(text_for_graphiql)
 
 
-def build_files_for_client_schema_cruddals(schema):
+def build_files_for_client_schema_cruddals(schema, outputPath=None):
     if schema is not None:
+        global PATH_ROOT, PATH_CLIENT
+        if outputPath:
+            PATH_ROOT = outputPath
+            PATH_CLIENT = f"{outputPath}/schema_cruddals"
+            if not os.path.exists(PATH_ROOT):
+                os.mkdir(PATH_ROOT)
+
+            if not os.path.exists(PATH_CLIENT):
+                os.mkdir(PATH_CLIENT)
+
         build_schema(schema)
 
         apps_name = get_apps_name()
@@ -593,7 +603,7 @@ def build_files_for_client_schema_cruddals(schema):
                     )
 
                 if query_read or query_list or query_search:
-                    internal_text_queries += f"\n//region ============= {model_name.upper()}{query_read}{query_list}{query_search}\n//endregion\n"
+                    internal_text_queries += f"\n// #region ============= MODEL: {model_name}{query_read}{query_list}{query_search}\n//endregion\n"
                 if (
                     mutation_create
                     or mutation_update
@@ -601,12 +611,12 @@ def build_files_for_client_schema_cruddals(schema):
                     or mutation_deactivate
                     or mutation_activate
                 ):
-                    internal_text_mutations += f"\n//region ============= {model_name.upper()}{mutation_create}{mutation_update}{mutation_delete}{mutation_deactivate}{mutation_activate}\n//endregion\n"
+                    internal_text_mutations += f"\n// #region ============= MODEL: {model_name}{mutation_create}{mutation_update}{mutation_delete}{mutation_deactivate}{mutation_activate}\n//endregion\n"
 
             if internal_text_queries:
-                text_queries += f"//region ============= {app_name.upper()}\n{internal_text_queries}\n//endregion\n\n"
+                text_queries += f"// #region ============= APP: {app_name}\n{internal_text_queries}\n//endregion\n\n"
             if internal_text_mutations:
-                text_mutations += f"//region ============= {app_name.upper()}\n{internal_text_mutations}\n//endregion\n\n"
+                text_mutations += f"// #region ============= APP: {app_name}\n{internal_text_mutations}\n//endregion\n\n"
 
         build_file_general_types()
         build_file_queries(text_queries)

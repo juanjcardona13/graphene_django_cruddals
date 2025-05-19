@@ -1,106 +1,12 @@
-System check identified no issues (0 silenced).
-April 17, 2024 - 00:28:14
-Django version 4.2, using settings 'bcs.settings'
-Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
-
-/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/schema.py changed, reloading.
-Watching for file changes with StatReloader
-Performing system checks...
-
-Exception in thread django-main-thread:
-Traceback (most recent call last):
-  File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
-    self.run()
-  File "/usr/lib/python3.10/threading.py", line 953, in run
-    self._target(*self._args, **self._kwargs)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/autoreload.py", line 64, in wrapper
-    fn(*args, **kwargs)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
-    self.check(display_num_errors=True)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/management/base.py", line 485, in check
-    all_issues = checks.run_checks(
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/registry.py", line 88, in run_checks
-    new_errors = check(app_configs=app_configs, databases=databases)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/urls.py", line 14, in check_url_config
-    return check_resolver(resolver)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/urls.py", line 24, in check_resolver
-    return check_method()
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 494, in check
-    for pattern in self.url_patterns:
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/functional.py", line 57, in __get__
-    res = instance.__dict__[self.name] = self.func(instance)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 715, in url_patterns
-    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/functional.py", line 57, in __get__
-    res = instance.__dict__[self.name] = self.func(instance)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
-    return import_module(self.urlconf_name)
-  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
-  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
-  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
-  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
-  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/urls.py", line 7, in <module>
-    from .schema import schema
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/schema.py", line 5, in <module>
-    class BcsCruddalsProject(CruddalsProject):
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene/utils/subclass_with_meta.py", line 46, in __init_subclass__
-    super_class.__init_subclass_with_meta__(**options)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1393, in __init_subclass_with_meta__
-    AppSchema = cls._create_app_schema(
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1463, in _create_app_schema
-    class AppSchema(CruddalsApp):
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene/utils/subclass_with_meta.py", line 46, in __init_subclass__
-    super_class.__init_subclass_with_meta__(**options)
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1288, in __init_subclass_with_meta__
-    cruddals_of_app = BuilderCruddalsApp(
-  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1211, in __init__
-    settings_model["interfaces"] = interfaces + settings_model.get(
-TypeError: can only concatenate tuple (not "list") to tuple
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# TODO: Add parameter strict que sea un booleano y por defecto sea True
 # TODO: Fix no se estan poniendo los help text de las relaciones, esoecificamente no me funciono par aun ForeignKey
 # TODO: Revisar como funciona los choices tengo un problema con las mayusculas, minusculas y la busqueda con exact
 # TODO: Terminar el soporte para ArrayField
 # hay un problema con los campos por default, si los excluyo campos que son requeridos pero tienen valor por defecto, django form no recibe los valores por defecto
-
-
-
+# TODO: Modificar la funcion de generar los archivos para el cliente a un comando django, y que sean en typescript, adicional mejorar los nombres de las funciones, ya que no son un creat, el traer los campos
+# TODO: Revisar por que el actualizar esta dejando el id como opcional, es el unico que deberia de ser requerido
+# TODO: Mejorar el tipado de requerido y opcional, tanto en la entrada como en la salida para mejorar el tipado de los inputs y outputs por parte de codegen
+# TODO: para construir los archivos del cleinte dejar que puedan definir una ruta de salida
 
 
 # TODO: Convertir el output para cliente en typescript y dar soporte a los dos (js y ts)
@@ -390,3 +296,72 @@ app.add_route("/graphql", Schema(mutation=Mutation))
 ************************************************************
 GPT => SubModelInterface: define los campos y las relaciones que deben ser proporcionados para crear, actualizar, leer o eliminar submodelos asociados a una instancia existente del modelo. Debe tener un método before_submodel para realizar operaciones previas a la manipulación del submodelo y un método after_submodel para realizar operaciones posteriores a la manipulación del submodelo.
 ************************************************************
+
+
+System check identified no issues (0 silenced).
+April 17, 2024 - 00:28:14
+Django version 4.2, using settings 'bcs.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/schema.py changed, reloading.
+Watching for file changes with StatReloader
+Performing system checks...
+
+Exception in thread django-main-thread:
+Traceback (most recent call last):
+  File "/usr/lib/python3.10/threading.py", line 1016, in _bootstrap_inner
+    self.run()
+  File "/usr/lib/python3.10/threading.py", line 953, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/autoreload.py", line 64, in wrapper
+    fn(*args, **kwargs)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/management/commands/runserver.py", line 133, in inner_run
+    self.check(display_num_errors=True)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/management/base.py", line 485, in check
+    all_issues = checks.run_checks(
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/registry.py", line 88, in run_checks
+    new_errors = check(app_configs=app_configs, databases=databases)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/urls.py", line 14, in check_url_config
+    return check_resolver(resolver)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/core/checks/urls.py", line 24, in check_resolver
+    return check_method()
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 494, in check
+    for pattern in self.url_patterns:
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 715, in url_patterns
+    patterns = getattr(self.urlconf_module, "urlpatterns", self.urlconf_module)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/utils/functional.py", line 57, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/django/urls/resolvers.py", line 708, in urlconf_module
+    return import_module(self.urlconf_name)
+  File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 1050, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1027, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1006, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 688, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 883, in exec_module
+  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/urls.py", line 7, in <module>
+    from .schema import schema
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/bcs/schema.py", line 5, in <module>
+    class BcsCruddalsProject(CruddalsProject):
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene/utils/subclass_with_meta.py", line 46, in __init_subclass__
+    super_class.__init_subclass_with_meta__(**options)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1393, in __init_subclass_with_meta__
+    AppSchema = cls._create_app_schema(
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1463, in _create_app_schema
+    class AppSchema(CruddalsApp):
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene/utils/subclass_with_meta.py", line 46, in __init_subclass__
+    super_class.__init_subclass_with_meta__(**options)
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1288, in __init_subclass_with_meta__
+    cruddals_of_app = BuilderCruddalsApp(
+  File "/home/juanjcardona13/Projects/Work/trotalo/bcsBackend/venv/lib/python3.10/site-packages/graphene_django_cruddals/main.py", line 1211, in __init__
+    settings_model["interfaces"] = interfaces + settings_model.get(
+TypeError: can only concatenate tuple (not "list") to tuple
+
+
+
+
