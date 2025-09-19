@@ -616,7 +616,7 @@ def build_files_for_client_schema_cruddals(schema, outputPath=None):
             if internal_text_queries:
                 text_queries += f"// #region ============= APP: {app_name}\n{internal_text_queries}\n//#endregion\n\n"
             if internal_text_mutations:
-                text_mutations += f"// #region ============= APP: {app_name}\n{internal_text_mutations}\n//endregion\n\n"
+                text_mutations += f"// #region ============= APP: {app_name}\n{internal_text_mutations}\n//#endregion\n\n"
 
         build_file_general_types()
         build_file_queries(text_queries)

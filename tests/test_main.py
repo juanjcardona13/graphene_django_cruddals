@@ -3108,13 +3108,14 @@ class TestGetObjectsAsList(SchemaTestCase):
         """
         Test that get_objects can be defined as a list of functions and they are applied in sequence.
         """
-        from graphene_django_cruddals import ModelObjectType
-        from tests.models import ModelA
+        from graphene_cruddals import ModelObjectType
+
+        from tests.models import ModelH
 
         # Create a test model with get_objects as a list
         class TestObjectType(ModelObjectType):
             class Meta:
-                model = ModelA
+                model = ModelH
 
             # Define get_objects as a list of functions
             get_objects = [
@@ -3131,12 +3132,12 @@ class TestGetObjectsAsList(SchemaTestCase):
         self.assertEqual(len(TestObjectType._get_objects_list), 2)
 
         # Create some test data
-        ModelA.objects.create(name="test1")
-        ModelA.objects.create(name="test2")
-        ModelA.objects.create(name="other")
+        ModelH.objects.create(name="test1")
+        ModelH.objects.create(name="test2")
+        ModelH.objects.create(name="other")
 
         # Test that get_objects applies the functions in sequence
-        initial_queryset = ModelA.objects.all()
+        initial_queryset = ModelH.objects.all()
         result = TestObjectType.get_objects(initial_queryset, None)
 
         # Should have filtered out "other" and ordered by id
