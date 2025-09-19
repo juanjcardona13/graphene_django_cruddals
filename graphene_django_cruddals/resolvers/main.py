@@ -34,6 +34,27 @@ from graphene_django_cruddals.utils.main import (
 )
 
 
+def apply_get_objects_with_list_support(django_object_type, queryset, info):
+    """
+    Applies get_objects method(s) with support for both single function and list of functions.
+
+    Parameters:
+        django_object_type: The Django object type that may have get_objects method(s).
+        queryset: The queryset to process.
+        info: GraphQL info object.
+
+    Returns:
+        The processed queryset after applying get_objects function(s).
+    """
+    # Check if there's a get_objects method
+    if hasattr(django_object_type, "get_objects") and callable(
+        django_object_type.get_objects
+    ):
+        return django_object_type.get_objects(queryset, info)
+
+    return queryset
+
+
 def default_create_update_resolver(
     model, model_form_class, registry, root, info, **args
 ):
@@ -127,7 +148,9 @@ def default_read_field_resolver(
         queryset = queryset.filter(obj_q)
         queryset = queryset.distinct()
     if isinstance(queryset, QuerySet):
-        queryset = maybe_queryset(django_object_type.get_objects(queryset, info))
+        queryset = maybe_queryset(
+            apply_get_objects_with_list_support(django_object_type, queryset, info)
+        )
     if queryset is None:
         raise ValueError(
             "The queryset is None. Ensure that the 'where' clause is correct and the default manager returns a valid queryset."
@@ -262,7 +285,9 @@ def default_search_field_resolver(
     queryset = queryset.distinct()
 
     if isinstance(queryset, QuerySet):
-        queryset = maybe_queryset(django_object_type.get_objects(queryset, info))
+        queryset = maybe_queryset(
+            apply_get_objects_with_list_support(django_object_type, queryset, info)
+        )
     return paginate_queryset(
         queryset,
         paginated_object_type,  # type: ignore

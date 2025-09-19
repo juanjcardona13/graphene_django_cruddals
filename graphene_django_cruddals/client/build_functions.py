@@ -603,7 +603,7 @@ def build_files_for_client_schema_cruddals(schema, outputPath=None):
                     )
 
                 if query_read or query_list or query_search:
-                    internal_text_queries += f"\n// #region ============= MODEL: {model_name}{query_read}{query_list}{query_search}\n//endregion\n"
+                    internal_text_queries += f"\n// #region ============= MODEL: {model_name}{query_read}{query_list}{query_search}\n//#endregion\n"
                 if (
                     mutation_create
                     or mutation_update
@@ -611,10 +611,10 @@ def build_files_for_client_schema_cruddals(schema, outputPath=None):
                     or mutation_deactivate
                     or mutation_activate
                 ):
-                    internal_text_mutations += f"\n// #region ============= MODEL: {model_name}{mutation_create}{mutation_update}{mutation_delete}{mutation_deactivate}{mutation_activate}\n//endregion\n"
+                    internal_text_mutations += f"\n// #region ============= MODEL: {model_name}{mutation_create}{mutation_update}{mutation_delete}{mutation_deactivate}{mutation_activate}\n//#endregion\n"
 
             if internal_text_queries:
-                text_queries += f"// #region ============= APP: {app_name}\n{internal_text_queries}\n//endregion\n\n"
+                text_queries += f"// #region ============= APP: {app_name}\n{internal_text_queries}\n//#endregion\n\n"
             if internal_text_mutations:
                 text_mutations += f"// #region ============= APP: {app_name}\n{internal_text_mutations}\n//endregion\n\n"
 

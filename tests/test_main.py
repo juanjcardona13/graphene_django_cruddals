@@ -3101,3 +3101,45 @@ class CruddalsProjectSchemaGlobalTests(SchemaTestCase):
         expected_schema = self.get_schema(default_client)
 
         self.assertEqual(project_schema, expected_schema)
+
+
+class TestGetObjectsAsList(SchemaTestCase):
+    def test_get_objects_as_list_functionality(self):
+        """
+        Test that get_objects can be defined as a list of functions and they are applied in sequence.
+        """
+        from graphene_django_cruddals import ModelObjectType
+        from tests.models import ModelA
+
+        # Create a test model with get_objects as a list
+        class TestObjectType(ModelObjectType):
+            class Meta:
+                model = ModelA
+
+            # Define get_objects as a list of functions
+            get_objects = [
+                lambda objects, info: objects.filter(name__icontains="test"),
+                lambda objects, info: objects.order_by("id"),
+            ]
+
+        # Test that _get_objects_list is set correctly
+        test_obj = TestObjectType()
+        test_obj._process_get_objects_list()
+
+        # Verify that the list was processed correctly
+        self.assertTrue(hasattr(TestObjectType, "_get_objects_list"))
+        self.assertEqual(len(TestObjectType._get_objects_list), 2)
+
+        # Create some test data
+        ModelA.objects.create(name="test1")
+        ModelA.objects.create(name="test2")
+        ModelA.objects.create(name="other")
+
+        # Test that get_objects applies the functions in sequence
+        initial_queryset = ModelA.objects.all()
+        result = TestObjectType.get_objects(initial_queryset, None)
+
+        # Should have filtered out "other" and ordered by id
+        result_list = list(result)
+        self.assertEqual(len(result_list), 2)
+        self.assertTrue(all("test" in obj.name for obj in result_list))

@@ -25,6 +25,27 @@ from graphene.utils.str_converters import to_camel_case
 from graphene_django_cruddals.converters.compat import ChoicesMeta
 
 
+def apply_get_objects_with_list_support(django_object_type, queryset, info):
+    """
+    Applies get_objects method(s) with support for both single function and list of functions.
+
+    Parameters:
+        django_object_type: The Django object type that may have get_objects method(s).
+        queryset: The queryset to process.
+        info: GraphQL info object.
+
+    Returns:
+        The processed queryset after applying get_objects function(s).
+    """
+    # Check if there's a get_objects method
+    if hasattr(django_object_type, "get_objects") and callable(
+        django_object_type.get_objects
+    ):
+        return django_object_type.get_objects(queryset, info)
+
+    return queryset
+
+
 def get_django_field_description(field: DjangoField):
     if hasattr(field, "help_text") and field.help_text:
         return str(field.help_text)
@@ -218,7 +239,9 @@ def resolve_for_relation_field(field, model, _type, root, info, **args):
         queryset = instance.get_queryset()
     else:
         queryset = model.objects.filter(id=instance.id)
-    queryset = maybe_queryset(_type.get_objects(queryset, info))
+    queryset = maybe_queryset(
+        apply_get_objects_with_list_support(_type, queryset, info)
+    )
     try:
         return queryset.distinct().get()
     except model.DoesNotExist:

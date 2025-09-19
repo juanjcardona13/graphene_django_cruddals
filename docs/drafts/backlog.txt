@@ -7,6 +7,15 @@
 # TODO: Revisar por que el actualizar esta dejando el id como opcional, es el unico que deberia de ser requerido
 # TODO: Mejorar el tipado de requerido y opcional, tanto en la entrada como en la salida para mejorar el tipado de los inputs y outputs por parte de codegen
 # TODO: para construir los archivos del cleinte dejar que puedan definir una ruta de salida
+# TODO: Revisar los defaults, especialmente numeros que son por defecto 0, 0.0, etc
+# TODO: Revisar como se quita, se borra, se deja en null, se deja en blanco un campo FK, O2O, etc, cuando es de tipo CruddalsRelation
+# TODO: Revisar como se actualiza una imagen a None, o se borra, etc
+
+
+
+
+
+
 
 
 # TODO: Convertir el output para cliente en typescript y dar soporte a los dos (js y ts)

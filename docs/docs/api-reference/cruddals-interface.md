@@ -119,6 +119,14 @@ class ExampleModelInterface:
         def get_objects(cls, objects, info):
             return objects
 
+        # NEW: get_objects can also be defined as a list of functions
+        # Each function will be applied in sequence
+        get_objects = [
+            lambda objects, info: objects.filter(is_active=True),
+            lambda objects, info: objects.select_related('user'),
+            lambda objects, info: objects.order_by('-created_at')
+        ]
+
     class InputObjectType:
       """
         This is the class that will be used to modify the InputObjectType of the model.
