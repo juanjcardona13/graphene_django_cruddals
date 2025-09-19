@@ -218,7 +218,19 @@ def resolve_for_relation_field(field, model, _type, root, info, **args):
         queryset = instance.get_queryset()
     else:
         queryset = model.objects.filter(id=instance.id)
-    queryset = maybe_queryset(_type.get_objects(queryset, info))
+
+    if hasattr(_type, "get_objects"):
+        if isinstance(_type.get_objects, list):
+            for get_objects_func in _type.get_objects:
+                queryset = maybe_queryset(get_objects_func(queryset, info))
+        elif callable(_type.get_objects):
+            queryset = maybe_queryset(_type.get_objects(queryset, info))
+        else:
+            raise ValueError(
+                "The get_objects method is not a list of functions or a callable."
+            )
+    else:
+        raise ValueError("The get_objects method is not defined.")
     try:
         return queryset.distinct().get()
     except model.DoesNotExist:

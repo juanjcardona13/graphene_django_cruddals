@@ -127,7 +127,20 @@ def default_read_field_resolver(
         queryset = queryset.filter(obj_q)
         queryset = queryset.distinct()
     if isinstance(queryset, QuerySet):
-        queryset = maybe_queryset(django_object_type.get_objects(queryset, info))
+        if hasattr(django_object_type, "get_objects"):
+            if isinstance(django_object_type.get_objects, list):
+                for get_objects_func in django_object_type.get_objects:
+                    queryset = maybe_queryset(get_objects_func(queryset, info))
+            elif callable(django_object_type.get_objects):
+                queryset = maybe_queryset(
+                    django_object_type.get_objects(queryset, info)
+                )
+            else:
+                raise ValueError(
+                    "The get_objects method is not a list of functions or a callable."
+                )
+        else:
+            raise ValueError("The get_objects method is not defined.")
     if queryset is None:
         raise ValueError(
             "The queryset is None. Ensure that the 'where' clause is correct and the default manager returns a valid queryset."
@@ -262,7 +275,20 @@ def default_search_field_resolver(
     queryset = queryset.distinct()
 
     if isinstance(queryset, QuerySet):
-        queryset = maybe_queryset(django_object_type.get_objects(queryset, info))
+        if hasattr(django_object_type, "get_objects"):
+            if isinstance(django_object_type.get_objects, list):
+                for get_objects_func in django_object_type.get_objects:
+                    queryset = maybe_queryset(get_objects_func(queryset, info))
+            elif callable(django_object_type.get_objects):
+                queryset = maybe_queryset(
+                    django_object_type.get_objects(queryset, info)
+                )
+            else:
+                raise ValueError(
+                    "The get_objects method is not a list of functions or a callable."
+                )
+        else:
+            raise ValueError("The get_objects method is not defined.")
     return paginate_queryset(
         queryset,
         paginated_object_type,  # type: ignore
