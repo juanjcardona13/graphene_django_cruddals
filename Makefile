@@ -5,8 +5,8 @@ help:
 
 .PHONY: dev-setup ## Install development dependencies
 dev-setup:
-	pip install -e ".[dev]"
-	python -m pre_commit install
+	pip install --use-pep517 -e ".[dev]"
+	pre-commit install
 
 .PHONY: tests ## Run unit tests
 tests:

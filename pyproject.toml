@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphene_django_cruddals"
+dynamic = ["version"]
+description = "Framework for trivial code, Easy and Fast for learn, Easy and Fast for use"
+readme = "README.md"
+license = {text = "Apache 2.0"}
+authors = [
+    {name = "Juan J Cardona", email = "juanjcardona13@gmail.com"}
+]
+keywords = ["api", "graphql", "crud", "graphene", "graphene-django", "cruddals"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Framework :: Django",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.2",
+]
+requires-python = ">=3.6"
+dependencies = [
+    "graphene-django>=3.0.0",
+    "graphene-cruddals>=0.2.13"
+]
+
+[project.urls]
+Homepage = "https://github.com/juanjcardona13/graphene_django_cruddals"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.3.1",
+    "pytest-cov",
+    "pytest-random-order",
+    "coveralls",
+    "mock",
+    "pytz",
+    "django-filter>=22.1",
+    "pytest-django>=4.5.2",
+]
+dev = [
+    "ruff==0.1.2",
+    "pre-commit",
+    "pytest>=7.3.1",
+    "pytest-cov",
+    "pytest-random-order",
+    "coveralls",
+    "mock",
+    "pytz",
+    "django-filter>=22.1",
+    "pytest-django>=4.5.2",
+]
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.dynamic]
+version = {attr = "graphene_django_cruddals.__version__"}
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "examples*"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings.django_test_settings"
+addopts = "--random-order"
+
+[tool.coverage.run]
+omit = ["*/tests/*"]
