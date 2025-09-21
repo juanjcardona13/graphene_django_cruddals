@@ -222,9 +222,19 @@ def resolve_for_relation_field(field, model, _type, root, info, **args):
     if hasattr(_type, "get_objects"):
         if isinstance(_type.get_objects, list):
             for get_objects_func in _type.get_objects:
-                queryset = maybe_queryset(get_objects_func(queryset, info))
+                if isinstance(get_objects_func, classmethod):
+                    queryset = maybe_queryset(
+                        get_objects_func.__func__(_type, queryset, info)
+                    )
+                else:
+                    queryset = maybe_queryset(get_objects_func(queryset, info))
         elif callable(_type.get_objects):
-            queryset = maybe_queryset(_type.get_objects(queryset, info))
+            if isinstance(_type.get_objects, classmethod):
+                queryset = maybe_queryset(
+                    _type.get_objects.__func__(_type, queryset, info)
+                )
+            else:
+                queryset = maybe_queryset(_type.get_objects(queryset, info))
         else:
             raise ValueError(
                 "The get_objects method is not a list of functions or a callable."
