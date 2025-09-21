@@ -70,6 +70,9 @@ version = {attr = "graphene_django_cruddals.__version__"}
 [tool.setuptools.packages.find]
 exclude = ["tests*", "examples*"]
 
+[tool.bdist_wheel]
+universal = false
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.settings.django_test_settings"
 addopts = "--random-order"
