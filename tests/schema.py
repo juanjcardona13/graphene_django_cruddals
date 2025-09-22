@@ -1,4 +1,5 @@
 from graphene_cruddals import CruddalsRelationField
+from graphene_django.debug import DjangoDebug
 
 import graphene
 from graphene_django_cruddals.main import (
@@ -113,6 +114,7 @@ class Query(
     CruddalsModelH.Query,
     graphene.ObjectType,
 ):
+    debug = graphene.Field(DjangoDebug, name="_debug")
     pass
 
 
@@ -157,8 +159,12 @@ class SchemaCruddalsApp(DjangoAppCruddals):
         }
 
 
+class Query(SchemaCruddalsApp.Query):
+    debug = graphene.Field(DjangoDebug, name="_debug")
+
+
 app_schema = graphene.Schema(
-    query=SchemaCruddalsApp.Query,
+    query=Query,
     mutation=SchemaCruddalsApp.Mutation,
     types=[
         SchemaCruddalsApp.meta.cruddals_of_models[
@@ -192,8 +198,12 @@ class SchemaCruddalsProject(DjangoProjectCruddals):
         }
 
 
+class Query(SchemaCruddalsProject.Query):
+    debug = graphene.Field(DjangoDebug, name="_debug")
+
+
 project_schema = graphene.Schema(
-    query=SchemaCruddalsProject.Query,
+    query=Query,
     mutation=SchemaCruddalsProject.Mutation,
     types=[
         SchemaCruddalsProject.meta["tests"]

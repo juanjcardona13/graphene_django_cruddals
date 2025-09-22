@@ -29,7 +29,12 @@ TEMPLATES = [
     }
 ]
 
-# GRAPHENE = {"SCHEMA": "tests.schema.schema"}
+GRAPHENE = {
+    "MIDDLEWARE": [
+        "graphene_django.debug.DjangoDebugMiddleware",
+    ]
+}
+
 
 ROOT_URLCONF = "tests.settings.urls"
 
