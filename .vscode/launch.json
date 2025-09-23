@@ -2,36 +2,12 @@
   "configurations": [
     {
       "args": [
-        "runserver"
-      ],
-      "autoStartBrowser": false,
-      "django": true,
-      "justMyCode": false,
-      "name": "Run Example Restaurant Project - Python Debugger Django",
-      "program": "${workspaceFolder}/examples/restaurantProject/manage.py",
-      "python": "${workspaceFolder}/examples/restaurantProject/venv/bin/python",
-      "request": "launch",
-      "type": "debugpy"
-    },
-    {
-      "args": [
-        "runserver"
-      ],
-      "autoStartBrowser": false,
-      "django": true,
-      "name": "Run Test Project - Python Debugger Django",
-      "program": "${workspaceFolder}/tests/integration/manage.py",
-      "python": "${workspaceFolder}/tests/integration/venv/bin/python",
-      "request": "launch",
-      "type": "debugpy"
-    },
-    {
-      "args": [
         "test",
         "tests/integration/"
       ],
       "autoStartBrowser": false,
       "django": true,
+      "justMyCode": false,
       "name": "Run Tests - Python Debugger Django",
       "program": "${workspaceFolder}/tests/integration/manage.py",
       "python": "${workspaceFolder}/tests/integration/venv/bin/python",
@@ -40,8 +16,19 @@
     },
     {
       "console": "integratedTerminal",
+      "justMyCode": false,
       "name": "Run Current File - Python Debugger",
       "program": "${file}",
+      "request": "launch",
+      "type": "debugpy"
+    },
+    {
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "name": "Python: Debug Unit Tests",
+      "purpose": [
+        "debug-test"
+      ],
       "request": "launch",
       "type": "debugpy"
     }

@@ -228,17 +228,8 @@ def resolve_for_relation_field(field, model, _type, root, info, **args):
                     )
                 else:
                     queryset = maybe_queryset(get_objects_func(queryset, info))
-        elif callable(_type.get_objects):
-            if isinstance(_type.get_objects, classmethod):
-                queryset = maybe_queryset(
-                    _type.get_objects.__func__(_type, queryset, info)
-                )
-            else:
-                queryset = maybe_queryset(_type.get_objects(queryset, info))
         else:
-            raise ValueError(
-                "The get_objects method is not a list of functions or a callable."
-            )
+            queryset = maybe_queryset(_type.get_objects(queryset, info))
     else:
         raise ValueError("The get_objects method is not defined.")
     try:

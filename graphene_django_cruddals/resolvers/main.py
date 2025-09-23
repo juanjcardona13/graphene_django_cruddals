@@ -148,20 +148,9 @@ def default_read_field_resolver(
                         )
                     else:
                         queryset = maybe_queryset(get_objects_func(queryset, info))
-            elif callable(django_object_type.get_objects):
-                if isinstance(django_object_type.get_objects, classmethod):
-                    queryset = maybe_queryset(
-                        django_object_type.get_objects.__func__(
-                            django_object_type, queryset, info
-                        )
-                    )
-                else:
-                    queryset = maybe_queryset(
-                        django_object_type.get_objects(queryset, info)
-                    )
             else:
-                raise ValueError(
-                    "The get_objects method is not a list of functions or a callable."
+                queryset = maybe_queryset(
+                    django_object_type.get_objects(queryset, info)
                 )
         else:
             raise ValueError("The get_objects method is not defined.")
@@ -574,20 +563,9 @@ def default_search_field_resolver(
                         )
                     else:
                         queryset = maybe_queryset(get_objects_func(queryset, info))
-            elif callable(django_object_type.get_objects):
-                if isinstance(django_object_type.get_objects, classmethod):
-                    queryset = maybe_queryset(
-                        django_object_type.get_objects.__func__(
-                            django_object_type, queryset, info
-                        )
-                    )
-                else:
-                    queryset = maybe_queryset(
-                        django_object_type.get_objects(queryset, info)
-                    )
             else:
-                raise ValueError(
-                    "The get_objects method is not a list of functions or a callable."
+                queryset = maybe_queryset(
+                    django_object_type.get_objects(queryset, info)
                 )
         else:
             raise ValueError("The get_objects method is not defined.")
