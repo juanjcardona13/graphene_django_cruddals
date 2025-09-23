@@ -351,6 +351,7 @@ class ModelC(models.Model):
     many_to_many_field = models.ManyToManyField(
         "ModelD", related_name="many_to_many_C_related", blank=True
     )
+    # foreign_key_D_related (Many)
     is_active = models.BooleanField(default=True)
 
 
@@ -362,6 +363,9 @@ class ModelD(models.Model):
         null=True,
         blank=True,
     )
+    # one_to_one_C_related (One)
+    # many_to_many_C_related (Many)
+    # foreign_key_E_related (Many)
 
 
 class ModelE(models.Model):

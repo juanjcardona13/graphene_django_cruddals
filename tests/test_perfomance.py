@@ -1,20 +1,5 @@
+from tests.models import ModelC, ModelD, ModelE
 from tests.utils import Client, SchemaTestCase
-
-model_c_fragment = """
-    fragment modelCType on ModelCType {
-        id
-        charField
-        integerField
-        booleanField
-        dateTimeField
-        jsonField
-        fileField
-        isActive
-        oneToOneField { id }
-        paginatedManyToManyField { objects { id } }
-        paginatedForeignKeyDRelated { objects { id } }
-    }
-"""
 
 model_d_fragment = """
     fragment modelDType on ModelDType {
@@ -35,49 +20,6 @@ model_e_fragment = """
             oneToOneCRelated { id }
             paginatedManyToManyCRelated { objects {id} }
             paginatedForeignKeyERelated { objects {id} }
-        }
-    }
-"""
-
-model_f_fragment = """
-    fragment modelFType on ModelFType {
-        id
-        name
-        foreignKeyField {
-            id
-        }
-    }
-"""
-
-model_g_fragment = """
-    fragment modelGType on ModelGType {
-        id
-        name
-        paginatedForeignKeyHRelated {
-            objects {
-                id
-            }
-        }
-    }
-"""
-
-model_h_fragment = """
-    fragment modelHType on ModelHType {
-        id
-        name
-        foreignKeyField {
-            id
-        }
-    }
-"""
-
-
-errors_fragment = """
-    fragment errorsType on ErrorCollectionType {
-        objectPosition
-        errors {
-            field
-            messages
         }
     }
 """
@@ -124,94 +66,6 @@ debug_fragment = """
 
 
 # region CRUDDALS ModelC
-create_model_c_mutation = (
-    errors_fragment
-    + model_c_fragment
-    + """
-    mutation createModelCs($input: [CreateModelCInput!]!) {
-        createModelCs(input: $input) {
-            objects { ...modelCType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-read_model_c_query = (
-    model_c_fragment
-    + """
-    query readModelC($where: FilterModelCInput!) {
-        readModelC(where: $where) {
-            ...modelCType
-        }
-    }
-"""
-)
-
-update_model_c_mutation = (
-    errors_fragment
-    + model_c_fragment
-    + """
-    mutation updateModelCs($input: [UpdateModelCInput!]!) {
-        updateModelCs(input: $input) {
-            objects { ...modelCType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-delete_model_c_mutation = (
-    errors_fragment
-    + model_c_fragment
-    + """
-    mutation deleteModelCs($where: FilterModelCInput!) {
-        deleteModelCs(where: $where) {
-            success
-            objects { ...modelCType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-deactivate_model_c_mutation = (
-    errors_fragment
-    + model_c_fragment
-    + """
-    mutation deactivateModelCs($where: FilterModelCInput!) {
-        deactivateModelCs(where: $where) {
-            objects { ...modelCType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-activate_model_c_mutation = (
-    errors_fragment
-    + model_c_fragment
-    + """
-    mutation activateModelCs($where: FilterModelCInput!) {
-        activateModelCs(where: $where) {
-            objects { ...modelCType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-list_model_c_query = (
-    model_c_fragment
-    + """
-    query listModelCs {
-        listModelCs {
-            ...modelCType
-        }
-    }
-"""
-)
-
 search_model_c_query = (
     debug_fragment
     + pagination_fragment
@@ -221,6 +75,50 @@ search_model_c_query = (
             ...paginationType
             objects {
                 id
+                charField
+                integerField
+                booleanField
+                dateTimeField
+                jsonField
+                fileField
+                isActive
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                    }
+                    paginatedForeignKeyERelated {
+                        objects {
+                            id
+                            foreignKeyFieldDeep {
+                                id
+                                foreignKeyField {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+                paginatedManyToManyField {
+                    objects {
+                        id
+                        foreignKeyField {
+                            id
+                        }
+                        paginatedForeignKeyERelated {
+                            objects {
+                                id
+                                foreignKeyFieldDeep {
+                                    id
+                                    foreignKeyField {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                paginatedForeignKeyDRelated { objects { id } }
             }
         }
         _debug {
@@ -229,644 +127,48 @@ search_model_c_query = (
     }
 """
 )
-
-objs_to_create_type_c = [
-    {
-        "charField": "AAA",
-        "integerField": 1,
-        "booleanField": True,
-        "dateTimeField": "2021-01-01T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "BBB",
-        "integerField": 2,
-        "booleanField": False,
-        "dateTimeField": "2021-02-02T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "CCC",
-        "integerField": 3,
-        "booleanField": True,
-        "dateTimeField": "2021-03-03T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "DDD",
-        "integerField": 4,
-        "booleanField": False,
-        "dateTimeField": "2021-04-04T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "EEE",
-        "integerField": 5,
-        "booleanField": True,
-        "dateTimeField": "2021-05-05T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "aaa",
-        "integerField": 1,
-        "booleanField": True,
-        "dateTimeField": "2021-01-01T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "bbb",
-        "integerField": 2,
-        "booleanField": False,
-        "dateTimeField": "2021-02-02T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "ccc",
-        "integerField": 3,
-        "booleanField": True,
-        "dateTimeField": "2021-03-03T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "ddd",
-        "integerField": 4,
-        "booleanField": False,
-        "dateTimeField": "2021-04-04T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-    {
-        "charField": "eee",
-        "integerField": 5,
-        "booleanField": True,
-        "dateTimeField": "2021-05-05T00:00:00Z",
-        "jsonField": '{"key": "value"}',
-    },
-]
 # endregion
 
 # region CRUDDALS ModelD
-create_model_d_mutation = (
-    errors_fragment
-    + model_d_fragment
-    + """
-    mutation createModelDs($input: [CreateModelDInput!]!) {
-        createModelDs(input: $input) {
-            objects { ...modelDType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-read_model_d_query = (
-    model_d_fragment
-    + """
-    query readModelD($where: FilterModelDInput!) {
-        readModelD(where: $where) {
-            ...modelDType
-        }
-    }
-"""
-)
-
-update_model_d_mutation = (
-    errors_fragment
-    + model_d_fragment
-    + """
-    mutation updateModelDs($input: [UpdateModelDInput!]!) {
-        updateModelDs(input: $input) {
-            objects { ...modelDType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-delete_model_d_mutation = (
-    errors_fragment
-    + model_d_fragment
-    + """
-    mutation deleteModelDs($where: FilterModelDInput) {
-        deleteModelDs(where: $where) {
-            success
-            objects { ...modelDType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-deactivate_model_d_mutation = (
-    errors_fragment
-    + model_d_fragment
-    + """
-    mutation deactivateModelDs($where: FilterModelDInput) {
-        deactivateModelDs(where: $where) {
-            objects { ...modelDType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-activate_model_d_mutation = (
-    errors_fragment
-    + model_d_fragment
-    + """
-    mutation activateModelDs($where: FilterModelDInput) {
-        activateModelDs(where: $where) {
-            objects { ...modelDType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-list_model_d_query = (
-    model_d_fragment
-    + """
-    query listModelDs {
-        listModelDs {
-            ...modelDType
-        }
-    }
-"""
-)
-
 search_model_d_query = (
-    pagination_fragment
+    debug_fragment
+    + pagination_fragment
+    + model_d_fragment
     + """
     query searchModelDs($where: FilterModelDInput $orderBy: OrderByModelDInput $paginationConfig: PaginationConfigInput) {
         searchModelDs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
             ...paginationType
             objects {
-                id
+                ...modelDType
             }
+        }
+        _debug {
+            ...debugType
         }
     }
 """
 )
-
-objs_to_create_type_d = [
-    {
-        "foreignKeyField": 2,
-    },
-    {
-        "foreignKeyField": 3,
-    },
-]
 # endregion
 
 # region CRUDDALS ModelE
-create_model_e_mutation = (
-    model_e_fragment
-    + errors_fragment
-    + """
-    mutation createModelEs($input: [CreateModelEInput!]!) {
-        createModelEs(input: $input) {
-            objects { ...modelEType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-read_model_e_query = (
-    model_e_fragment
-    + """
-    query readModelE($where: FilterModelEInput!) {
-        readModelE(where: $where) {
-            ...modelEType
-        }
-    }
-"""
-)
-
-update_model_e_mutation = (
-    model_e_fragment
-    + errors_fragment
-    + """
-    mutation updateModelEs($input: [UpdateModelEInput!]!) {
-        updateModelEs(input: $input) {
-            objects { ...modelEType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-delete_model_e_mutation = (
-    model_e_fragment
-    + errors_fragment
-    + """
-    mutation deleteModelEs($where: FilterModelEInput) {
-        deleteModelEs(where: $where) {
-            success
-            objects { ...modelEType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-deactivate_model_e_mutation = (
-    model_e_fragment
-    + errors_fragment
-    + """
-    mutation deactivateModelEs($where: FilterModelEInput) {
-        deactivateModelEs(where: $where) {
-            objects { ...modelEType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-activate_model_e_mutation = (
-    model_e_fragment
-    + errors_fragment
-    + """
-    mutation activateModelEs($where: FilterModelEInput) {
-        activateModelEs(where: $where) {
-            objects { ...modelEType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-list_model_e_query = (
-    model_e_fragment
-    + """
-    query listModelEs {
-        listModelEs {
-            ...modelEType
-        }
-    }
-"""
-)
-
 search_model_e_query = (
-    pagination_fragment
+    debug_fragment
+    + pagination_fragment
     + model_e_fragment
     + """
     query searchModelEs($where: FilterModelEInput $orderBy: OrderByModelEInput $paginationConfig: PaginationConfigInput) {
         searchModelEs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
             ...paginationType
-            objects { ...modelEType }
+            objects {
+                ...modelEType
+            }
+        }
+        _debug {
+            ...debugType
         }
     }
 """
 )
-
-objs_to_create_type_e = [
-    {
-        "foreignKeyFieldDeep": 1,
-    },
-    {
-        "foreignKeyFieldDeep": 2,
-    },
-]
-
-# endregion
-
-# region CRUDDALS ModelF
-create_model_f_mutation = (
-    model_f_fragment
-    + errors_fragment
-    + """
-    mutation createModelFs($input: [CreateModelFInput!]!) {
-        createModelFs(input: $input) {
-            objects { ...modelFType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-read_model_f_query = (
-    model_f_fragment
-    + """
-    query readModelF($where: FilterModelFInput!) {
-        readModelF(where: $where) {
-            ...modelFType
-        }
-    }
-"""
-)
-
-update_model_f_mutation = (
-    model_f_fragment
-    + errors_fragment
-    + """
-    mutation updateModelFs($input: [UpdateModelFInput!]!) {
-        updateModelFs(input: $input) {
-            objects { ...modelFType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-delete_model_f_mutation = (
-    model_f_fragment
-    + errors_fragment
-    + """
-    mutation deleteModelFs($where: FilterModelFInput) {
-        deleteModelFs(where: $where) {
-            success
-            objects { ...modelFType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-deactivate_model_f_mutation = (
-    model_f_fragment
-    + errors_fragment
-    + """
-    mutation deactivateModelFs($where: FilterModelFInput) {
-        deactivateModelFs(where: $where) {
-            objects { ...modelFType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-activate_model_f_mutation = (
-    model_f_fragment
-    + errors_fragment
-    + """
-    mutation activateModelFs($where: FilterModelFInput) {
-        activateModelFs(where: $where) {
-            objects { ...modelFType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-list_model_f_query = (
-    model_f_fragment
-    + """
-    query listModelFs {
-        listModelFs {
-            ...modelFType
-        }
-    }
-"""
-)
-
-search_model_f_query = (
-    pagination_fragment
-    + model_f_fragment
-    + """
-    query searchModelFs($where: FilterModelFInput $orderBy: OrderByModelFInput $paginationConfig: PaginationConfigInput) {
-        searchModelFs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
-            ...paginationType
-            objects { ...modelFType }
-        }
-    }
-"""
-)
-
-objs_to_create_type_f = [
-    {
-        "name": "Juan",
-    },
-    {
-        "name": "Carlos",
-    },
-]
-
-# endregion
-
-# region CRUDDALS ModelG
-create_model_g_mutation = (
-    model_g_fragment
-    + errors_fragment
-    + """
-    mutation createModelGs($input: [CreateModelGInput!]!) {
-        createModelGs(input: $input) {
-            objects { ...modelGType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-read_model_g_query = (
-    model_g_fragment
-    + """
-    query readModelG($where: FilterModelGInput!) {
-        readModelG(where: $where) {
-            ...modelGType
-        }
-    }
-"""
-)
-
-update_model_g_mutation = (
-    model_g_fragment
-    + errors_fragment
-    + """
-    mutation updateModelGs($input: [UpdateModelGInput!]!) {
-        updateModelGs(input: $input) {
-            objects { ...modelGType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-delete_model_g_mutation = (
-    model_g_fragment
-    + errors_fragment
-    + """
-    mutation deleteModelGs($where: FilterModelGInput) {
-        deleteModelGs(where: $where) {
-            success
-            objects { ...modelGType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-deactivate_model_g_mutation = (
-    model_g_fragment
-    + errors_fragment
-    + """
-    mutation deactivateModelGs($where: FilterModelGInput) {
-        deactivateModelGs(where: $where) {
-            objects { ...modelGType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-activate_model_g_mutation = (
-    model_g_fragment
-    + errors_fragment
-    + """
-    mutation activateModelGs($where: FilterModelGInput) {
-        activateModelGs(where: $where) {
-            objects { ...modelGType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-list_model_g_query = (
-    model_g_fragment
-    + """
-    query listModelGs {
-        listModelGs {
-            ...modelGType
-        }
-    }
-"""
-)
-
-search_model_g_query = (
-    pagination_fragment
-    + model_g_fragment
-    + """
-    query searchModelGs($where: FilterModelGInput $orderBy: OrderByModelGInput $paginationConfig: PaginationConfigInput) {
-        searchModelGs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
-            ...paginationType
-            objects { ...modelGType }
-        }
-    }
-"""
-)
-
-objs_to_create_type_g = [
-    {
-        "name": "Juan",
-    },
-    {
-        "name": "Carlos",
-    },
-]
-
-# endregion
-
-# region CRUDDALS ModelH
-create_model_h_mutation = (
-    model_h_fragment
-    + errors_fragment
-    + """
-    mutation createModelHs($input: [CreateModelHInput!]!) {
-        createModelHs(input: $input) {
-            objects { ...modelHType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-read_model_h_query = (
-    model_h_fragment
-    + """
-    query readModelH($where: FilterModelHInput!) {
-        readModelH(where: $where) {
-            ...modelHType
-        }
-    }
-"""
-)
-
-update_model_h_mutation = (
-    model_h_fragment
-    + errors_fragment
-    + """
-    mutation updateModelHs($input: [UpdateModelHInput!]!) {
-        updateModelHs(input: $input) {
-            objects { ...modelHType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-delete_model_h_mutation = (
-    model_h_fragment
-    + errors_fragment
-    + """
-    mutation deleteModelHs($where: FilterModelHInput) {
-        deleteModelHs(where: $where) {
-            success
-            objects { ...modelHType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-deactivate_model_h_mutation = (
-    model_h_fragment
-    + errors_fragment
-    + """
-    mutation deactivateModelHs($where: FilterModelHInput) {
-        deactivateModelHs(where: $where) {
-            objects { ...modelHType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-activate_model_h_mutation = (
-    model_h_fragment
-    + errors_fragment
-    + """
-    mutation activateModelHs($where: FilterModelHInput) {
-        activateModelHs(where: $where) {
-            objects { ...modelHType }
-            errorsReport { ...errorsType }
-        }
-    }
-"""
-)
-
-list_model_h_query = (
-    model_h_fragment
-    + """
-    query listModelHs {
-        listModelHs {
-            ...modelHType
-        }
-    }
-"""
-)
-
-search_model_h_query = (
-    pagination_fragment
-    + model_h_fragment
-    + """
-    query searchModelHs($where: FilterModelHInput $orderBy: OrderByModelHInput $paginationConfig: PaginationConfigInput) {
-        searchModelHs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
-            ...paginationType
-            objects { ...modelHType }
-        }
-    }
-"""
-)
-
-objs_to_create_type_g = [
-    {
-        "name": "Juan",
-    },
-    {
-        "name": "Carlos",
-    },
-]
-
 # endregion
 
 
@@ -875,262 +177,302 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
         client = Client()
 
         # region CREATE ModelC
-        variables = {"input": objs_to_create_type_c}
-        expected_response = {
-            "data": {
-                "createModelCs": {
-                    "objects": [
-                        {
-                            "id": "1",
-                            "charField": "AAA",
-                            "integerField": 1,
-                            "booleanField": True,
-                            "dateTimeField": "2021-01-01T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "2",
-                            "charField": "BBB",
-                            "integerField": 2,
-                            "booleanField": False,
-                            "dateTimeField": "2021-02-02T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "3",
-                            "charField": "CCC",
-                            "integerField": 3,
-                            "booleanField": True,
-                            "dateTimeField": "2021-03-03T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "4",
-                            "charField": "DDD",
-                            "integerField": 4,
-                            "booleanField": False,
-                            "dateTimeField": "2021-04-04T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "5",
-                            "charField": "EEE",
-                            "integerField": 5,
-                            "booleanField": True,
-                            "dateTimeField": "2021-05-05T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "6",
-                            "charField": "aaa",
-                            "integerField": 1,
-                            "booleanField": True,
-                            "dateTimeField": "2021-01-01T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "7",
-                            "charField": "bbb",
-                            "integerField": 2,
-                            "booleanField": False,
-                            "dateTimeField": "2021-02-02T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "8",
-                            "charField": "ccc",
-                            "integerField": 3,
-                            "booleanField": True,
-                            "dateTimeField": "2021-03-03T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "9",
-                            "charField": "ddd",
-                            "integerField": 4,
-                            "booleanField": False,
-                            "dateTimeField": "2021-04-04T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                        {
-                            "id": "10",
-                            "charField": "eee",
-                            "integerField": 5,
-                            "booleanField": True,
-                            "dateTimeField": "2021-05-05T00:00:00+00:00",
-                            "jsonField": '{"key": "value"}',
-                            "fileField": "",
-                            "isActive": True,
-                            "oneToOneField": None,
-                            "paginatedManyToManyField": {"objects": []},
-                            "paginatedForeignKeyDRelated": {"objects": []},
-                        },
-                    ],
-                    "errorsReport": None,
-                }
-            }
-        }
-        response = client.query(create_model_c_mutation, variables=variables).json()
-        self.verify_response(response, expected_response, message="CREATE ModelC")
+        mc1 = ModelC(
+            char_field="AAA",
+            integer_field=1,
+            boolean_field=True,
+            date_time_field="2021-01-01T00:00:00+00:00",
+            json_field='{"key1": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc1.save()
+        mc2 = ModelC(
+            char_field="BBB",
+            integer_field=2,
+            boolean_field=False,
+            date_time_field="2021-02-02T00:00:00+00:00",
+            json_field='{"key2": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc2.save()
+        mc3 = ModelC(
+            char_field="CCC",
+            integer_field=3,
+            boolean_field=True,
+            date_time_field="2021-03-03T00:00:00+00:00",
+            json_field='{"key3": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc3.save()
+        mc4 = ModelC(
+            char_field="DDD",
+            integer_field=4,
+            boolean_field=False,
+            date_time_field="2021-04-04T00:00:00+00:00",
+            json_field='{"key4": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc4.save()
+        mc5 = ModelC(
+            char_field="EEE",
+            integer_field=5,
+            boolean_field=True,
+            date_time_field="2021-05-05T00:00:00+00:00",
+            json_field='{"key5": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc5.save()
+        mc6 = ModelC(
+            char_field="aaa",
+            integer_field=1,
+            boolean_field=True,
+            date_time_field="2022-01-01T00:00:00+00:00",
+            json_field='{"key6": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc6.save()
+        mc7 = ModelC(
+            char_field="bbb",
+            integer_field=2,
+            boolean_field=False,
+            date_time_field="2022-02-02T00:00:00+00:00",
+            json_field='{"key7": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc7.save()
+        mc8 = ModelC(
+            char_field="ccc",
+            integer_field=3,
+            boolean_field=True,
+            date_time_field="2022-03-03T00:00:00+00:00",
+            json_field='{"key8": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc8.save()
+        mc9 = ModelC(
+            char_field="ddd",
+            integer_field=4,
+            boolean_field=False,
+            date_time_field="2022-04-04T00:00:00+00:00",
+            json_field='{"key9": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc9.save()
+        mc10 = ModelC(
+            char_field="eee",
+            integer_field=5,
+            boolean_field=True,
+            date_time_field="2022-05-05T00:00:00+00:00",
+            json_field='{"key10": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc10.save()
         # endregion
 
         # region CREATE ModelD
-        variables = {"input": objs_to_create_type_d}
-        expected_response = {
-            "data": {
-                "createModelDs": {
-                    "objects": [
-                        {
-                            "id": "1",
-                            "foreignKeyField": {
-                                "id": "2",
-                            },
-                            "oneToOneCRelated": None,
-                            "paginatedManyToManyCRelated": {"objects": []},
-                            "paginatedForeignKeyERelated": {"objects": []},
-                        },
-                        {
-                            "id": "2",
-                            "foreignKeyField": {
-                                "id": "3",
-                            },
-                            "oneToOneCRelated": None,
-                            "paginatedManyToManyCRelated": {"objects": []},
-                            "paginatedForeignKeyERelated": {"objects": []},
-                        },
-                    ],
-                    "errorsReport": None,
-                }
-            }
-        }
-        response = client.query(create_model_d_mutation, variables=variables).json()
-        self.verify_response(response, expected_response, message="CREATE ModelD")
+        md1 = ModelD(foreign_key_field=mc1)
+        md1.save()
+
+        mc11 = ModelC(
+            char_field="AAA1",
+            integer_field=1,
+            boolean_field=True,
+            date_time_field="2021-01-01T00:00:00+00:00",
+            json_field='{"key11": "value"}',
+            file_field="",
+            one_to_one_field=md1,
+            is_active=True,
+        )
+        mc11.save()
+
+        md2 = ModelD(foreign_key_field=mc2)
+        md2.save()
+        md3 = ModelD(foreign_key_field=mc3)
+        md3.save()
+        md4 = ModelD(foreign_key_field=mc4)
+        md4.save()
+
+        mc12 = ModelC(
+            char_field="AAA2",
+            integer_field=1,
+            boolean_field=True,
+            date_time_field="2021-01-01T00:00:00+00:00",
+            json_field='{"key12": "value"}',
+            file_field="",
+            one_to_one_field=None,
+            is_active=True,
+        )
+        mc12.save()
+        mc12.many_to_many_field.set([md1, md2, md3])
+        mc12.save()
         # endregion
 
         # region CREATE ModelE
-        variables = {"input": objs_to_create_type_e}
-        expected_response = {
-            "data": {
-                "createModelEs": {
-                    "objects": [
-                        {
-                            "id": "1",
-                            "foreignKeyFieldDeep": {
-                                "id": "1",
-                                "foreignKeyField": {
-                                    "id": "2",
-                                },
-                                "oneToOneCRelated": None,
-                                "paginatedManyToManyCRelated": {"objects": []},
-                                "paginatedForeignKeyERelated": {
-                                    "objects": [
-                                        {
-                                            "id": "1",
-                                        }
-                                    ]
-                                },
-                            },
-                        },
-                        {
-                            "id": "2",
-                            "foreignKeyFieldDeep": {
-                                "id": "2",
-                                "foreignKeyField": {
-                                    "id": "3",
-                                },
-                                "oneToOneCRelated": None,
-                                "paginatedManyToManyCRelated": {"objects": []},
-                                "paginatedForeignKeyERelated": {
-                                    "objects": [
-                                        {
-                                            "id": "2",
-                                        }
-                                    ]
-                                },
-                            },
-                        },
-                    ],
-                    "errorsReport": None,
-                }
-            }
-        }
-        response = client.query(create_model_e_mutation, variables=variables).json()
-        self.verify_response(response, expected_response, message="CREATE ModelD")
+        me1 = ModelE(foreign_key_field_deep=md1)
+        me1.save()
+        me2 = ModelE(foreign_key_field_deep=md2)
+        me2.save()
         # endregion
 
         # region SEARCH ModelC
-        # region Test search with pagination
-        variables = {"paginationConfig": {"page": 1, "itemsPerPage": 2}}
-        expected_response = {
-            "data": {
-                "searchModelCs": {
-                    "total": 10,
-                    "page": 1,
-                    "pages": 5,
-                    "hasNext": True,
-                    "hasPrev": False,
-                    "indexStart": 1,
-                    "indexEnd": 2,
+
+        from django.core.cache import cache
+        from django.core.paginator import Paginator
+        from django.db import connection, reset_queries
+        from django.test.utils import override_settings
+
+        with override_settings(DEBUG=True):
+            connection.queries_log.clear()
+            reset_queries()
+
+            variables = {"paginationConfig": {"page": 4, "itemsPerPage": 3}}
+            print("search_model_c_query", search_model_c_query)
+            graphql_response = client.query(
+                search_model_c_query, variables=variables
+            ).json()
+
+            graphql_queries = len(connection.queries)
+            print(f"GraphQL ejecutó {graphql_queries} consultas SQL")
+
+            connection.queries_log.clear()
+            reset_queries()
+            cache.clear()
+
+            page = 4
+            items_per_page = 3
+            queryset = (
+                ModelC.objects.select_related("one_to_one_field__foreign_key_field")
+                .prefetch_related(
+                    "many_to_many_field__foreign_key_field",
+                    "many_to_many_field__foreign_key_E_related__foreign_key_field_deep__foreign_key_field",
+                    "foreign_key_D_related",
+                )
+                .all()
+            )
+            paginator = Paginator(queryset, items_per_page)
+            page_obj = paginator.get_page(page)
+            django_objects = []
+            for obj in page_obj:
+                one_to_one_data = None
+                if obj.one_to_one_field:
+                    one_to_one_data = {
+                        "id": str(obj.one_to_one_field.id),
+                        "foreignKeyField": {
+                            "id": str(obj.one_to_one_field.foreign_key_field.id)
+                        },
+                        "paginatedForeignKeyERelated": {
+                            "objects": [
+                                {
+                                    "id": str(e_obj.id),
+                                    "foreignKeyFieldDeep": {
+                                        "id": str(e_obj.foreign_key_field_deep.id),
+                                        "foreignKeyField": {
+                                            "id": str(
+                                                e_obj.foreign_key_field_deep.foreign_key_field.id
+                                            )
+                                        },
+                                    },
+                                }
+                                for e_obj in obj.one_to_one_field.foreign_key_E_related.all()
+                            ]
+                        },
+                    }
+
+                many_to_many_data = {
                     "objects": [
                         {
-                            "id": "1",
-                        },
-                        {
-                            "id": "2",
-                        },
-                    ],
+                            "id": str(m2m_obj.id),
+                            "foreignKeyField": {
+                                "id": str(m2m_obj.foreign_key_field.id)
+                            },
+                            "paginatedForeignKeyERelated": {
+                                "objects": [
+                                    {
+                                        "id": str(e_obj.id),
+                                        "foreignKeyFieldDeep": {
+                                            "id": str(e_obj.foreign_key_field_deep.id),
+                                            "foreignKeyField": {
+                                                "id": str(
+                                                    e_obj.foreign_key_field_deep.foreign_key_field.id
+                                                )
+                                            },
+                                        },
+                                    }
+                                    for e_obj in m2m_obj.foreign_key_E_related.all()
+                                ]
+                            },
+                        }
+                        for m2m_obj in obj.many_to_many_field.all()
+                    ]
+                }
+
+                foreign_key_d_data = {
+                    "objects": [
+                        {"id": str(fk_obj.id)}
+                        for fk_obj in obj.foreign_key_D_related.all()
+                    ]
+                }
+
+                serialized_obj = {
+                    "id": str(obj.id),
+                    "charField": obj.char_field,
+                    "integerField": obj.integer_field,
+                    "booleanField": obj.boolean_field,
+                    "dateTimeField": obj.date_time_field.isoformat() + "+00:00"
+                    if obj.date_time_field
+                    else None,
+                    "jsonField": f'"{obj.json_field}"' if obj.json_field else None,
+                    "fileField": str(obj.file_field) if obj.file_field else "",
+                    "isActive": obj.is_active,
+                    "oneToOneField": one_to_one_data,
+                    "paginatedManyToManyField": many_to_many_data,
+                    "paginatedForeignKeyDRelated": foreign_key_d_data,
+                }
+                django_objects.append(serialized_obj)
+            _django_response = {
+                "searchModelCs": {
+                    "total": paginator.count,
+                    "page": page,
+                    "pages": paginator.num_pages,
+                    "hasNext": page_obj.has_next(),
+                    "hasPrev": page_obj.has_previous(),
+                    "indexStart": page_obj.start_index(),
+                    "indexEnd": page_obj.end_index(),
+                    "objects": django_objects,
                 }
             }
-        }
-        response = client.query(search_model_c_query, variables=variables).json()
-        print(response)
-        self.verify_response(
-            response, expected_response, message="SEARCH with pagination 1 ModelC"
-        )
-        # endregion
+
+            django_queries = len(connection.queries)  # - graphql_queries
+            print(f"Django ejecutó {django_queries} consultas SQL")
+
+            graphql_objects = graphql_response["data"]["searchModelCs"]["objects"]
+            print(f"GraphQL devolvió {len(graphql_objects)} objetos")
+            print(f"Django devolvió {len(django_objects)} objetos")
+
+            # Verificar que los IDs coincidan
+            graphql_ids = [obj["id"] for obj in graphql_objects]
+            django_ids = [obj["id"] for obj in django_objects]
+            print(f"IDs GraphQL: {graphql_ids}")
+            print(f"IDs Django: {django_ids}")
+            print(f"IDs coinciden: {graphql_ids == django_ids}")
         # endregion

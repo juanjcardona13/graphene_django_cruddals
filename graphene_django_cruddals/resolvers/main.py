@@ -1,12 +1,15 @@
 from enum import Enum
-from typing import Union
+from typing import Any, Dict, List, Set, Union
 
 from django.db import transaction
 from django.db.models import (
     Field as DjangoField,
     FileField,
+    ForeignKey,
     ImageField,
+    ManyToManyField,
     Model as DjangoModel,
+    OneToOneField,
     QuerySet,
 )
 from django.forms import ModelForm as DjangoModelForm
@@ -18,8 +21,15 @@ from graphene_cruddals import (
     ModelPaginatedObjectType,
     RegistryGlobal,
 )
+from graphql.language.ast import (
+    FieldNode,
+    FragmentSpreadNode,
+    InlineFragmentNode,
+    SelectionSetNode,
+)
 
 import graphene
+from graphene.utils.str_converters import to_snake_case
 from graphene_django_cruddals.converters.utils import maybe_queryset
 from graphene_django_cruddals.utils.main import (
     add_mutate_errors,
@@ -231,6 +241,259 @@ def default_list_field_resolver(resolver, default_manager, root, info, **args):
     return queryset
 
 
+def extract_requested_fields_from_graphql_query(info) -> Set[str]:
+    """
+    Extrae los campos solicitados en la consulta GraphQL de forma recursiva.
+    Retorna un set con todos los nombres de campos que se están solicitando.
+
+    Maneja:
+    - FragmentSpread: Resuelve fragmentos definidos
+    - InlineFragment: Maneja fragmentos inline con condiciones de tipo
+    - PaginatedType: Extrae campos del campo 'objects' cuando el tipo es paginado
+    """
+    requested_fields = set()
+
+    def is_paginated_type(selection_set: SelectionSetNode) -> tuple[bool, FieldNode]:
+        """
+        Determina si un campo es de tipo PaginatedType verificando si tiene
+        el campo 'objects' en su selection_set.
+        """
+        if not selection_set:
+            return False, None
+        for selection in selection_set.selections:
+            # TODO: Debo de encontrar una mejor manera de verificar si es un PaginatedType, por que si alguien usa el campo 'objects' en otro lugar, se va a tomar como un PaginatedType
+            if isinstance(selection, FieldNode) and hasattr(selection, "name"):
+                if selection.name.value == "objects":
+                    return True, selection
+        return False, None
+
+    def extract_from_selection_set(selection_set: SelectionSetNode, path: str = ""):
+        if not selection_set:
+            return
+        selections = selection_set.selections
+        for field in selections:
+            if isinstance(field, FragmentSpreadNode):
+                fragment_name = field.name.value
+                fragment_definition = info.fragments.get(fragment_name)
+                if fragment_definition and hasattr(
+                    fragment_definition, "selection_set"
+                ):
+                    extract_from_selection_set(fragment_definition.selection_set, path)
+
+            elif isinstance(field, InlineFragmentNode):
+                if hasattr(field, "selection_set") and field.selection_set:
+                    extract_from_selection_set(field.selection_set, path)
+
+            elif (
+                isinstance(field, FieldNode)
+                and hasattr(field, "name")
+                and hasattr(field, "selection_set")
+            ):
+                field_name = (
+                    field.name.value
+                    if hasattr(field.name, "value")
+                    else str(field.name)
+                )
+
+                if field_name.startswith("__"):
+                    continue
+
+                field_name = to_snake_case(field_name)
+
+                is_paginated, paginated_field = is_paginated_type(field.selection_set)
+                if is_paginated:
+                    field = paginated_field
+                    if field_name.startswith("paginated_"):
+                        field_name = field_name.replace("paginated_", "", 1)
+
+                current_path = field_name if not path else f"{path}.{field_name}"
+                requested_fields.add(current_path)
+                if hasattr(field, "selection_set") and field.selection_set:
+                    extract_from_selection_set(field.selection_set, current_path)
+
+    if hasattr(info, "field_nodes") and info.field_nodes:
+        for field_node in info.field_nodes:
+            if hasattr(field_node, "selection_set"):
+                is_paginated, paginated_field = is_paginated_type(
+                    field_node.selection_set
+                )
+                if is_paginated:
+                    extract_from_selection_set(paginated_field.selection_set)
+                else:
+                    extract_from_selection_set(field_node.selection_set)
+
+    return requested_fields
+
+
+def get_relation_fields_for_model(model: DjangoModel) -> Dict[str, Any]:
+    """
+    Obtiene todos los campos de relación (ForeignKey, OneToOneField, ManyToManyField)
+    de un modelo Django de forma agnóstica.
+    """
+    relation_fields = {}
+
+    for field in model._meta.get_fields():
+        # TODO: Revisar si para los campos ManyToOneRel, OneToOneRel, ManyToManyRel, GenericRelation tambien se agregan
+        if isinstance(field, (ForeignKey, OneToOneField, ManyToManyField)):
+            relation_fields[field.name] = {
+                "field": field,
+                "related_model": field.related_model,
+                "field_type": type(field).__name__,
+                "is_many_to_many": field.many_to_many,
+                "is_one_to_one": field.one_to_one,
+                "is_foreign_key": isinstance(field, ForeignKey),
+            }
+
+    return relation_fields
+
+
+def build_optimization_paths(
+    requested_fields: Set[str], model: DjangoModel
+) -> Dict[str, List[str]]:
+    """
+    Construye los paths de optimización (select_related y prefetch_related)
+    basándose en los campos solicitados en la consulta GraphQL.
+
+    Esta función es robusta y recursiva, validando que solo se incluyan
+    campos relacionales en los paths de optimización.
+    """
+    relation_fields = get_relation_fields_for_model(model)
+    select_related_paths = []
+    prefetch_related_paths = []
+
+    def is_relational_field(field_name: str, current_model: DjangoModel) -> bool:
+        """Verifica si un campo es relacional en el modelo dado."""
+        try:
+            field = current_model._meta.get_field(field_name)
+            return isinstance(field, (ForeignKey, OneToOneField, ManyToManyField))
+        except Exception:
+            return False
+
+    def get_related_model(field_name: str, current_model: DjangoModel):
+        """Obtiene el modelo relacionado para un campo dado."""
+        try:
+            field = current_model._meta.get_field(field_name)
+            if isinstance(field, (ForeignKey, OneToOneField, ManyToManyField)):
+                return field.related_model
+        except Exception:
+            pass
+        return None
+
+    def build_path_recursively(
+        path_parts: List[str], current_model: DjangoModel, current_path: str = ""
+    ) -> List[str]:
+        """
+        Construye paths de optimización de forma recursiva, validando
+        que cada nivel del path sea un campo relacional válido.
+        """
+        if not path_parts:
+            return []
+
+        current_field = path_parts[0]
+        remaining_parts = path_parts[1:]
+
+        # Verificar si el campo actual es relacional
+        if not is_relational_field(current_field, current_model):
+            return []
+
+        # Construir el path actual
+        if current_path:
+            full_path = f"{current_path}__{current_field}"
+        else:
+            full_path = current_field
+
+        # Obtener el modelo relacionado
+        related_model = get_related_model(current_field, current_model)
+        if not related_model:
+            return []
+
+        result_paths = []
+
+        # Si hay más partes en el path, continuar recursivamente
+        if remaining_parts:
+            nested_paths = build_path_recursively(
+                remaining_parts, related_model, full_path
+            )
+            result_paths.extend(nested_paths)
+            # También agregar el path actual si es relacional
+            result_paths.append(full_path)
+        else:
+            # Si no hay más partes, agregar el path actual
+            result_paths.append(full_path)
+
+        return result_paths
+
+    def categorize_path(path: str, model: DjangoModel) -> str:
+        """
+        Categoriza un path como select_related o prefetch_related
+        basándose en el tipo de relación del primer campo.
+        """
+        first_field = path.split("__")[0]
+        if first_field in relation_fields:
+            field_info = relation_fields[first_field]
+            if field_info["is_many_to_many"]:
+                return "prefetch_related"
+            elif field_info["is_one_to_one"] or field_info["is_foreign_key"]:
+                return "select_related"
+        return None
+
+    # Procesar cada campo solicitado
+    for field_path in requested_fields:
+        path_parts = field_path.split(".")
+
+        # Solo procesar paths con al menos 2 partes (relación + campo)
+        if len(path_parts) >= 2:
+            # Construir paths recursivamente
+            built_paths = build_path_recursively(path_parts, model)
+
+            # Categorizar cada path construido
+            for path in built_paths:
+                category = categorize_path(path, model)
+                if category == "select_related":
+                    select_related_paths.append(path)
+                elif category == "prefetch_related":
+                    prefetch_related_paths.append(path)
+
+    return {
+        "select_related": list(set(select_related_paths)),
+        "prefetch_related": list(set(prefetch_related_paths)),
+    }
+
+
+def optimize_queryset_for_graphql_query(
+    queryset: QuerySet, model: DjangoModel, info
+) -> QuerySet:
+    """
+    Optimiza un queryset aplicando select_related y prefetch_related
+    basándose en los campos solicitados en la consulta GraphQL.
+    Esta función es completamente agnóstica y funciona con cualquier modelo Django.
+    """
+    try:
+        # Extraer campos solicitados de la consulta GraphQL
+        requested_fields = extract_requested_fields_from_graphql_query(info)
+
+        # Construir paths de optimización
+        optimization_paths = build_optimization_paths(requested_fields, model)
+
+        # Aplicar select_related
+        if optimization_paths["select_related"]:
+            queryset = queryset.select_related(*optimization_paths["select_related"])
+
+        # Aplicar prefetch_related
+        if optimization_paths["prefetch_related"]:
+            queryset = queryset.prefetch_related(
+                *optimization_paths["prefetch_related"]
+            )
+
+        return queryset
+
+    except Exception as e:
+        # Si hay algún error en la optimización, retornar el queryset original
+        # Esto asegura que la funcionalidad básica no se rompa
+        print(f"Warning: Error in query optimization: {e}")
+        return queryset
+
+
 def default_search_field_resolver(
     model: DjangoModel,
     registry: RegistryGlobal,
@@ -240,6 +503,15 @@ def default_search_field_resolver(
     info,
     **args,
 ):
+    # print("-------------Aca comienza la query------------")
+    # print("model", model)
+    # print("registry", registry)
+    # print("resolver", resolver)
+    # print("default_manager", default_manager)
+    # print("root", root)
+    # print("info", info)
+    # print("args", args)
+    # print("-------------Aca termina la query------------")
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
     paginated_object_type: ModelPaginatedObjectType = registries_for_model[
@@ -287,6 +559,8 @@ def default_search_field_resolver(
         "paginationConfig", {}
     )
     queryset = queryset.distinct()
+
+    queryset = optimize_queryset_for_graphql_query(queryset, model, info)
 
     if isinstance(queryset, QuerySet):
         if hasattr(django_object_type, "get_objects"):
