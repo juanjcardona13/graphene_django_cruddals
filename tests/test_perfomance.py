@@ -1,3 +1,5 @@
+import json
+
 from tests.models import ModelC, ModelD, ModelE
 from tests.utils import Client, SchemaTestCase
 
@@ -38,29 +40,27 @@ pagination_fragment = """
 
 debug_fragment = """
     fragment debugType on DjangoDebug {
-
-            sql {
-                vendor
-                alias
-                sql
-                duration
-                rawSql
-                params
-                startTime
-                stopTime
-                isSlow
-                isSelect
-                transId
-                transStatus
-                isoLevel
-                encoding
-            }
-            exceptions {
-                excType
-                message
-                stack
-            }
-
+        sql {
+            vendor
+            alias
+            sql
+            duration
+            rawSql
+            params
+            startTime
+            stopTime
+            isSlow
+            isSelect
+            transId
+            transStatus
+            isoLevel
+            encoding
+        }
+        exceptions {
+            excType
+            message
+            stack
+        }
     }
 """
 
@@ -336,8 +336,6 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
 
         # region SEARCH ModelC
 
-        from django.core.cache import cache
-        from django.core.paginator import Paginator
         from django.db import connection, reset_queries
         from django.test.utils import override_settings
 
@@ -345,134 +343,150 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
             connection.queries_log.clear()
             reset_queries()
 
-            variables = {"paginationConfig": {"page": 4, "itemsPerPage": 3}}
-            print("search_model_c_query", search_model_c_query)
-            graphql_response = client.query(
-                search_model_c_query, variables=variables
-            ).json()
+            # print("search_model_c_query", search_model_c_query)
+            graphql_response = client.query(search_model_c_query).json()
 
             graphql_queries = len(connection.queries)
             print(f"GraphQL ejecutó {graphql_queries} consultas SQL")
 
-            connection.queries_log.clear()
-            reset_queries()
-            cache.clear()
+            # print("graphql_response", graphql_response)
+            j = json.dumps(graphql_response, indent=4)
+            with open("./gql_response.json", "w") as f:
+                f.write(j)
+            # print("gql response json", j)
+            print("========")
 
-            page = 4
-            items_per_page = 3
-            queryset = (
-                ModelC.objects.select_related("one_to_one_field__foreign_key_field")
-                .prefetch_related(
-                    "many_to_many_field__foreign_key_field",
-                    "many_to_many_field__foreign_key_E_related__foreign_key_field_deep__foreign_key_field",
-                    "foreign_key_D_related",
-                )
-                .all()
-            )
-            paginator = Paginator(queryset, items_per_page)
-            page_obj = paginator.get_page(page)
-            django_objects = []
-            for obj in page_obj:
-                one_to_one_data = None
-                if obj.one_to_one_field:
-                    one_to_one_data = {
-                        "id": str(obj.one_to_one_field.id),
-                        "foreignKeyField": {
-                            "id": str(obj.one_to_one_field.foreign_key_field.id)
-                        },
-                        "paginatedForeignKeyERelated": {
-                            "objects": [
-                                {
-                                    "id": str(e_obj.id),
-                                    "foreignKeyFieldDeep": {
-                                        "id": str(e_obj.foreign_key_field_deep.id),
-                                        "foreignKeyField": {
-                                            "id": str(
-                                                e_obj.foreign_key_field_deep.foreign_key_field.id
-                                            )
-                                        },
-                                    },
-                                }
-                                for e_obj in obj.one_to_one_field.foreign_key_E_related.all()
-                            ]
-                        },
-                    }
+            # connection.queries_log.clear()
+            # reset_queries()
+            # cache.clear()
 
-                many_to_many_data = {
-                    "objects": [
-                        {
-                            "id": str(m2m_obj.id),
-                            "foreignKeyField": {
-                                "id": str(m2m_obj.foreign_key_field.id)
-                            },
-                            "paginatedForeignKeyERelated": {
-                                "objects": [
-                                    {
-                                        "id": str(e_obj.id),
-                                        "foreignKeyFieldDeep": {
-                                            "id": str(e_obj.foreign_key_field_deep.id),
-                                            "foreignKeyField": {
-                                                "id": str(
-                                                    e_obj.foreign_key_field_deep.foreign_key_field.id
-                                                )
-                                            },
-                                        },
-                                    }
-                                    for e_obj in m2m_obj.foreign_key_E_related.all()
-                                ]
-                            },
-                        }
-                        for m2m_obj in obj.many_to_many_field.all()
-                    ]
-                }
+            # page = 4
+            # items_per_page = 3
+            # queryset = (
+            #     ModelC.objects
+            #     .select_related("one_to_one_field__foreign_key_field")
+            #     .prefetch_related(
+            #         Prefetch(
+            #             "many_to_many_field",
+            #             queryset=ModelD.objects.select_related("foreign_key_field")
+            #             .prefetch_related(
+            #                 Prefetch(
+            #                     "foreign_key_E_related",
+            #                     queryset=ModelE.objects.select_related("foreign_key_field_deep__foreign_key_field")
+            #                 )
+            #             )
+            #         ),
+            #         Prefetch(
+            #             "foreign_key_D_related",
+            #             queryset=ModelD.objects.only("id")
+            #         )
+            #     )
+            #     .all()
+            # )
+            # paginator = Paginator(queryset, items_per_page)
+            # page_obj = paginator.get_page(page)
+            # django_objects = []
+            # for obj in page_obj:
+            #     one_to_one_data = None
+            #     if obj.one_to_one_field:
+            #         one_to_one_data = {
+            #             "id": str(obj.one_to_one_field.id),
+            #             "foreignKeyField": {
+            #                 "id": str(obj.one_to_one_field.foreign_key_field.id)
+            #             },
+            #             "paginatedForeignKeyERelated": {
+            #                 "objects": [
+            #                     {
+            #                         "id": str(e_obj.id),
+            #                         "foreignKeyFieldDeep": {
+            #                             "id": str(e_obj.foreign_key_field_deep.id),
+            #                             "foreignKeyField": {
+            #                                 "id": str(
+            #                                     e_obj.foreign_key_field_deep.foreign_key_field.id
+            #                                 )
+            #                             },
+            #                         },
+            #                     }
+            #                     for e_obj in obj.one_to_one_field.foreign_key_E_related.all()
+            #                 ]
+            #             },
+            #         }
 
-                foreign_key_d_data = {
-                    "objects": [
-                        {"id": str(fk_obj.id)}
-                        for fk_obj in obj.foreign_key_D_related.all()
-                    ]
-                }
+            #     many_to_many_data = {
+            #         "objects": [
+            #             {
+            #                 "id": str(m2m_obj.id),
+            #                 "foreignKeyField": {
+            #                     "id": str(m2m_obj.foreign_key_field.id)
+            #                 },
+            #                 "paginatedForeignKeyERelated": {
+            #                     "objects": [
+            #                         {
+            #                             "id": str(e_obj.id),
+            #                             "foreignKeyFieldDeep": {
+            #                                 "id": str(e_obj.foreign_key_field_deep.id),
+            #                                 "foreignKeyField": {
+            #                                     "id": str(
+            #                                         e_obj.foreign_key_field_deep.foreign_key_field.id
+            #                                     )
+            #                                 },
+            #                             },
+            #                         }
+            #                         for e_obj in m2m_obj.foreign_key_E_related.all()
+            #                     ]
+            #                 },
+            #             }
+            #             for m2m_obj in obj.many_to_many_field.all()
+            #         ]
+            #     }
 
-                serialized_obj = {
-                    "id": str(obj.id),
-                    "charField": obj.char_field,
-                    "integerField": obj.integer_field,
-                    "booleanField": obj.boolean_field,
-                    "dateTimeField": obj.date_time_field.isoformat() + "+00:00"
-                    if obj.date_time_field
-                    else None,
-                    "jsonField": f'"{obj.json_field}"' if obj.json_field else None,
-                    "fileField": str(obj.file_field) if obj.file_field else "",
-                    "isActive": obj.is_active,
-                    "oneToOneField": one_to_one_data,
-                    "paginatedManyToManyField": many_to_many_data,
-                    "paginatedForeignKeyDRelated": foreign_key_d_data,
-                }
-                django_objects.append(serialized_obj)
-            _django_response = {
-                "searchModelCs": {
-                    "total": paginator.count,
-                    "page": page,
-                    "pages": paginator.num_pages,
-                    "hasNext": page_obj.has_next(),
-                    "hasPrev": page_obj.has_previous(),
-                    "indexStart": page_obj.start_index(),
-                    "indexEnd": page_obj.end_index(),
-                    "objects": django_objects,
-                }
-            }
+            #     foreign_key_d_data = {
+            #         "objects": [
+            #             {"id": str(fk_obj.id)}
+            #             for fk_obj in obj.foreign_key_D_related.all()
+            #         ]
+            #     }
 
-            django_queries = len(connection.queries)  # - graphql_queries
-            print(f"Django ejecutó {django_queries} consultas SQL")
+            #     serialized_obj = {
+            #         "id": str(obj.id),
+            #         "charField": obj.char_field,
+            #         "integerField": obj.integer_field,
+            #         "booleanField": obj.boolean_field,
+            #         "dateTimeField": obj.date_time_field.isoformat() + "+00:00"
+            #         if obj.date_time_field
+            #         else None,
+            #         "jsonField": f'"{obj.json_field}"' if obj.json_field else None,
+            #         "fileField": str(obj.file_field) if obj.file_field else "",
+            #         "isActive": obj.is_active,
+            #         "oneToOneField": one_to_one_data,
+            #         "paginatedManyToManyField": many_to_many_data,
+            #         "paginatedForeignKeyDRelated": foreign_key_d_data,
+            #     }
+            #     django_objects.append(serialized_obj)
+            # _django_response = {
+            #     "searchModelCs": {
+            #         "total": paginator.count,
+            #         "page": page,
+            #         "pages": paginator.num_pages,
+            #         "hasNext": page_obj.has_next(),
+            #         "hasPrev": page_obj.has_previous(),
+            #         "indexStart": page_obj.start_index(),
+            #         "indexEnd": page_obj.end_index(),
+            #         "objects": django_objects,
+            #     }
+            # }
 
-            graphql_objects = graphql_response["data"]["searchModelCs"]["objects"]
-            print(f"GraphQL devolvió {len(graphql_objects)} objetos")
-            print(f"Django devolvió {len(django_objects)} objetos")
+            # django_queries = len(connection.queries)  # - graphql_queries
+            # print(f"Django ejecutó {django_queries} consultas SQL")
 
-            # Verificar que los IDs coincidan
-            graphql_ids = [obj["id"] for obj in graphql_objects]
-            django_ids = [obj["id"] for obj in django_objects]
-            print(f"IDs GraphQL: {graphql_ids}")
-            print(f"IDs Django: {django_ids}")
-            print(f"IDs coinciden: {graphql_ids == django_ids}")
+            # graphql_objects = graphql_response["data"]["searchModelCs"]["objects"]
+            # print(f"GraphQL devolvió {len(graphql_objects)} objetos")
+            # print(f"Django devolvió {len(django_objects)} objetos")
+
+            # # Verificar que los IDs coincidan
+            # graphql_ids = [obj["id"] for obj in graphql_objects]
+            # django_ids = [obj["id"] for obj in django_objects]
+            # print(f"IDs GraphQL: {graphql_ids}")
+            # print(f"IDs Django: {django_ids}")
+            # print(f"IDs coinciden: {graphql_ids == django_ids}")
         # endregion

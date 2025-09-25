@@ -318,6 +318,7 @@ def convert_onetoone_field_to_djangomodel(
         )
 
         if direct_type:
+            # TODO: Revisar por que aca no se considera el custom resolver => """Esta parte es importante por si en el TypeParent se define un resolver para el campo relacionado"""
             default_resolver = get_function_for_type(
                 direct_type, f"resolve_{field.name}", field.name
             )
