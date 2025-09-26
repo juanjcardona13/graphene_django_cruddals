@@ -351,7 +351,7 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
 
             # print("graphql_response", graphql_response)
             j = json.dumps(graphql_response, indent=4)
-            with open("./gql_response.json", "w") as f:
+            with open("gql_response.json", "w") as f:
                 f.write(j)
             # print("gql response json", j)
             print("========")

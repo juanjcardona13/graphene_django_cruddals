@@ -13,6 +13,7 @@ from django.db.models import (
     Model as DjangoModel,
     OneToOneField,
     OneToOneRel,
+    Prefetch,
     QuerySet,
 )
 from django.forms import ModelForm as DjangoModelForm
@@ -25,12 +26,21 @@ from graphene_cruddals import (
     RegistryGlobal,
 )
 from graphql.language.ast import (
+    BooleanValueNode,
+    EnumValueNode,
+    FloatValueNode,
     FragmentSpreadNode as FragmentSpread,
     InlineFragmentNode as InlineFragment,
+    IntValueNode,
+    ListValueNode,
+    ObjectValueNode,
+    StringValueNode,
+    VariableNode,
 )
 
 import graphene
 from graphene import Dynamic, List
+from graphene.types.scalars import MAX_INT, MIN_INT
 from graphene.utils.str_converters import to_camel_case
 from graphene_django_cruddals.converters.utils import maybe_queryset
 from graphene_django_cruddals.utils.main import (
@@ -224,6 +234,91 @@ def default_list_field_resolver(resolver, default_manager, root, info, **args):
     return queryset
 
 
+def parse_ast(ast, variable_values=None):
+    if variable_values is None:
+        variable_values = {}
+    if isinstance(ast, VariableNode):
+        var_name = ast.name.value
+        value = variable_values.get(var_name)
+        return value
+    elif isinstance(ast, (StringValueNode, BooleanValueNode)):
+        return ast.value
+    elif isinstance(ast, IntValueNode):
+        num = int(ast.value)
+        if MIN_INT <= num <= MAX_INT:
+            return num
+    elif isinstance(ast, FloatValueNode):
+        return float(ast.value)
+    elif isinstance(ast, EnumValueNode):
+        return ast.value
+    elif isinstance(ast, ListValueNode):
+        ret = []
+        for ast_value in ast.values:
+            value = parse_ast(ast_value, variable_values=variable_values)
+            if value is not None:
+                ret.append(value)
+        return ret
+    elif isinstance(ast, ObjectValueNode):
+        ret = {}
+        for field in ast.fields:
+            value = parse_ast(field.value, variable_values=variable_values)
+            if value is not None:
+                ret[field.name.value] = value
+        return ret
+    else:
+        return None
+
+
+def parse_arguments_ast(arguments, variable_values=None):
+    if variable_values is None:
+        variable_values = {}
+    ret = {}
+    for argument in arguments:
+        value = parse_ast(argument.value, variable_values=variable_values)
+        if value is not None:
+            ret[argument.name.value] = value
+    return ret
+
+
+def _queryset_factory(
+    model, info, field_ast=None, is_connection=True, registry=None, **kwargs
+):
+    queryset = model.objects.all()
+    arguments = parse_arguments_ast(
+        field_ast.arguments, variable_values=info.variable_values
+    )
+    queryset_factory = _queryset_factory_analyze(
+        info,
+        field_ast.selection_set,
+        is_connection=is_connection,
+        model=model,
+        registry=registry,
+    )
+    print("========")
+    print("queryset_factory", queryset_factory)
+    print("========")
+    queryset = queryset.select_related(*queryset_factory["select_related"])
+    queryset = queryset.only(*queryset_factory["only"])
+    queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
+
+    if "where" in arguments.keys():
+        where = arguments["where"]
+        obj_q = where_input_to_Q(where)
+        queryset = queryset.filter(obj_q)
+
+    if "order_by" in arguments.keys() or "orderBy" in arguments.keys():
+        order_by = arguments.get("order_by") or arguments.get("orderBy")
+        if isinstance(order_by, dict):
+            order_by = [order_by]
+        list_for_order = order_by_input_to_args(order_by)
+        queryset = queryset.order_by(*list_for_order)
+    else:
+        queryset = queryset.order_by("pk")
+
+    queryset = queryset.distinct()
+    return queryset
+
+
 def get_type_field(gql_type, gql_name):
     fields = gql_type._meta.fields
     for name, field in fields.items():
@@ -343,9 +438,19 @@ def _queryset_factory_analyze(
                     elif isinstance(
                         model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
                     ):
-                        # TODO: Falta hacer el prefetch_related
-                        pass
-
+                        qs = _queryset_factory(
+                            related_model,
+                            info,
+                            field_ast=field,
+                            is_connection=True,
+                            registry=registry,
+                        )
+                        ret["prefetch_related"].append(
+                            Prefetch(
+                                new_suffix + real_name,
+                                queryset=qs,
+                            )
+                        )
                 elif isinstance(model_field, FileField):
                     ret["only"].append(new_suffix + real_name)
             else:
@@ -362,6 +467,16 @@ def default_search_field_resolver(
     info,
     **args,
 ):
+    print("default_search_field_resolver")
+    print("model", model)
+    print("registry", registry)
+    print("resolver", resolver)
+    print("default_manager", default_manager)
+    print("root", root)
+    print("info", info)
+    print("args", args)
+    print("========")
+
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
     paginated_object_type: ModelPaginatedObjectType = registries_for_model[
@@ -375,13 +490,20 @@ def default_search_field_resolver(
             "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
         )
 
-    # queryset = _queryset_factory_analyze(
-    #     info,
-    #     selection_set=info.field_nodes[0].selection_set,
-    #     is_connection=True, # supongo que es por el paginado, como alla es un batch,
-    #     model=model,
-    #     registry=registry,
-    # )
+    queryset_factory = _queryset_factory_analyze(
+        info,
+        selection_set=info.field_nodes[0].selection_set,
+        is_connection=True,  # supongo que es por el paginado, como alla es un batch,
+        model=model,
+        registry=registry,
+    )
+    print("========")
+    print("queryset_factory", queryset_factory)
+    print("========")
+
+    queryset = queryset.select_related(*queryset_factory["select_related"])
+    queryset = queryset.only(*queryset_factory["only"])
+    queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
     if resolver is not None and hasattr(resolver, "args"):
         maybe_manager = resolver(root, info, **args)
