@@ -438,17 +438,30 @@ def _queryset_factory_analyze(
                     elif isinstance(
                         model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
                     ):
-                        qs = _queryset_factory(
-                            related_model,
+                        # NO llamar a _queryset_factory aquí, solo analizar
+                        related_ret = _queryset_factory_analyze(
                             info,
-                            field_ast=field,
-                            is_connection=True,
-                            registry=registry,
+                            field.selection_set,
+                            True,  # is_connection=True para ManyToMany
+                            related_model,
+                            registry,
+                            "",  # sin suffix para ManyToMany
                         )
+
+                        # Crear un queryset básico optimizado sin ejecutar el resolver
+                        related_queryset = related_model.objects.all()
+                        related_queryset = related_queryset.select_related(
+                            *related_ret["select_related"]
+                        )
+                        related_queryset = related_queryset.only(*related_ret["only"])
+                        related_queryset = related_queryset.prefetch_related(
+                            *related_ret["prefetch_related"]
+                        )
+
                         ret["prefetch_related"].append(
                             Prefetch(
                                 new_suffix + real_name,
-                                queryset=qs,
+                                queryset=related_queryset,
                             )
                         )
                 elif isinstance(model_field, FileField):
