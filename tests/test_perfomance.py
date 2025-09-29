@@ -354,6 +354,8 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
             with open("gql_response.json", "w") as f:
                 f.write(j)
             # print("gql response json", j)
+            # graphql_queries deberia de ser 10
+            self.assertEqual(graphql_queries, 10)
             print("========")
 
             # connection.queries_log.clear()
