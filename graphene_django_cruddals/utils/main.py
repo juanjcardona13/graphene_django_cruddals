@@ -400,17 +400,17 @@ def toggle_active_status(
 
 
 def paginate_queryset(
-    qs: DjangoQuerySet,
+    qs: Union[DjangoQuerySet, list],
     paginated_type: Type[graphene.ObjectType],
     items_per_page: Union[int, Literal["All"]] = "All",
     page: int = 1,
     **kwargs,
 ) -> graphene.ObjectType:
     """
-    Paginate a queryset based on the specified parameters.
+    Paginate a queryset or list based on the specified parameters.
 
     Args:
-        qs (QuerySet): The queryset to paginate.
+        qs (QuerySet | list): The queryset or list to paginate.
         paginated_type (Type[graphene.ObjectType]): The pagination type to return. By default, it is None.
         items_per_page (Union[int, Literal['All']], optional): The number of items per page. By default, it is 'All'.
         page (int, optional): The current page number. By default, it is 1.
@@ -420,8 +420,15 @@ def paginate_queryset(
         Type: An instance of paginated_type with pagination information and objects.
     """
 
+    # Cachear el count para evitar queries duplicadas
+    if isinstance(qs, list):
+        total_count = len(qs)
+    else:
+        # Ejecutar count solo una vez y cachearlo
+        total_count = qs.count()
+
     if items_per_page == "All":
-        items_per_page = qs.count()
+        items_per_page = total_count
 
     try:
         page = int(page)
@@ -435,24 +442,40 @@ def paginate_queryset(
     if items_per_page == 0:
         items_per_page = 1
 
-    p = Paginator(qs, items_per_page)
+    # Crear Paginator manualmente para evitar select count duplicados
+    # Calcular páginas manualmente
+    import math
+    num_pages = math.ceil(total_count / items_per_page) if items_per_page > 0 else 1
 
-    try:
-        page_obj = p.page(page)
-    except PageNotAnInteger:
-        page_obj = p.page(1)
-    except EmptyPage:
-        page_obj = p.page(p.num_pages)
+    # Validar número de página
+    if page < 1:
+        page = 1
+    elif page > num_pages and num_pages > 0:
+        page = num_pages
+
+    # Calcular offset y límite
+    start_index = (page - 1) * items_per_page
+    end_index = start_index + items_per_page
+
+    # Obtener objetos de la página
+    if isinstance(qs, list):
+        page_objects = qs[start_index:end_index]
+    else:
+        page_objects = list(qs[start_index:end_index])
+
+    # Calcular índices para display (1-indexed)
+    index_start = start_index + 1 if total_count > 0 else 0
+    index_end = min(end_index, total_count)
 
     return paginated_type(
-        total=p.count,
-        page=page_obj.number,
-        pages=p.num_pages,
-        has_next=page_obj.has_next(),
-        has_prev=page_obj.has_previous(),
-        index_start=page_obj.start_index(),
-        index_end=page_obj.end_index(),
-        objects=page_obj.object_list,
+        total=total_count,
+        page=page,
+        pages=num_pages,
+        has_next=page < num_pages,
+        has_prev=page > 1,
+        index_start=index_start,
+        index_end=index_end,
+        objects=page_objects,
         **kwargs,
     )
 
