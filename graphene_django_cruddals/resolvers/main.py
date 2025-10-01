@@ -280,45 +280,6 @@ def parse_arguments_ast(arguments, variable_values=None):
     return ret
 
 
-def _queryset_factory(
-    model, info, field_ast=None, is_connection=True, registry=None, **kwargs
-):
-    queryset = model.objects.all()
-    arguments = parse_arguments_ast(
-        field_ast.arguments, variable_values=info.variable_values
-    )
-    queryset_factory = _queryset_factory_analyze(
-        info,
-        field_ast.selection_set,
-        is_connection=is_connection,
-        model=model,
-        registry=registry,
-    )
-    print("========")
-    print("queryset_factory", queryset_factory)
-    print("========")
-    queryset = queryset.select_related(*queryset_factory["select_related"])
-    queryset = queryset.only(*queryset_factory["only"])
-    queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
-
-    if "where" in arguments.keys():
-        where = arguments["where"]
-        obj_q = where_input_to_Q(where)
-        queryset = queryset.filter(obj_q)
-
-    if "order_by" in arguments.keys() or "orderBy" in arguments.keys():
-        order_by = arguments.get("order_by") or arguments.get("orderBy")
-        if isinstance(order_by, dict):
-            order_by = [order_by]
-        list_for_order = order_by_input_to_args(order_by)
-        queryset = queryset.order_by(*list_for_order)
-    else:
-        queryset = queryset.order_by("pk")
-
-    queryset = queryset.distinct()
-    return queryset
-
-
 def get_type_field(gql_type, gql_name):
     fields = gql_type._meta.fields
     for name, field in fields.items():
@@ -399,6 +360,7 @@ def _queryset_factory_analyze(
             registries_for_model = registry.get_registry_for_model(model)
             django_object_type: ModelObjectType = registries_for_model["object_type"]
             real_name, _type_field = get_type_field(django_object_type, field_name)
+
             if real_name.startswith("paginated_"):
                 real_name = real_name.replace("paginated_", "", 1)
 
@@ -422,6 +384,7 @@ def _queryset_factory_analyze(
                     ),
                 ):
                     related_model = model_field.remote_field.model
+
                     if isinstance(
                         model_field, (OneToOneField, OneToOneRel, ForeignKey)
                     ):
@@ -435,10 +398,30 @@ def _queryset_factory_analyze(
                             new_suffix + real_name,
                         )
                         ret = fusion_ret(ret, new_ret)
+
                     elif isinstance(
                         model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
                     ):
-                        # NO llamar a _queryset_factory aquí, solo analizar
+                        # Extraer orderBy de los argumentos del campo
+                        # Para agregarlo al Prefetch y optimizar la consulta
+                        order_by_list = []
+                        if hasattr(field, "arguments"):
+                            field_args = parse_arguments_ast(
+                                field.arguments,
+                                variable_values=info.variable_values
+                                if hasattr(info, "variable_values")
+                                else {},
+                            )
+                            if "orderBy" in field_args or "order_by" in field_args:
+                                order_by = field_args.get("orderBy") or field_args.get(
+                                    "order_by"
+                                )
+                                if isinstance(order_by, dict):
+                                    order_by = [order_by]
+                                if order_by:
+                                    order_by_list = order_by_input_to_args(order_by)
+
+                        # Analizar campos anidados
                         related_ret = _queryset_factory_analyze(
                             info,
                             field.selection_set,
@@ -448,7 +431,7 @@ def _queryset_factory_analyze(
                             "",  # sin suffix para ManyToMany
                         )
 
-                        # Crear un queryset básico optimizado sin ejecutar el resolver
+                        # Crear un queryset básico optimizado
                         related_queryset = related_model.objects.all()
                         related_queryset = related_queryset.select_related(
                             *related_ret["select_related"]
@@ -458,16 +441,26 @@ def _queryset_factory_analyze(
                             *related_ret["prefetch_related"]
                         )
 
+                        # Aplicar orderBy si existe
+                        # aqui si se aplica order_by porque es un queryset independiente
+                        if order_by_list:
+                            related_queryset = related_queryset.order_by(*order_by_list)
+                        else:
+                            related_queryset = related_queryset.order_by("pk")
+
                         ret["prefetch_related"].append(
                             Prefetch(
                                 new_suffix + real_name,
                                 queryset=related_queryset,
                             )
                         )
+
                 elif isinstance(model_field, FileField):
                     ret["only"].append(new_suffix + real_name)
+
             else:
                 ret["only"].append(new_suffix + real_name)
+
     return ret
 
 
@@ -480,92 +473,105 @@ def default_search_field_resolver(
     info,
     **args,
 ):
-    print("default_search_field_resolver")
-    print("model", model)
-    print("registry", registry)
-    print("resolver", resolver)
-    print("default_manager", default_manager)
-    print("root", root)
-    print("info", info)
-    print("args", args)
-    print("========")
-
     registries_for_model = registry.get_registry_for_model(model)
-    django_object_type: ModelObjectType = registries_for_model["object_type"]
     paginated_object_type: ModelPaginatedObjectType = registries_for_model[
         "paginated_object_type"
     ]
 
-    queryset = maybe_queryset(default_manager)
+    # Manejamos el resolver personalizado (para relaciones inversas paginadas)
+    queryset = None
+    field_name_for_prefetch = None
+    is_nested_paginated_field = False
+
+    if resolver is not None and hasattr(resolver, "args"):
+        attname, default_value = resolver.args
+        if attname.startswith("paginated_"):
+            is_nested_paginated_field = True
+            posible_field = attname.replace("paginated_", "", 1)
+            posible_field_with_default_set = posible_field + "_set"
+            field_name_for_prefetch = (
+                posible_field
+                if hasattr(root, posible_field)
+                else posible_field_with_default_set
+            )
+
+            # Verificar si los datos ya están en el cache de prefetch
+            if (
+                hasattr(root, "_prefetched_objects_cache")
+                and field_name_for_prefetch in root._prefetched_objects_cache
+            ):
+                # Los datos ya están prefetched, usarlos directamente como lista
+                queryset = list(root._prefetched_objects_cache[field_name_for_prefetch])
+            else:
+                # No están prefetched, obtenerlos normalmente
+                maybe_manager = resolver(root, info, **args)
+                if hasattr(root, field_name_for_prefetch):
+                    maybe_manager = getattr(
+                        root, field_name_for_prefetch, default_value
+                    )
+                queryset = maybe_queryset(maybe_manager)
+
+    # Si no obtuvimos queryset del resolver, usar el default_manager
+    if queryset is None:
+        queryset = maybe_queryset(default_manager)
 
     if queryset is None:
         raise ValueError(
             "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
         )
 
-    queryset_factory = _queryset_factory_analyze(
-        info,
-        selection_set=info.field_nodes[0].selection_set,
-        is_connection=True,  # supongo que es por el paginado, como alla es un batch,
-        model=model,
-        registry=registry,
+    # Detectar si los datos ya están cargados (prefetched) o es una lista
+    is_prefetched = isinstance(queryset, list) or (
+        hasattr(queryset, "_result_cache") and queryset._result_cache is not None
     )
-    print("========")
-    print("queryset_factory", queryset_factory)
-    print("========")
 
-    queryset = queryset.select_related(*queryset_factory["select_related"])
-    queryset = queryset.only(*queryset_factory["only"])
-    queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
+    # Solo aplicamos optimizaciones si los datos NO están prefetched Y NO es un campo anidado paginado
+    if not is_prefetched and not is_nested_paginated_field:
+        # Analizamos el AST para determinar qué optimizaciones necesitamos
+        queryset_factory = _queryset_factory_analyze(
+            info,
+            selection_set=info.field_nodes[0].selection_set,
+            is_connection=True,
+            model=model,
+            registry=registry,
+        )
 
-    if resolver is not None and hasattr(resolver, "args"):
-        maybe_manager = resolver(root, info, **args)
-        attname, default_value = resolver.args
-        if attname.startswith("paginated_"):
-            posible_field = attname.replace("paginated_", "", 1)
-            posible_field_with_default_set = posible_field + "_set"
-            posible_field = (
-                posible_field
-                if hasattr(root, posible_field)
-                else posible_field_with_default_set
-            )
-            if hasattr(root, posible_field):
-                maybe_manager = getattr(root, posible_field, default_value)
+        # Aplicamos las optimizaciones
+        if queryset_factory["select_related"]:
+            queryset = queryset.select_related(*queryset_factory["select_related"])
+        if queryset_factory["only"]:
+            queryset = queryset.only(*queryset_factory["only"])
+        if queryset_factory["prefetch_related"]:
+            queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
-        queryset: QuerySet = maybe_queryset(maybe_manager)
-
-    if "where" in args:
+    # Aplicamos filtros (where) - solo si NO están prefetched
+    if "where" in args and not is_prefetched:
         where = args["where"]
         obj_q = where_input_to_Q(where)
         queryset = queryset.filter(obj_q)
 
-    if "order_by" in args or "orderBy" in args:
-        order_by = args.get("order_by") or args.get("orderBy")
-        if isinstance(order_by, dict):
-            order_by = [order_by]
-        list_for_order = order_by_input_to_args(order_by)
-        queryset = queryset.order_by(*list_for_order)
-    else:
-        queryset = queryset.order_by("pk")
+    # Aplicamos ordenamiento (orderBy) - solo si NO es una lista (ya ordenada en Prefetch)
+    if not isinstance(queryset, list):
+        if "order_by" in args or "orderBy" in args:
+            order_by = args.get("order_by") or args.get("orderBy")
+            if isinstance(order_by, dict):
+                order_by = [order_by]
+            list_for_order = order_by_input_to_args(order_by)
+            queryset = queryset.order_by(*list_for_order)
+        elif not is_prefetched:
+            queryset = queryset.order_by("pk")
 
-    if isinstance(queryset, QuerySet):
-        if hasattr(django_object_type, "get_objects"):
-            if isinstance(django_object_type.get_objects, list):
-                for get_objects_func in django_object_type.get_objects:
-                    queryset = maybe_queryset(get_objects_func(queryset, info))
-            elif callable(django_object_type.get_objects):
-                queryset = maybe_queryset(
-                    django_object_type.get_objects(queryset, info)
-                )
+    # Aseguramos que no haya dupilcados - solo si NO están prefetched
+    if not is_prefetched and not isinstance(queryset, list):
+        queryset = queryset.distinct()
 
-    queryset = queryset.distinct()
-
+    # Paginamos el queryset
     pagination_config = args.get("pagination_config", {}) or args.get(
         "paginationConfig", {}
     )
     return paginate_queryset(
         queryset,
-        paginated_object_type,  # type: ignore
+        paginated_object_type,
         pagination_config.get("items_per_page", "All"),
         pagination_config.get("page", 1),
     )
