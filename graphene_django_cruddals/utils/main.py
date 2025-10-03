@@ -1,5 +1,6 @@
+import math
 from itertools import chain
-from typing import Any, List, Literal, Type, Union
+from typing import Any, List, Literal, Sequence, Type, Union
 
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,
@@ -52,6 +53,23 @@ from graphene_django_cruddals.converters.converter_output import (
 from graphene_django_cruddals.converters.utils import (
     convert_choice_field_to_graphene_enum,
 )
+
+
+class PaginatorWithCount(Paginator):
+    """custom Paginator that accepts a count already calculated to avoid duplicate calls."""
+
+    def __init__(
+        self, object_list, per_page, orphans=0, allow_empty_first_page=True, count=None
+    ):
+        super().__init__(object_list, per_page, orphans, allow_empty_first_page)
+        self._cached_count = count
+
+    @property
+    def count(self):
+        """Return the total number of objects, across all pages."""
+        if self._cached_count is not None:
+            return self._cached_count
+        return super().count
 
 
 def get_field_name(field: DjangoField, for_queryset: bool) -> str:
@@ -400,10 +418,14 @@ def toggle_active_status(
 
 
 def paginate_queryset(
-    qs: Union[DjangoQuerySet, list],
+    qs: Union[DjangoQuerySet, Sequence],
     paginated_type: Type[graphene.ObjectType],
     items_per_page: Union[int, Literal["All"]] = "All",
     page: int = 1,
+    *,
+    min_per_page: int = 1,
+    max_per_page: int = 200,  # anti-abuso / memoria
+    enforce_order: bool = False,
     **kwargs,
 ) -> graphene.ObjectType:
     """
@@ -420,64 +442,110 @@ def paginate_queryset(
         Type: An instance of paginated_type with pagination information and objects.
     """
 
-    # Cachear el count para evitar queries duplicadas
-    if isinstance(qs, list):
-        total_count = len(qs)
+    # old = False
+    old = True
+
+    if old:
+        try:
+            page = int(page)
+        except (TypeError, ValueError):
+            page = 1
+
+        if page < 1:
+            page = 1
+
+        if isinstance(qs, DjangoQuerySet):
+            total_count = qs.count()
+        else:
+            total_count = len(qs)  # type: ignore[arg-type]
+
+        if items_per_page == "All":
+            per_page = total_count
+        else:
+            try:
+                per_page = int(items_per_page)  # type: ignore[arg-type]
+            except (TypeError, ValueError):
+                per_page = min_per_page
+
+        # if per_page < min_per_page:
+        #     per_page = min_per_page
+        # if max_per_page is not None and per_page > max_per_page:
+        #     per_page = max_per_page
+
+        # if enforce_order and isinstance(qs, DjangoQuerySet) and not qs.query.order_by:
+        #     qs = qs.order_by('pk')
+
+        # Usar Paginator personalizado con el count ya calculado
+        p = PaginatorWithCount(qs, per_page, count=total_count)
+
+        try:
+            page_obj = p.page(page)
+        except PageNotAnInteger:
+            page_obj = p.page(1)
+        except EmptyPage:
+            page_obj = p.page(p.num_pages if p.num_pages > 0 else 1)
+
+        return paginated_type(
+            total=total_count,
+            page=page_obj.number,
+            pages=p.num_pages,
+            has_next=page_obj.has_next(),
+            has_prev=page_obj.has_previous(),
+            index_start=page_obj.start_index() if total_count else 0,
+            index_end=page_obj.end_index() if total_count else 0,
+            objects=list(page_obj.object_list),
+            **kwargs,
+        )
     else:
-        # Ejecutar count solo una vez y cachearlo
-        total_count = qs.count()
+        if isinstance(qs, list):
+            total_count = len(qs)
+        else:
+            total_count = qs.count()
 
-    if items_per_page == "All":
-        items_per_page = total_count
+        if items_per_page == "All":
+            items_per_page = total_count
 
-    try:
-        page = int(page)
-        items_per_page = int(items_per_page)
-    except Exception:
-        page = 1
-        items_per_page = 1
+        try:
+            page = int(page)
+            items_per_page = int(items_per_page)
+        except Exception:
+            page = 1
+            items_per_page = 1
 
-    if page == 0:
-        page = 1
-    if items_per_page == 0:
-        items_per_page = 1
+        if page == 0:
+            page = 1
+        if items_per_page == 0:
+            items_per_page = 1
 
-    # Crear Paginator manualmente para evitar select count duplicados
-    # Calcular páginas manualmente
-    import math
-    num_pages = math.ceil(total_count / items_per_page) if items_per_page > 0 else 1
+        num_pages = max(1, math.ceil(total_count / items_per_page))
 
-    # Validar número de página
-    if page < 1:
-        page = 1
-    elif page > num_pages and num_pages > 0:
-        page = num_pages
+        if page < 1:
+            page = 1
+        elif page > num_pages and num_pages > 0:
+            page = num_pages
 
-    # Calcular offset y límite
-    start_index = (page - 1) * items_per_page
-    end_index = start_index + items_per_page
+        start_index = (page - 1) * items_per_page
+        end_index = start_index + items_per_page
 
-    # Obtener objetos de la página
-    if isinstance(qs, list):
-        page_objects = qs[start_index:end_index]
-    else:
-        page_objects = list(qs[start_index:end_index])
+        if isinstance(qs, list):
+            page_objects = qs[start_index:end_index]
+        else:
+            page_objects = list(qs[start_index:end_index])
 
-    # Calcular índices para display (1-indexed)
-    index_start = start_index + 1 if total_count > 0 else 0
-    index_end = min(end_index, total_count)
+        index_start = start_index + 1 if total_count > 0 else 0
+        index_end = min(end_index, total_count)
 
-    return paginated_type(
-        total=total_count,
-        page=page,
-        pages=num_pages,
-        has_next=page < num_pages,
-        has_prev=page > 1,
-        index_start=index_start,
-        index_end=index_end,
-        objects=page_objects,
-        **kwargs,
-    )
+        return paginated_type(
+            total=total_count,
+            page=page,
+            pages=num_pages,
+            has_next=page < num_pages,
+            has_prev=page > 1,
+            index_start=index_start,
+            index_end=index_end,
+            objects=page_objects,
+            **kwargs,
+        )
 
 
 def add_mutate_errors(responses, object_counter, internal_arr_errors, transaction=None):
