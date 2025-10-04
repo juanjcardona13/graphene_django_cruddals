@@ -215,8 +215,12 @@ def resolve_for_relation_field(field, model, _type, root, info, **args):
     if instance is None:
         return None
 
-    if isinstance(instance, model):
-        return instance
+    try:
+        if isinstance(instance, model):
+            return instance
+    except TypeError:
+        # model is not a valid type (e.g., MagicMock in tests)
+        pass
 
     if isinstance(instance, Manager):
         queryset = instance.get_queryset()
