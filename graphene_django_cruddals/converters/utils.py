@@ -216,23 +216,48 @@ def resolve_for_relation_field(field, model, _type, root, info, **args):
         return None
     elif isinstance(instance, Manager):
         queryset = instance.get_queryset()
-    else:
-        queryset = model.objects.filter(id=instance.id)
-
-    if hasattr(_type, "get_objects"):
-        if isinstance(_type.get_objects, list):
-            for get_objects_func in _type.get_objects:
-                if isinstance(get_objects_func, classmethod):
-                    queryset = maybe_queryset(
-                        get_objects_func.__func__(_type, queryset, info)
-                    )
-                else:
-                    queryset = maybe_queryset(get_objects_func(queryset, info))
+        # Para Managers, aplicar get_objects y ejecutar query
+        if hasattr(_type, "get_objects"):
+            if isinstance(_type.get_objects, list):
+                for get_objects_func in _type.get_objects:
+                    if isinstance(get_objects_func, classmethod):
+                        queryset = maybe_queryset(
+                            get_objects_func.__func__(_type, queryset, info)
+                        )
+                    else:
+                        queryset = maybe_queryset(get_objects_func(queryset, info))
+            else:
+                queryset = maybe_queryset(_type.get_objects(queryset, info))
         else:
-            queryset = maybe_queryset(_type.get_objects(queryset, info))
+            raise ValueError("The get_objects method is not defined.")
+        try:
+            return queryset.distinct().get()
+        except model.DoesNotExist:
+            return None
     else:
-        raise ValueError("The get_objects method is not defined.")
-    try:
-        return queryset.distinct().get()
-    except model.DoesNotExist:
-        return None
+        # Si la instancia ya está cargada (por select_related), devolverla directamente
+        # sin crear un nuevo queryset que causaría queries adicionales
+        if isinstance(instance, model):
+            # ✓ La instancia ya está completamente cargada por select_related
+            # Devolverla directamente SIN llamar a get_objects (evita queries)
+            return instance
+        else:
+            # No es una instancia del modelo, crear queryset y aplicar get_objects
+            queryset = model.objects.filter(id=instance.id)
+            if hasattr(_type, "get_objects"):
+                if isinstance(_type.get_objects, list):
+                    for get_objects_func in _type.get_objects:
+                        if isinstance(get_objects_func, classmethod):
+                            queryset = maybe_queryset(
+                                get_objects_func.__func__(_type, queryset, info)
+                            )
+                        else:
+                            queryset = maybe_queryset(get_objects_func(queryset, info))
+                else:
+                    queryset = maybe_queryset(_type.get_objects(queryset, info))
+            else:
+                raise ValueError("The get_objects method is not defined.")
+            try:
+                return queryset.distinct().get()
+            except model.DoesNotExist:
+                return None
