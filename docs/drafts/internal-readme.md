@@ -64,7 +64,7 @@ Estaría bien estos pasos, para publicar mi proyecto:
 4. Hacer todos los pasos necesarios de git
   `git add .`
   `git commit -m "UPDATE MESSAGE HERE"`
-  `git tag v0.1.18`
+  `git tag v0.1.19`
   `git push origin main --tags`
 5. Esperar a que GitHub Actions haga su trabajo
   - Correr los test
