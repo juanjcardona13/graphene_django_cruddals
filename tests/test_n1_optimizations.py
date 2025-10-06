@@ -1,36 +1,55 @@
 """
-Tests para validar las optimizaciones N+1 en GraphQL.
+Tests to validate N+1 optimizations in GraphQL.
 
-Este archivo contiene tests que verifican que las optimizaciones implementadas
-reducen las queries de 99 → 27 → 10, eliminando problemas de N+1.
+This file contains tests that verify that the implemented optimizations
+reduce queries from 99 → 27 → 10, eliminating N+1 problems.
 
-Optimizaciones probadas:
-1. select_related para ForeignKey y OneToOneField
-2. prefetch_related con Prefetch personalizado para ManyToMany y reverse ForeignKey
-3. orderBy extraído del AST y aplicado en Prefetch
-4. Paginación optimizada (count ejecutado solo una vez)
-5. resolve_for_relation_field detecta instancias ya cargadas
+Optimizations tested:
+1. select_related for ForeignKey and OneToOneField
+2. prefetch_related with custom Prefetch for ManyToMany and reverse ForeignKey
+3. orderBy extracted from the AST and applied in Prefetch
+4. Optimized pagination (count executed only once)
+5. resolve_for_relation_field detects already-loaded instances
 """
 
-import json
-from django.test import TestCase, override_settings
 from django.db import connection, reset_queries
+from django.test import TestCase, override_settings
 
 from tests.models import ModelC, ModelD, ModelE
 from tests.utils import Client
 
 
 class N1OptimizationsTestCase(TestCase):
-    """Tests para verificar optimizaciones N+1 en queries GraphQL."""
+    """Tests to verify N+1 optimizations in GraphQL queries."""
 
     @classmethod
     def setUpTestData(cls):
-        """Crear datos de prueba una sola vez para todos los tests."""
+        """Create test data once for all tests."""
         model_c_data = [
-            {"char_field": "AAA", "integer_field": 1, "boolean_field": True, "key": "key1"},
-            {"char_field": "BBB", "integer_field": 2, "boolean_field": False, "key": "key2"},
-            {"char_field": "CCC", "integer_field": 3, "boolean_field": True, "key": "key3"},
-            {"char_field": "DDD", "integer_field": 4, "boolean_field": False, "key": "key4"},
+            {
+                "char_field": "AAA",
+                "integer_field": 1,
+                "boolean_field": True,
+                "key": "key1",
+            },
+            {
+                "char_field": "BBB",
+                "integer_field": 2,
+                "boolean_field": False,
+                "key": "key2",
+            },
+            {
+                "char_field": "CCC",
+                "integer_field": 3,
+                "boolean_field": True,
+                "key": "key3",
+            },
+            {
+                "char_field": "DDD",
+                "integer_field": 4,
+                "boolean_field": False,
+                "key": "key4",
+            },
         ]
 
         model_c_instances = [
@@ -47,8 +66,7 @@ class N1OptimizationsTestCase(TestCase):
         cls.mc1, cls.mc2, cls.mc3, cls.mc4 = model_c_instances
 
         model_d_instances = [
-            ModelD.objects.create(foreign_key_field=mc)
-            for mc in model_c_instances
+            ModelD.objects.create(foreign_key_field=mc) for mc in model_c_instances
         ]
         cls.md1, cls.md2, cls.md3, cls.md4 = model_d_instances
 
@@ -77,18 +95,18 @@ class N1OptimizationsTestCase(TestCase):
         cls.me1, cls.me2 = model_e_instances
 
     def setUp(self):
-        """Reset queries antes de cada test."""
+        """Reset queries before each test."""
         reset_queries()
         connection.queries_log.clear()
 
     def test_search_basic_optimizations(self):
         """
-        Test: Query básica con select_related y prefetch_related.
+        Test: Basic query with select_related and prefetch_related.
 
-        Verifica que:
-        - select_related carga OneToOneField en un solo JOIN
-        - prefetch_related carga ManyToMany eficientemente
-        - No hay N+1 queries
+        Verifies that:
+        - select_related loads OneToOneField with a single JOIN
+        - prefetch_related loads ManyToMany efficiently
+        - There are no N+1 queries
         """
         client = Client()
         query = """
@@ -118,25 +136,26 @@ class N1OptimizationsTestCase(TestCase):
             response = client.query(query).json()
             query_count = len(connection.queries)
 
-            # Validar respuesta
+            # Validate response
             self.assertIsNone(response.get("errors"))
             self.assertIn("data", response)
 
-            # Queries esperadas:
-            # 1. COUNT para paginación
-            # 2. SELECT ModelC con JOIN ModelD (select_related)
+            # Expected queries:
+            # 1. COUNT for pagination
+            # 2. SELECT ModelC with JOIN ModelD (select_related)
             # 3. Prefetch ManyToMany
-            # Total: ~3-5 queries (depende de los datos)
-            self.assertLess(query_count, 10,
-                f"Expected < 10 queries, got {query_count}")
+            # Total: ~3-5 queries (depends on data)
+            self.assertLess(
+                query_count, 10, f"Expected < 10 queries, got {query_count}"
+            )
 
     def test_onetoone_no_additional_queries(self):
         """
-        Test: OneToOneField no ejecuta queries adicionales.
+        Test: OneToOneField does not execute additional queries.
 
-        Verifica que resolve_for_relation_field detecta instancias
-        ya cargadas por select_related y las retorna directamente
-        sin ejecutar queries adicionales.
+        Verifies that resolve_for_relation_field detects instances
+        already loaded by select_related and returns them directly
+        without executing additional queries.
         """
         client = Client()
         query = """
@@ -157,24 +176,26 @@ class N1OptimizationsTestCase(TestCase):
             response = client.query(query).json()
             queries = connection.queries
 
-            # Validar respuesta
+            # Validate response
             self.assertIsNone(response.get("errors"))
 
-            # Buscar queries individuales de ModelD (indicaría N+1)
+            # Look for individual ModelD queries (would indicate N+1)
             individual_queries = [
-                q for q in queries
-                if 'WHERE "tests_modeld"."id" =' in q['sql']
+                q for q in queries if 'WHERE "tests_modeld"."id" =' in q["sql"]
             ]
 
-            self.assertEqual(len(individual_queries), 0,
-                f"Found {len(individual_queries)} individual ModelD queries (N+1 problem)")
+            self.assertEqual(
+                len(individual_queries),
+                0,
+                f"Found {len(individual_queries)} individual ModelD queries (N+1 problem)",
+            )
 
     def test_pagination_single_count(self):
         """
-        Test: Paginación ejecuta COUNT solo una vez.
+        Test: Pagination executes COUNT only once.
 
-        Verifica que paginate_queryset cachea el count y no lo ejecuta
-        múltiples veces.
+        Verifies that paginate_queryset caches the count and does not execute it
+        multiple times.
         """
         client = Client()
         query = """
@@ -191,25 +212,25 @@ class N1OptimizationsTestCase(TestCase):
 
         with override_settings(DEBUG=True):
             reset_queries()
-            response = client.query(query).json()
+            client.query(query).json()
             queries = connection.queries
 
-            # Contar queries COUNT
-            count_queries = [
-                q for q in queries
-                if 'COUNT(' in q['sql'].upper()
-            ]
+            # Count COUNT queries
+            count_queries = [q for q in queries if "COUNT(" in q["sql"].upper()]
 
-            # Solo debe haber 1 COUNT
-            self.assertLessEqual(len(count_queries), 1,
-                f"Expected 1 COUNT query, got {len(count_queries)}")
+            # There should be only 1 COUNT
+            self.assertLessEqual(
+                len(count_queries),
+                1,
+                f"Expected 1 COUNT query, got {len(count_queries)}",
+            )
 
     def test_prefetch_with_orderby(self):
         """
-        Test: Prefetch aplica orderBy del AST.
+        Test: Prefetch applies orderBy from the AST.
 
-        Verifica que los datos prefetcheados vienen ordenados
-        según el orderBy especificado en la query GraphQL.
+        Verifies that the prefetched data is ordered according to
+        the orderBy specified in the GraphQL query.
         """
         client = Client()
         query = """
@@ -232,29 +253,28 @@ class N1OptimizationsTestCase(TestCase):
             response = client.query(query).json()
             queries = connection.queries
 
-            # Validar respuesta
+            # Validate response
             self.assertIsNone(response.get("errors"))
 
-            # Buscar el Prefetch en las queries
+            # Look for the Prefetch in queries
             prefetch_queries = [
-                q for q in queries
-                if 'tests_modelc_many_to_many_field' in q['sql']
+                q for q in queries if "tests_modelc_many_to_many_field" in q["sql"]
             ]
 
-            # El Prefetch debe incluir ORDER BY
+            # Prefetch query should include ORDER BY
             if prefetch_queries:
                 self.assertTrue(
-                    any('ORDER BY' in q['sql'].upper() for q in prefetch_queries),
-                    "Prefetch query should include ORDER BY"
+                    any("ORDER BY" in q["sql"].upper() for q in prefetch_queries),
+                    "Prefetch query should include ORDER BY",
                 )
 
     def test_deep_relations_optimization(self):
         """
-        Test: Relaciones profundas (3+ niveles) optimizadas.
+        Test: Deep relations (3+ levels) optimized.
 
-        Verifica que queries con relaciones profundas como:
+        Verifies that queries with deep relations such as:
         ModelC -> ModelD -> ModelE -> ModelD -> ModelC
-        no generan N+1 en ningún nivel.
+        do not generate N+1 at any level.
         """
         client = Client()
         query = """
@@ -289,19 +309,22 @@ class N1OptimizationsTestCase(TestCase):
             response = client.query(query).json()
             query_count = len(connection.queries)
 
-            # Validar respuesta
+            # Validate response
             self.assertIsNone(response.get("errors"))
 
-            # Con optimizaciones, incluso queries profundas deben ser < 15 queries
-            self.assertLess(query_count, 15,
-                f"Deep relation query should be < 15 queries, got {query_count}")
+            # With optimizations, even deep relation queries should be < 15 queries
+            self.assertLess(
+                query_count,
+                15,
+                f"Deep relation query should be < 15 queries, got {query_count}",
+            )
 
     def test_full_optimization_10_queries(self):
         """
-        Test: Query completa ejecuta exactamente 10 queries.
+        Test: Full query executes exactly 10 queries.
 
-        Este es el test principal que valida que la optimización
-        completa (de 99 → 27 → 10 queries) funciona correctamente.
+        This is the main test that validates the full optimization
+        (from 99 → 27 → 10 queries) works correctly.
         """
         client = Client()
         query = """
@@ -352,24 +375,27 @@ class N1OptimizationsTestCase(TestCase):
             response = client.query(query).json()
             query_count = len(connection.queries)
 
-            # Debug: imprimir queries si falla
+            # Debug: print queries if it fails
             if query_count > 10:
                 print(f"\n=== Expected ≤10 queries, got {query_count} ===")
                 for i, q in enumerate(connection.queries, 1):
                     print(f"{i}. {q['sql'][:100]}...")
 
-            # Validar respuesta
+            # Validate response
             self.assertIsNone(response.get("errors"))
 
-            # El objetivo principal: máximo 10 queries (9-10 es aceptable por optimizaciones)
-            self.assertLessEqual(query_count, 10,
-                f"Expected at most 10 queries with full optimization, got {query_count}")
+            # Main goal: at most 10 queries (9-10 is acceptable due to optimizations)
+            self.assertLessEqual(
+                query_count,
+                10,
+                f"Expected at most 10 queries with full optimization, got {query_count}",
+            )
 
     def test_query_breakdown(self):
         """
-        Test: Breakdown detallado de las 10 queries.
+        Test: Detailed breakdown of the 10 queries.
 
-        Documenta qué hace cada una de las 10 queries finales.
+        Documents what each of the final 10 queries does.
         """
         client = Client()
         query = """
@@ -398,32 +424,42 @@ class N1OptimizationsTestCase(TestCase):
 
         with override_settings(DEBUG=True):
             reset_queries()
-            response = client.query(query).json()
+            client.query(query).json()
             queries = connection.queries
 
-            # Categorizar queries
-            count_queries = [q for q in queries if 'COUNT(' in q['sql'].upper()]
-            select_queries = [q for q in queries if 'SELECT' in q['sql'].upper() and 'COUNT(' not in q['sql'].upper()]
-            join_queries = [q for q in select_queries if 'JOIN' in q['sql'].upper()]
-            prefetch_queries = [q for q in select_queries if 'IN (' in q['sql']]
+            # Categorize queries
+            count_queries = [q for q in queries if "COUNT(" in q["sql"].upper()]
+            select_queries = [
+                q
+                for q in queries
+                if "SELECT" in q["sql"].upper() and "COUNT(" not in q["sql"].upper()
+            ]
+            join_queries = [q for q in select_queries if "JOIN" in q["sql"].upper()]
+            prefetch_queries = [q for q in select_queries if "IN (" in q["sql"]]
 
-            print(f"\n=== Query Breakdown ===")
+            print("\n=== Query Breakdown ===")
             print(f"Total queries: {len(queries)}")
             print(f"COUNT queries: {len(count_queries)}")
             print(f"SELECT with JOIN (select_related): {len(join_queries)}")
             print(f"Prefetch (IN clause): {len(prefetch_queries)}")
 
-            # Validaciones
-            self.assertGreaterEqual(len(count_queries), 1, "Should have at least 1 COUNT")
-            self.assertGreaterEqual(len(join_queries), 1, "Should have at least 1 JOIN (select_related)")
-            self.assertGreaterEqual(len(prefetch_queries), 1, "Should have at least 1 Prefetch")
+            # Validations
+            self.assertGreaterEqual(
+                len(count_queries), 1, "Should have at least 1 COUNT"
+            )
+            self.assertGreaterEqual(
+                len(join_queries), 1, "Should have at least 1 JOIN (select_related)"
+            )
+            self.assertGreaterEqual(
+                len(prefetch_queries), 1, "Should have at least 1 Prefetch"
+            )
 
     def test_data_integrity_basic_fields(self):
         """
-        Test: Los datos básicos retornados son correctos.
+        Test: Basic returned data is correct.
 
-        Valida que los campos básicos (char_field, integer_field)
-        retornan los valores esperados.
+        Validates that the basic fields (char_field, integer_field)
+        return the expected values.
         """
         client = Client()
         query = """
@@ -441,14 +477,14 @@ class N1OptimizationsTestCase(TestCase):
 
         response = client.query(query).json()
 
-        # Validar respuesta
+        # Validate response
         self.assertIsNone(response.get("errors"))
         objects = response["data"]["searchModelCs"]["objects"]
 
-        # Debe retornar 1 objeto (solo mc1 tiene charField="AAA")
+        # It should return 1 object (only mc1 has charField="AAA")
         self.assertEqual(len(objects), 1)
 
-        # Validar valores
+        # Validate values
         obj = objects[0]
         self.assertEqual(obj["charField"], "AAA")
         self.assertEqual(obj["integerField"], 1)
@@ -456,10 +492,10 @@ class N1OptimizationsTestCase(TestCase):
 
     def test_data_integrity_onetoone_relation(self):
         """
-        Test: La relación OneToOne retorna los datos correctos.
+        Test: The OneToOne relationship returns the correct data.
 
-        Valida que oneToOneField.foreignKeyField apunta
-        al ModelC correcto.
+        Validates that oneToOneField.foreignKeyField points
+        to the correct ModelC.
         """
         client = Client()
         query = """
@@ -482,11 +518,11 @@ class N1OptimizationsTestCase(TestCase):
 
         response = client.query(query).json()
 
-        # Validar respuesta
+        # Validate response
         self.assertIsNone(response.get("errors"))
         objects = response["data"]["searchModelCs"]["objects"]
 
-        # mc11 tiene oneToOneField -> md1 -> mc1
+        # mc11 has oneToOneField -> md1 -> mc1
         self.assertEqual(len(objects), 1)
         obj = objects[0]
 
@@ -496,10 +532,10 @@ class N1OptimizationsTestCase(TestCase):
 
     def test_data_integrity_manytomany_relation(self):
         """
-        Test: ManyToMany retorna todos los objetos relacionados.
+        Test: ManyToMany returns all related objects.
 
-        Valida que paginatedManyToManyField retorna exactamente
-        los 3 ModelD asociados (md1, md2, md3).
+        Validates that paginatedManyToManyField returns exactly
+        the 3 associated ModelD (md1, md2, md3).
         """
         client = Client()
         query = """
@@ -524,34 +560,33 @@ class N1OptimizationsTestCase(TestCase):
 
         response = client.query(query).json()
 
-        # Validar respuesta
+        # Validate response
         self.assertIsNone(response.get("errors"))
         objects = response["data"]["searchModelCs"]["objects"]
 
-        # mc12 tiene M2M con [md1, md2, md3]
+        # mc12 has M2M with [md1, md2, md3]
         self.assertEqual(len(objects), 1)
         obj = objects[0]
 
         self.assertEqual(obj["charField"], "AAA2")
         m2m_data = obj["paginatedManyToManyField"]
 
-        # Total debe ser 3
+        # Total should be 3
         self.assertEqual(m2m_data["total"], 3)
         self.assertEqual(len(m2m_data["objects"]), 3)
 
-        # Validar que son AAA, BBB, CCC (md1->mc1, md2->mc2, md3->mc3)
-        char_fields = sorted([
-            obj["foreignKeyField"]["charField"]
-            for obj in m2m_data["objects"]
-        ])
+        # Validate that they are AAA, BBB, CCC (md1->mc1, md2->mc2, md3->mc3)
+        char_fields = sorted(
+            [obj["foreignKeyField"]["charField"] for obj in m2m_data["objects"]]
+        )
         self.assertEqual(char_fields, ["AAA", "BBB", "CCC"])
 
     def test_data_integrity_reverse_fk_relation(self):
         """
-        Test: Reverse ForeignKey retorna los objetos correctos.
+        Test: Reverse ForeignKey returns the correct objects.
 
-        Valida que paginatedForeignKeyDRelated retorna solo
-        los ModelD que apuntan a cada ModelC.
+        Validates that paginatedForeignKeyDRelated returns only
+        the ModelD that point to each ModelC.
         """
         client = Client()
         query = """
@@ -573,11 +608,11 @@ class N1OptimizationsTestCase(TestCase):
 
         response = client.query(query).json()
 
-        # Validar respuesta
+        # Validate response
         self.assertIsNone(response.get("errors"))
         objects = response["data"]["searchModelCs"]["objects"]
 
-        # mc1 (charField="AAA") debe tener 1 ModelD (md1)
+        # mc1 (charField="AAA") should have 1 ModelD (md1)
         self.assertEqual(len(objects), 1)
         obj = objects[0]
 
@@ -587,9 +622,9 @@ class N1OptimizationsTestCase(TestCase):
 
     def test_data_integrity_deep_relations(self):
         """
-        Test: Relaciones profundas retornan la cadena completa correcta.
+        Test: Deep relations return the correct full chain.
 
-        Valida la cadena completa:
+        Validates the full chain:
         mc11 -> md1 (oneToOne) -> me1 (reverse FK) -> md1 -> mc1
         """
         client = Client()
@@ -617,7 +652,7 @@ class N1OptimizationsTestCase(TestCase):
 
         response = client.query(query).json()
 
-        # Validar respuesta
+        # Validate response
         self.assertIsNone(response.get("errors"))
         objects = response["data"]["searchModelCs"]["objects"]
 
@@ -628,15 +663,15 @@ class N1OptimizationsTestCase(TestCase):
         e_related = obj["oneToOneField"]["paginatedForeignKeyERelated"]["objects"]
         self.assertGreater(len(e_related), 0)
 
-        # me1 apunta a md1, que apunta a mc1 (charField="AAA")
+        # me1 points to md1, which points to mc1 (charField="AAA")
         deep_char = e_related[0]["foreignKeyFieldDeep"]["foreignKeyField"]["charField"]
         self.assertEqual(deep_char, "AAA")
 
     def test_data_integrity_with_ordering(self):
         """
-        Test: orderBy retorna los datos en el orden correcto.
+        Test: orderBy returns data in the correct order.
 
-        Valida que los datos vienen ordenados según lo especificado.
+        Validates that the data comes ordered as specified.
         """
         client = Client()
         query = """
@@ -652,21 +687,21 @@ class N1OptimizationsTestCase(TestCase):
 
         response = client.query(query).json()
 
-        # Validar respuesta
+        # Validate response
         self.assertIsNone(response.get("errors"))
         objects = response["data"]["searchModelCs"]["objects"]
 
-        # Extraer integerField values
+        # Extract integerField values
         integer_fields = [obj["integerField"] for obj in objects]
 
-        # Deben estar ordenados descendente
+        # They should be in descending order
         self.assertEqual(integer_fields, sorted(integer_fields, reverse=True))
 
     def test_data_integrity_pagination_consistency(self):
         """
-        Test: Paginación retorna total y objetos consistentes.
+        Test: Pagination returns consistent total and objects.
 
-        Valida que total, pages y len(objects) son consistentes.
+        Validates that total, pages and len(objects) are consistent.
         """
         client = Client()
         query = """
@@ -683,15 +718,15 @@ class N1OptimizationsTestCase(TestCase):
 
         response = client.query(query).json()
 
-        # Validar respuesta
+        # Validate response
         self.assertIsNone(response.get("errors"))
         data = response["data"]["searchModelCs"]
 
-        # Total debe ser 6 (mc1, mc2, mc3, mc4, mc11, mc12)
+        # Total should be 6 (mc1, mc2, mc3, mc4, mc11, mc12)
         self.assertEqual(data["total"], 6)
 
-        # Con itemsPerPage=2, debe retornar 2 objetos
+        # With itemsPerPage=2, it should return 2 objects
         self.assertEqual(len(data["objects"]), 2)
 
-        # Pages debe ser ceil(6/2) = 3
+        # Pages should be ceil(6/2) = 3
         self.assertEqual(data["pages"], 3)

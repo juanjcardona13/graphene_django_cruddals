@@ -421,7 +421,6 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
             client.query(get_all_model_c_objects_without_relations_query).json()
             graphql_queries = len(connection.queries)
             self.assertLessEqual(graphql_queries, django_queries)
-            print("========")
 
             # connection.queries_log.clear()
             # reset_queries()

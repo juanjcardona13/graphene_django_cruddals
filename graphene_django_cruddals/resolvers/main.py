@@ -26,35 +26,175 @@ from graphene_cruddals import (
     RegistryGlobal,
 )
 from graphql.language.ast import (
-    BooleanValueNode,
-    EnumValueNode,
-    FloatValueNode,
     FragmentSpreadNode as FragmentSpread,
     InlineFragmentNode as InlineFragment,
-    IntValueNode,
-    ListValueNode,
-    ObjectValueNode,
-    StringValueNode,
-    VariableNode,
 )
 
 import graphene
-from graphene import Dynamic, List
-from graphene.types.scalars import MAX_INT, MIN_INT
-from graphene.utils.str_converters import to_camel_case
 from graphene_django_cruddals.converters.utils import maybe_queryset
 from graphene_django_cruddals.utils.main import (
     add_mutate_errors,
     create_relation_model_objects,
     get_data_for_generic_foreign_key,
     get_model_fields_for_output,
+    get_order_by_list_from_arguments,
+    get_type_field,
     obj_to_modify_have_generic_foreign_key_input,
-    order_by_input_to_args,
     paginate_queryset,
+    parse_arguments_ast,
     toggle_active_status,
     update_dict_with_model_instance,
     where_input_to_Q,
 )
+
+
+def _queryset_factory_analyze(
+    info, selection_set, is_connection, model, registry, suffix=""
+):
+    def fusion_ret(a, b):
+        [
+            a["select_related"].append(x)
+            for x in b["select_related"]
+            if x not in a["select_related"]
+        ]
+        [a["prefetch_related"].append(x) for x in b["prefetch_related"]]
+        [a["only"].append(x) for x in b["only"] if x not in a["only"]]
+        return a
+
+    if suffix == "":
+        new_suffix = ""
+    else:
+        new_suffix = suffix + "__"
+
+    ret = {
+        "select_related": [],
+        "only": [new_suffix + model._meta.pk.name],
+        "prefetch_related": [],
+    }
+
+    model_fields = get_model_fields_for_output(model)
+
+    for field in selection_set.selections:
+        field_name = field.name.value
+
+        if isinstance(field, FragmentSpread):
+            new_ret = _queryset_factory_analyze(
+                info,
+                info.fragments[field_name].selection_set,
+                is_connection,
+                model,
+                registry,
+                suffix,
+            )
+            ret = fusion_ret(ret, new_ret)
+            continue
+
+        if isinstance(field, InlineFragment):
+            # TODO: Handle this case
+            # if field.type_condition.name.value == cls.__name__:
+            print("Warning: InlineFragment not implemented")
+            new_ret = _queryset_factory_analyze(
+                info, field.selection_set, is_connection, model, registry, suffix
+            )
+            ret = fusion_ret(ret, new_ret)
+            # continue
+
+        if field_name.startswith("__"):
+            continue
+
+        if is_connection:
+            if field_name in ["objects"]:
+                new_ret = _queryset_factory_analyze(
+                    info, field.selection_set, False, model, registry, new_suffix
+                )
+                ret = fusion_ret(ret, new_ret)
+        else:
+            registries_for_model = registry.get_registry_for_model(model)
+            django_object_type: ModelObjectType = registries_for_model["object_type"]
+            real_name, _type_field = get_type_field(django_object_type, field_name)
+
+            if real_name.startswith("paginated_"):
+                real_name = real_name.replace("paginated_", "", 1)
+
+            try:
+                model_field = model_fields[real_name]
+            except KeyError:
+                continue
+
+            if getattr(field, "selection_set", None):
+                if isinstance(
+                    model_field,
+                    (
+                        OneToOneField,
+                        OneToOneRel,
+                        ForeignKey,
+                        ManyToManyField,
+                        ManyToManyRel,
+                        ManyToOneRel,
+                    ),
+                ):
+                    related_model = model_field.remote_field.model
+
+                    if isinstance(
+                        model_field, (OneToOneField, OneToOneRel, ForeignKey)
+                    ):
+                        ret["select_related"].append(new_suffix + real_name)
+                        new_ret = _queryset_factory_analyze(
+                            info,
+                            field.selection_set,
+                            False,
+                            related_model,
+                            registry,
+                            new_suffix + real_name,
+                        )
+                        ret = fusion_ret(ret, new_ret)
+
+                    elif isinstance(
+                        model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
+                    ):
+                        order_by_list = ["pk"]
+                        if hasattr(field, "arguments"):
+                            field_args = parse_arguments_ast(
+                                field.arguments,
+                                variable_values=info.variable_values
+                                if hasattr(info, "variable_values")
+                                else {},
+                            )
+                            order_by_list = get_order_by_list_from_arguments(field_args)
+
+                        related_ret = _queryset_factory_analyze(
+                            info,
+                            field.selection_set,
+                            True,
+                            related_model,
+                            registry,
+                            "",
+                        )
+
+                        related_queryset = related_model.objects.all()
+                        related_queryset = related_queryset.select_related(
+                            *related_ret["select_related"]
+                        )
+                        related_queryset = related_queryset.only(*related_ret["only"])
+                        related_queryset = related_queryset.prefetch_related(
+                            *related_ret["prefetch_related"]
+                        )
+                        related_queryset = related_queryset.order_by(*order_by_list)
+
+                        ret["prefetch_related"].append(
+                            Prefetch(
+                                new_suffix + real_name,
+                                queryset=related_queryset,
+                            )
+                        )
+
+                elif isinstance(model_field, FileField):
+                    ret["only"].append(new_suffix + real_name)
+
+            else:
+                ret["only"].append(new_suffix + real_name)
+
+    return ret
 
 
 def default_create_update_resolver(
@@ -234,236 +374,6 @@ def default_list_field_resolver(resolver, default_manager, root, info, **args):
     return queryset
 
 
-def parse_ast(ast, variable_values=None):
-    if variable_values is None:
-        variable_values = {}
-    if isinstance(ast, VariableNode):
-        var_name = ast.name.value
-        value = variable_values.get(var_name)
-        return value
-    elif isinstance(ast, (StringValueNode, BooleanValueNode)):
-        return ast.value
-    elif isinstance(ast, IntValueNode):
-        num = int(ast.value)
-        if MIN_INT <= num <= MAX_INT:
-            return num
-    elif isinstance(ast, FloatValueNode):
-        return float(ast.value)
-    elif isinstance(ast, EnumValueNode):
-        return ast.value
-    elif isinstance(ast, ListValueNode):
-        ret = []
-        for ast_value in ast.values:
-            value = parse_ast(ast_value, variable_values=variable_values)
-            if value is not None:
-                ret.append(value)
-        return ret
-    elif isinstance(ast, ObjectValueNode):
-        ret = {}
-        for field in ast.fields:
-            value = parse_ast(field.value, variable_values=variable_values)
-            if value is not None:
-                ret[field.name.value] = value
-        return ret
-    else:
-        return None
-
-
-def parse_arguments_ast(arguments, variable_values=None):
-    if variable_values is None:
-        variable_values = {}
-    ret = {}
-    for argument in arguments:
-        value = parse_ast(argument.value, variable_values=variable_values)
-        if value is not None:
-            ret[argument.name.value] = value
-    return ret
-
-
-def get_type_field(gql_type, gql_name):
-    fields = gql_type._meta.fields
-    for name, field in fields.items():
-        if to_camel_case(gql_name) == to_camel_case(name):
-            if isinstance(field, Dynamic):
-                field = field.get_type()
-            else:
-                field = field
-            if isinstance(field, List):
-                field_type = field.of_type
-            else:
-                field_type = field.type
-            if isinstance(field_type, List):
-                field_type = field_type.of_type
-            return name, field_type
-
-
-def _queryset_factory_analyze(
-    info, selection_set, is_connection, model, registry, suffix=""
-):
-    def fusion_ret(a, b):
-        [
-            a["select_related"].append(x)
-            for x in b["select_related"]
-            if x not in a["select_related"]
-        ]
-        [a["prefetch_related"].append(x) for x in b["prefetch_related"]]
-        [a["only"].append(x) for x in b["only"] if x not in a["only"]]
-        return a
-
-    if suffix == "":
-        new_suffix = ""
-    else:
-        new_suffix = suffix + "__"
-
-    ret = {
-        "select_related": [],
-        "only": [new_suffix + model._meta.pk.name],
-        "prefetch_related": [],
-    }
-
-    model_fields = get_model_fields_for_output(model)
-
-    for field in selection_set.selections:
-        field_name = field.name.value
-
-        if isinstance(field, FragmentSpread):
-            new_ret = _queryset_factory_analyze(
-                info,
-                info.fragments[field_name].selection_set,
-                is_connection,
-                model,
-                registry,
-                suffix,
-            )
-            ret = fusion_ret(ret, new_ret)
-            continue
-
-        if isinstance(field, InlineFragment):
-            # TODO: Entender este caso
-            # if field.type_condition.name.value == cls.__name__:
-            new_ret = _queryset_factory_analyze(
-                info, field.selection_set, is_connection, model, registry, suffix
-            )
-            ret = fusion_ret(ret, new_ret)
-            # continue
-
-        if field_name.startswith("__"):
-            continue
-
-        if is_connection:
-            if field_name in ["objects"]:
-                new_ret = _queryset_factory_analyze(
-                    info, field.selection_set, False, model, registry, new_suffix
-                )
-                ret = fusion_ret(ret, new_ret)
-        else:
-            registries_for_model = registry.get_registry_for_model(model)
-            django_object_type: ModelObjectType = registries_for_model["object_type"]
-            real_name, _type_field = get_type_field(django_object_type, field_name)
-
-            if real_name.startswith("paginated_"):
-                real_name = real_name.replace("paginated_", "", 1)
-
-            try:
-                model_field = model_fields[real_name]
-            except KeyError as e:
-                print(f"KeyError: {real_name}")
-                print(e)
-                continue
-
-            if getattr(field, "selection_set", None):
-                if isinstance(
-                    model_field,
-                    (
-                        OneToOneField,
-                        OneToOneRel,
-                        ForeignKey,
-                        ManyToManyField,
-                        ManyToManyRel,
-                        ManyToOneRel,
-                    ),
-                ):
-                    related_model = model_field.remote_field.model
-
-                    if isinstance(
-                        model_field, (OneToOneField, OneToOneRel, ForeignKey)
-                    ):
-                        ret["select_related"].append(new_suffix + real_name)
-                        new_ret = _queryset_factory_analyze(
-                            info,
-                            field.selection_set,
-                            False,
-                            related_model,
-                            registry,
-                            new_suffix + real_name,
-                        )
-                        ret = fusion_ret(ret, new_ret)
-
-                    elif isinstance(
-                        model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
-                    ):
-                        # Extraer orderBy de los argumentos del campo
-                        # Para agregarlo al Prefetch y optimizar la consulta
-                        order_by_list = []
-                        if hasattr(field, "arguments"):
-                            field_args = parse_arguments_ast(
-                                field.arguments,
-                                variable_values=info.variable_values
-                                if hasattr(info, "variable_values")
-                                else {},
-                            )
-                            if "orderBy" in field_args or "order_by" in field_args:
-                                order_by = field_args.get("orderBy") or field_args.get(
-                                    "order_by"
-                                )
-                                if isinstance(order_by, dict):
-                                    order_by = [order_by]
-                                if order_by:
-                                    order_by_list = order_by_input_to_args(order_by)
-
-                        # Analizar campos anidados
-                        related_ret = _queryset_factory_analyze(
-                            info,
-                            field.selection_set,
-                            True,  # is_connection=True para ManyToMany
-                            related_model,
-                            registry,
-                            "",  # sin suffix para ManyToMany
-                        )
-
-                        # Crear un queryset básico optimizado
-                        related_queryset = related_model.objects.all()
-                        related_queryset = related_queryset.select_related(
-                            *related_ret["select_related"]
-                        )
-                        related_queryset = related_queryset.only(*related_ret["only"])
-                        related_queryset = related_queryset.prefetch_related(
-                            *related_ret["prefetch_related"]
-                        )
-
-                        # Aplicar orderBy si existe
-                        # aqui si se aplica order_by porque es un queryset independiente
-                        if order_by_list:
-                            related_queryset = related_queryset.order_by(*order_by_list)
-                        else:
-                            related_queryset = related_queryset.order_by("pk")
-
-                        ret["prefetch_related"].append(
-                            Prefetch(
-                                new_suffix + real_name,
-                                queryset=related_queryset,
-                            )
-                        )
-
-                elif isinstance(model_field, FileField):
-                    ret["only"].append(new_suffix + real_name)
-
-            else:
-                ret["only"].append(new_suffix + real_name)
-
-    return ret
-
-
 def default_search_field_resolver(
     model: DjangoModel,
     registry: RegistryGlobal,
@@ -474,6 +384,7 @@ def default_search_field_resolver(
     **args,
 ):
     registries_for_model = registry.get_registry_for_model(model)
+    django_object_type: ModelObjectType = registries_for_model["object_type"]
     paginated_object_type: ModelPaginatedObjectType = registries_for_model[
         "paginated_object_type"
     ]
@@ -527,7 +438,6 @@ def default_search_field_resolver(
             model=model,
             registry=registry,
         )
-
         if queryset_factory["select_related"]:
             queryset = queryset.select_related(*queryset_factory["select_related"])
         if queryset_factory["only"]:
@@ -541,17 +451,30 @@ def default_search_field_resolver(
         queryset = queryset.filter(obj_q)
 
     if not isinstance(queryset, list):
+        order_by_list = get_order_by_list_from_arguments(args)
         if "order_by" in args or "orderBy" in args:
-            order_by = args.get("order_by") or args.get("orderBy")
-            if isinstance(order_by, dict):
-                order_by = [order_by]
-            list_for_order = order_by_input_to_args(order_by)
-            queryset = queryset.order_by(*list_for_order)
+            queryset = queryset.order_by(*order_by_list)
         elif not is_prefetched:
-            queryset = queryset.order_by("pk")
+            queryset = queryset.order_by(*order_by_list)
 
     if not is_prefetched and not isinstance(queryset, list):
         queryset = queryset.distinct()
+
+    if isinstance(queryset, QuerySet):
+        if hasattr(django_object_type, "get_objects"):
+            if isinstance(django_object_type.get_objects, list):
+                for get_objects_func in django_object_type.get_objects:
+                    queryset = maybe_queryset(get_objects_func(queryset, info))
+            elif callable(django_object_type.get_objects):
+                queryset = maybe_queryset(
+                    django_object_type.get_objects(queryset, info)
+                )
+            else:
+                raise ValueError(
+                    "The get_objects method is not a list of functions or a callable."
+                )
+        else:
+            raise ValueError("The get_objects method is not defined.")
 
     pagination_config = args.get("pagination_config", {}) or args.get(
         "paginationConfig", {}

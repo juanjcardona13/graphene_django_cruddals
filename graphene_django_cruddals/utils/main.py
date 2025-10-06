@@ -34,8 +34,20 @@ from graphene_cruddals import (
     TypesMutation,
     TypesMutationEnum,
 )
+from graphql.language.ast import (
+    BooleanValueNode,
+    EnumValueNode,
+    FloatValueNode,
+    IntValueNode,
+    ListValueNode,
+    ObjectValueNode,
+    StringValueNode,
+    VariableNode,
+)
 
 import graphene
+from graphene import Dynamic, List as GrapheneList
+from graphene.types.scalars import MAX_INT, MIN_INT
 from graphene.utils.str_converters import to_camel_case, to_snake_case
 from graphene_django_cruddals.converters.converter_filter_input import (
     convert_django_field_to_filter_input,
@@ -459,7 +471,7 @@ def paginate_queryset(
         else:
             total_count = len(qs)  # type: ignore[arg-type]
 
-        if items_per_page == "All":
+        if items_per_page == "All" and total_count > 0:
             per_page = total_count
         else:
             try:
@@ -1049,3 +1061,77 @@ def get_data_for_generic_foreign_key(obj_to_modify, model, responses):
                         data[fk_field] = response["objects"][0].pk
                         data[ct_field] = obj_contenttype.pk
     return data
+
+
+def parse_ast(ast, variable_values=None):
+    if variable_values is None:
+        variable_values = {}
+    if isinstance(ast, VariableNode):
+        var_name = ast.name.value
+        value = variable_values.get(var_name)
+        return value
+    elif isinstance(ast, (StringValueNode, BooleanValueNode)):
+        return ast.value
+    elif isinstance(ast, IntValueNode):
+        num = int(ast.value)
+        if MIN_INT <= num <= MAX_INT:
+            return num
+    elif isinstance(ast, FloatValueNode):
+        return float(ast.value)
+    elif isinstance(ast, EnumValueNode):
+        return ast.value
+    elif isinstance(ast, ListValueNode):
+        ret = []
+        for ast_value in ast.values:
+            value = parse_ast(ast_value, variable_values=variable_values)
+            if value is not None:
+                ret.append(value)
+        return ret
+    elif isinstance(ast, ObjectValueNode):
+        ret = {}
+        for field in ast.fields:
+            value = parse_ast(field.value, variable_values=variable_values)
+            if value is not None:
+                ret[field.name.value] = value
+        return ret
+    else:
+        return None
+
+
+def parse_arguments_ast(arguments, variable_values=None):
+    if variable_values is None:
+        variable_values = {}
+    ret = {}
+    for argument in arguments:
+        value = parse_ast(argument.value, variable_values=variable_values)
+        if value is not None:
+            ret[argument.name.value] = value
+    return ret
+
+
+def get_type_field(gql_type, gql_name):
+    fields = gql_type._meta.fields
+    for name, field in fields.items():
+        if to_camel_case(gql_name) == to_camel_case(name):
+            if isinstance(field, Dynamic):
+                field = field.get_type()
+            else:
+                field = field
+            if isinstance(field, GrapheneList):
+                field_type = field.of_type
+            else:
+                field_type = field.type
+            if isinstance(field_type, GrapheneList):
+                field_type = field_type.of_type
+            return name, field_type
+
+
+def get_order_by_list_from_arguments(args):
+    order_by_list = ["pk"]
+    if "order_by" in args or "orderBy" in args:
+        order_by = args.get("order_by") or args.get("orderBy")
+        if isinstance(order_by, dict):
+            order_by = [order_by]
+        if order_by:
+            order_by_list = order_by_input_to_args(order_by)
+    return order_by_list
