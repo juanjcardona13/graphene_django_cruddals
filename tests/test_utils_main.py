@@ -27,7 +27,7 @@ from graphene_django_cruddals.utils.main import (
 )
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def simple_model():
     class SimpleModel(models.Model):
         name = models.CharField(max_length=100)
@@ -36,7 +36,7 @@ def simple_model():
     return SimpleModel
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def one_to_one_related_model(simple_model):
     class OneToOneRelatedModel(models.Model):
         simple1 = models.OneToOneField(
@@ -58,7 +58,7 @@ def one_to_one_related_model(simple_model):
     return OneToOneRelatedModel
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def many_to_one_related_model(simple_model):
     class ManyToOneRelatedModel(models.Model):
         simple1 = models.ForeignKey(
@@ -80,7 +80,7 @@ def many_to_one_related_model(simple_model):
     return ManyToOneRelatedModel
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def many_to_many_related_model(simple_model):
     class ManyToManyRelatedModel(models.Model):
         simple1 = models.ManyToManyField(
@@ -394,7 +394,7 @@ def test_get_field_name_for_input(
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def simple_model2():
     class SimpleModel2(models.Model):
         name = models.CharField(max_length=100)
@@ -405,7 +405,7 @@ def simple_model2():
     return SimpleModel2
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def complex_model2(simple_model2):
     class ComplexModel2(models.Model):
         simple = models.ForeignKey(simple_model2, on_delete=models.CASCADE)
@@ -466,7 +466,7 @@ def test_get_model_fields_for_input_with_uneditable_fields(simple_model2):
     assert "description" not in fields
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def simple_model3():
     class SimpleModel3(models.Model):
         name = models.CharField(max_length=100)
@@ -475,7 +475,7 @@ def simple_model3():
     return SimpleModel3
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def simple_model3_without_relations():
     class SimpleModel3WithoutRelations(models.Model):
         name = models.CharField(max_length=100)
@@ -484,7 +484,7 @@ def simple_model3_without_relations():
     return SimpleModel3WithoutRelations
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def complex_model3(simple_model3):
     class ComplexModel3(models.Model):
         simple = models.ForeignKey(simple_model3, on_delete=models.CASCADE)
