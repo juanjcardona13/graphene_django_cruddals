@@ -514,10 +514,10 @@ def paginate_queryset(
 
         if page == 0:
             page = 1
-        if items_per_page == 0:
-            items_per_page = 1
 
-        num_pages = max(1, math.ceil(total_count / items_per_page))
+        items_per_page = max(1, items_per_page)
+
+        num_pages = max(math.ceil(total_count / items_per_page), 1)
 
         if page < 1:
             page = 1

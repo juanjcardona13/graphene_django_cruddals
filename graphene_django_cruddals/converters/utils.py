@@ -208,30 +208,39 @@ def get_function_for_type(graphene_type, func_name, name) -> Union[CallableType,
 
 
 def resolve_for_relation_field(field, model, _type, root, info, **args):
-    queryset = None
     attname = field.name
     default_value = getattr(field, "default", None)
     instance = getattr(root, attname, default_value)
+
     if instance is None:
         return None
-    elif isinstance(instance, Manager):
+
+    try:
+        if isinstance(instance, model):
+            return instance
+    except TypeError:
+        # model is not a valid type (e.g., MagicMock in tests)
+        pass
+
+    if isinstance(instance, Manager):
         queryset = instance.get_queryset()
     else:
         queryset = model.objects.filter(id=instance.id)
 
-    if hasattr(_type, "get_objects"):
-        if isinstance(_type.get_objects, list):
-            for get_objects_func in _type.get_objects:
-                if isinstance(get_objects_func, classmethod):
-                    queryset = maybe_queryset(
-                        get_objects_func.__func__(_type, queryset, info)
-                    )
-                else:
-                    queryset = maybe_queryset(get_objects_func(queryset, info))
-        else:
-            queryset = maybe_queryset(_type.get_objects(queryset, info))
-    else:
+    if not hasattr(_type, "get_objects"):
         raise ValueError("The get_objects method is not defined.")
+
+    if isinstance(_type.get_objects, list):
+        for get_objects_func in _type.get_objects:
+            if isinstance(get_objects_func, classmethod):
+                queryset = maybe_queryset(
+                    get_objects_func.__func__(_type, queryset, info)
+                )
+            else:
+                queryset = maybe_queryset(get_objects_func(queryset, info))
+    else:
+        queryset = maybe_queryset(_type.get_objects(queryset, info))
+
     try:
         return queryset.distinct().get()
     except model.DoesNotExist:
