@@ -436,8 +436,6 @@ def paginate_queryset(
     page: int = 1,
     *,
     min_per_page: int = 1,
-    max_per_page: int = 200,  # anti-abuso / memoria
-    enforce_order: bool = False,
     **kwargs,
 ) -> graphene.ObjectType:
     """
@@ -479,15 +477,6 @@ def paginate_queryset(
             except (TypeError, ValueError):
                 per_page = min_per_page
 
-        # if per_page < min_per_page:
-        #     per_page = min_per_page
-        # if max_per_page is not None and per_page > max_per_page:
-        #     per_page = max_per_page
-
-        # if enforce_order and isinstance(qs, DjangoQuerySet) and not qs.query.order_by:
-        #     qs = qs.order_by('pk')
-
-        # Usar Paginator personalizado con el count ya calculado
         p = PaginatorWithCount(qs, per_page, count=total_count)
 
         try:
@@ -495,7 +484,7 @@ def paginate_queryset(
         except PageNotAnInteger:
             page_obj = p.page(1)
         except EmptyPage:
-            page_obj = p.page(p.num_pages if p.num_pages > 0 else 1)
+            page_obj = p.page(p.num_pages)
 
         return paginated_type(
             total=total_count,
@@ -503,8 +492,8 @@ def paginate_queryset(
             pages=p.num_pages,
             has_next=page_obj.has_next(),
             has_prev=page_obj.has_previous(),
-            index_start=page_obj.start_index() if total_count else 0,
-            index_end=page_obj.end_index() if total_count else 0,
+            index_start=page_obj.start_index(),
+            index_end=page_obj.end_index(),
             objects=page_obj.object_list,
             **kwargs,
         )

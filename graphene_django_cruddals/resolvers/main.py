@@ -457,6 +457,9 @@ def default_search_field_resolver(
         elif not is_prefetched:
             queryset = queryset.order_by(*order_by_list)
 
+    pagination_config = args.get("pagination_config", {}) or args.get(
+        "paginationConfig", {}
+    )
     if not is_prefetched and not isinstance(queryset, list):
         queryset = queryset.distinct()
 
@@ -475,13 +478,9 @@ def default_search_field_resolver(
                 )
         else:
             raise ValueError("The get_objects method is not defined.")
-
-    pagination_config = args.get("pagination_config", {}) or args.get(
-        "paginationConfig", {}
-    )
     return paginate_queryset(
         queryset,
-        paginated_object_type,
+        paginated_object_type,  # type: ignore
         pagination_config.get("items_per_page", "All"),
         pagination_config.get("page", 1),
     )
