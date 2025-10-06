@@ -1,4 +1,6 @@
-import json
+from django.core.paginator import Paginator
+from django.db import connection, reset_queries
+from django.test.utils import override_settings
 
 from tests.models import ModelC, ModelD, ModelE
 from tests.utils import Client, SchemaTestCase
@@ -66,6 +68,27 @@ debug_fragment = """
 
 
 # region CRUDDALS ModelC
+get_all_model_c_objects_without_relations_query = (
+    pagination_fragment
+    + """
+    query searchModelCs($where: FilterModelCInput $orderBy: OrderByModelCInput $paginationConfig: PaginationConfigInput) {
+        searchModelCs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
+            ...paginationType
+            objects {
+                id
+                charField
+                integerField
+                booleanField
+                dateTimeField
+                jsonField
+                fileField
+                isActive
+            }
+        }
+    }
+"""
+)
+
 search_model_c_query = (
     debug_fragment
     + pagination_fragment
@@ -170,6 +193,61 @@ search_model_e_query = (
 """
 )
 # endregion
+
+
+def get_all_model_c_objects_without_relations():
+    connection.queries_log.clear()
+    reset_queries()
+    qs = (
+        ModelC.objects.all()
+        .only(
+            "id",
+            "char_field",
+            "integer_field",
+            "boolean_field",
+            "date_time_field",
+            "json_field",
+            "file_field",
+            "is_active",
+        )
+        .distinct()
+        .order_by("id")
+    )
+    p = Paginator(qs, 12)
+    page_obj = p.page(1)
+    list(page_obj.object_list)
+    django_queries = len(connection.queries)
+    return django_queries
+
+
+def get_all_model_c_objects_with_relation_one_to_one():
+    connection.queries_log.clear()
+    reset_queries()
+    qs = (
+        ModelC.objects.all()
+        .select_related("one_to_one_field__foreign_key_field")
+        .prefetch_related(
+            "many_to_many_field__foreign_key_field__foreign_key_E_related",
+            "foreign_key_D_related",
+        )
+        .only(
+            "id",
+            "char_field",
+            "integer_field",
+            "boolean_field",
+            "date_time_field",
+            "json_field",
+            "file_field",
+            "is_active",
+        )
+        .distinct()
+        .order_by("id")
+    )
+    p = Paginator(qs, 12)
+    page_obj = p.page(1)
+    list(page_obj.object_list)
+    django_queries = len(connection.queries)
+    return django_queries
 
 
 class CruddalsModelSchemaTestResolvers(SchemaTestCase):
@@ -336,26 +414,13 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
 
         # region SEARCH ModelC
 
-        from django.db import connection, reset_queries
-        from django.test.utils import override_settings
-
         with override_settings(DEBUG=True):
+            django_queries = get_all_model_c_objects_without_relations()
             connection.queries_log.clear()
             reset_queries()
-
-            # print("search_model_c_query", search_model_c_query)
-            graphql_response = client.query(search_model_c_query).json()
-
+            client.query(get_all_model_c_objects_without_relations_query).json()
             graphql_queries = len(connection.queries)
-            print(f"GraphQL ejecutó {graphql_queries} consultas SQL")
-
-            # print("graphql_response", graphql_response)
-            j = json.dumps(graphql_response, indent=4)
-            with open("gql_response.json", "w") as f:
-                f.write(j)
-            # print("gql response json", j)
-            # graphql_queries deberia de ser igual o menor a 27
-            self.assertLessEqual(graphql_queries, 27)
+            self.assertLessEqual(graphql_queries, django_queries)
             print("========")
 
             # connection.queries_log.clear()

@@ -493,7 +493,7 @@ def paginate_queryset(
             has_prev=page_obj.has_previous(),
             index_start=page_obj.start_index() if total_count else 0,
             index_end=page_obj.end_index() if total_count else 0,
-            objects=list(page_obj.object_list),
+            objects=page_obj.object_list,
             **kwargs,
         )
     else:
