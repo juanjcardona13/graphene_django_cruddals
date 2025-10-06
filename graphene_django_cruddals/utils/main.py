@@ -439,31 +439,25 @@ def paginate_queryset(
 
     if page == 0:
         page = 1
-    if items_per_page == 0:
-        items_per_page = 1
 
-    # Crear Paginator manualmente para evitar select count duplicados
-    # Calcular páginas manualmente
+    items_per_page = max(1, items_per_page)
+
     import math
-    num_pages = math.ceil(total_count / items_per_page) if items_per_page > 0 else 1
+    num_pages = max(math.ceil(total_count / items_per_page), 1)
 
-    # Validar número de página
     if page < 1:
         page = 1
     elif page > num_pages and num_pages > 0:
         page = num_pages
 
-    # Calcular offset y límite
     start_index = (page - 1) * items_per_page
     end_index = start_index + items_per_page
 
-    # Obtener objetos de la página
     if isinstance(qs, list):
         page_objects = qs[start_index:end_index]
     else:
         page_objects = list(qs[start_index:end_index])
 
-    # Calcular índices para display (1-indexed)
     index_start = start_index + 1 if total_count > 0 else 0
     index_end = min(end_index, total_count)
 

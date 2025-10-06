@@ -478,7 +478,6 @@ def default_search_field_resolver(
         "paginated_object_type"
     ]
 
-    # Manejamos el resolver personalizado (para relaciones inversas paginadas)
     queryset = None
     field_name_for_prefetch = None
     is_nested_paginated_field = False
@@ -495,15 +494,12 @@ def default_search_field_resolver(
                 else posible_field_with_default_set
             )
 
-            # Verificar si los datos ya están en el cache de prefetch
             if (
                 hasattr(root, "_prefetched_objects_cache")
                 and field_name_for_prefetch in root._prefetched_objects_cache
             ):
-                # Los datos ya están prefetched, usarlos directamente como lista
                 queryset = list(root._prefetched_objects_cache[field_name_for_prefetch])
             else:
-                # No están prefetched, obtenerlos normalmente
                 maybe_manager = resolver(root, info, **args)
                 if hasattr(root, field_name_for_prefetch):
                     maybe_manager = getattr(
@@ -511,7 +507,6 @@ def default_search_field_resolver(
                     )
                 queryset = maybe_queryset(maybe_manager)
 
-    # Si no obtuvimos queryset del resolver, usar el default_manager
     if queryset is None:
         queryset = maybe_queryset(default_manager)
 
@@ -520,14 +515,11 @@ def default_search_field_resolver(
             "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
         )
 
-    # Detectar si los datos ya están cargados (prefetched) o es una lista
     is_prefetched = isinstance(queryset, list) or (
         hasattr(queryset, "_result_cache") and queryset._result_cache is not None
     )
 
-    # Solo aplicamos optimizaciones si los datos NO están prefetched Y NO es un campo anidado paginado
     if not is_prefetched and not is_nested_paginated_field:
-        # Analizamos el AST para determinar qué optimizaciones necesitamos
         queryset_factory = _queryset_factory_analyze(
             info,
             selection_set=info.field_nodes[0].selection_set,
@@ -536,7 +528,6 @@ def default_search_field_resolver(
             registry=registry,
         )
 
-        # Aplicamos las optimizaciones
         if queryset_factory["select_related"]:
             queryset = queryset.select_related(*queryset_factory["select_related"])
         if queryset_factory["only"]:
@@ -544,13 +535,11 @@ def default_search_field_resolver(
         if queryset_factory["prefetch_related"]:
             queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
-    # Aplicamos filtros (where) - solo si NO están prefetched
     if "where" in args and not is_prefetched:
         where = args["where"]
         obj_q = where_input_to_Q(where)
         queryset = queryset.filter(obj_q)
 
-    # Aplicamos ordenamiento (orderBy) - solo si NO es una lista (ya ordenada en Prefetch)
     if not isinstance(queryset, list):
         if "order_by" in args or "orderBy" in args:
             order_by = args.get("order_by") or args.get("orderBy")
@@ -561,11 +550,9 @@ def default_search_field_resolver(
         elif not is_prefetched:
             queryset = queryset.order_by("pk")
 
-    # Aseguramos que no haya dupilcados - solo si NO están prefetched
     if not is_prefetched and not isinstance(queryset, list):
         queryset = queryset.distinct()
 
-    # Paginamos el queryset
     pagination_config = args.get("pagination_config", {}) or args.get(
         "paginationConfig", {}
     )
