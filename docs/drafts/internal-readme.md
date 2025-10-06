@@ -43,6 +43,13 @@ twine check dist/* => para verificar que los archivos generados esten correctos
 
 twine upload dist/* => para subir los archivos a PyPi
 
+
+    python -m pip install --upgrade pip
+    pip install build
+    python -m build
+
+
+
 Por ultimo, para actualizar el proyecto Graphene Django Cruddals correctamente se debe de hacer lo siguiente:
 
 Estaría bien estos pasos, para publicar mi proyecto:
