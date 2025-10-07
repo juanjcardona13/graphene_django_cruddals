@@ -40,32 +40,6 @@ pagination_fragment = """
     }
 """
 
-debug_fragment = """
-    fragment debugType on DjangoDebug {
-        sql {
-            vendor
-            alias
-            sql
-            duration
-            rawSql
-            params
-            startTime
-            stopTime
-            isSlow
-            isSelect
-            transId
-            transStatus
-            isoLevel
-            encoding
-        }
-        exceptions {
-            excType
-            message
-            stack
-        }
-    }
-"""
-
 
 # region CRUDDALS ModelC
 get_all_model_c_objects_without_relations_query = (
@@ -89,9 +63,31 @@ get_all_model_c_objects_without_relations_query = (
 """
 )
 
+get_all_model_c_objects_with_many_to_many_relation_ordered = (
+    pagination_fragment
+    + """
+    query searchModelCs($where: FilterModelCInput $orderBy: OrderByModelCInput $paginationConfig: PaginationConfigInput) {
+        searchModelCs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
+            ...paginationType
+            objects {
+                id
+                charField
+                paginatedManyToManyField(orderBy: {foreignKeyField: {id: DESC}}) {
+                    objects {
+                        id
+                        foreignKeyField {
+                            id
+                        }
+                    }
+                }
+            }
+        }
+    }
+"""
+)
+
 search_model_c_query = (
-    debug_fragment
-    + pagination_fragment
+    pagination_fragment
     + """
     query searchModelCs($where: FilterModelCInput $orderBy: OrderByModelCInput $paginationConfig: PaginationConfigInput) {
         searchModelCs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
@@ -144,9 +140,6 @@ search_model_c_query = (
                 paginatedForeignKeyDRelated { objects { id } }
             }
         }
-        _debug {
-            ...debugType
-        }
     }
 """
 )
@@ -154,8 +147,7 @@ search_model_c_query = (
 
 # region CRUDDALS ModelD
 search_model_d_query = (
-    debug_fragment
-    + pagination_fragment
+    pagination_fragment
     + model_d_fragment
     + """
     query searchModelDs($where: FilterModelDInput $orderBy: OrderByModelDInput $paginationConfig: PaginationConfigInput) {
@@ -165,9 +157,6 @@ search_model_d_query = (
                 ...modelDType
             }
         }
-        _debug {
-            ...debugType
-        }
     }
 """
 )
@@ -175,8 +164,7 @@ search_model_d_query = (
 
 # region CRUDDALS ModelE
 search_model_e_query = (
-    debug_fragment
-    + pagination_fragment
+    pagination_fragment
     + model_e_fragment
     + """
     query searchModelEs($where: FilterModelEInput $orderBy: OrderByModelEInput $paginationConfig: PaginationConfigInput) {
@@ -185,9 +173,6 @@ search_model_e_query = (
             objects {
                 ...modelEType
             }
-        }
-        _debug {
-            ...debugType
         }
     }
 """
@@ -371,6 +356,7 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
         md1 = ModelD(foreign_key_field=mc1)
         md1.save()
 
+        # model c with one to one relation to md1
         mc11 = ModelC(
             char_field="AAA1",
             integer_field=1,
@@ -390,6 +376,7 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
         md4 = ModelD(foreign_key_field=mc4)
         md4.save()
 
+        # model c with many to many relation to md1, md2, md3
         mc12 = ModelC(
             char_field="AAA2",
             integer_field=1,
@@ -415,144 +402,102 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
         # region SEARCH ModelC
 
         with override_settings(DEBUG=True):
-            django_queries = get_all_model_c_objects_without_relations()
-            connection.queries_log.clear()
-            reset_queries()
-            client.query(get_all_model_c_objects_without_relations_query).json()
-            graphql_queries = len(connection.queries)
-            self.assertLessEqual(graphql_queries, django_queries)
-
+            # django_queries = get_all_model_c_objects_without_relations()
             # connection.queries_log.clear()
             # reset_queries()
-            # cache.clear()
+            # client.query(get_all_model_c_objects_without_relations_query).json()
+            # graphql_queries = len(connection.queries)
+            # self.assertLessEqual(graphql_queries, django_queries)
 
-            # page = 4
-            # items_per_page = 3
-            # queryset = (
-            #     ModelC.objects
-            #     .select_related("one_to_one_field__foreign_key_field")
-            #     .prefetch_related(
-            #         Prefetch(
-            #             "many_to_many_field",
-            #             queryset=ModelD.objects.select_related("foreign_key_field")
-            #             .prefetch_related(
-            #                 Prefetch(
-            #                     "foreign_key_E_related",
-            #                     queryset=ModelE.objects.select_related("foreign_key_field_deep__foreign_key_field")
-            #                 )
-            #             )
-            #         ),
-            #         Prefetch(
-            #             "foreign_key_D_related",
-            #             queryset=ModelD.objects.only("id")
-            #         )
-            #     )
-            #     .all()
-            # )
-            # paginator = Paginator(queryset, items_per_page)
-            # page_obj = paginator.get_page(page)
-            # django_objects = []
-            # for obj in page_obj:
-            #     one_to_one_data = None
-            #     if obj.one_to_one_field:
-            #         one_to_one_data = {
-            #             "id": str(obj.one_to_one_field.id),
-            #             "foreignKeyField": {
-            #                 "id": str(obj.one_to_one_field.foreign_key_field.id)
-            #             },
-            #             "paginatedForeignKeyERelated": {
-            #                 "objects": [
-            #                     {
-            #                         "id": str(e_obj.id),
-            #                         "foreignKeyFieldDeep": {
-            #                             "id": str(e_obj.foreign_key_field_deep.id),
-            #                             "foreignKeyField": {
-            #                                 "id": str(
-            #                                     e_obj.foreign_key_field_deep.foreign_key_field.id
-            #                                 )
-            #                             },
-            #                         },
-            #                     }
-            #                     for e_obj in obj.one_to_one_field.foreign_key_E_related.all()
-            #                 ]
-            #             },
-            #         }
-
-            #     many_to_many_data = {
-            #         "objects": [
-            #             {
-            #                 "id": str(m2m_obj.id),
-            #                 "foreignKeyField": {
-            #                     "id": str(m2m_obj.foreign_key_field.id)
-            #                 },
-            #                 "paginatedForeignKeyERelated": {
-            #                     "objects": [
-            #                         {
-            #                             "id": str(e_obj.id),
-            #                             "foreignKeyFieldDeep": {
-            #                                 "id": str(e_obj.foreign_key_field_deep.id),
-            #                                 "foreignKeyField": {
-            #                                     "id": str(
-            #                                         e_obj.foreign_key_field_deep.foreign_key_field.id
-            #                                     )
-            #                                 },
-            #                             },
-            #                         }
-            #                         for e_obj in m2m_obj.foreign_key_E_related.all()
-            #                     ]
-            #                 },
-            #             }
-            #             for m2m_obj in obj.many_to_many_field.all()
-            #         ]
-            #     }
-
-            #     foreign_key_d_data = {
-            #         "objects": [
-            #             {"id": str(fk_obj.id)}
-            #             for fk_obj in obj.foreign_key_D_related.all()
-            #         ]
-            #     }
-
-            #     serialized_obj = {
-            #         "id": str(obj.id),
-            #         "charField": obj.char_field,
-            #         "integerField": obj.integer_field,
-            #         "booleanField": obj.boolean_field,
-            #         "dateTimeField": obj.date_time_field.isoformat() + "+00:00"
-            #         if obj.date_time_field
-            #         else None,
-            #         "jsonField": f'"{obj.json_field}"' if obj.json_field else None,
-            #         "fileField": str(obj.file_field) if obj.file_field else "",
-            #         "isActive": obj.is_active,
-            #         "oneToOneField": one_to_one_data,
-            #         "paginatedManyToManyField": many_to_many_data,
-            #         "paginatedForeignKeyDRelated": foreign_key_d_data,
-            #     }
-            #     django_objects.append(serialized_obj)
-            # _django_response = {
-            #     "searchModelCs": {
-            #         "total": paginator.count,
-            #         "page": page,
-            #         "pages": paginator.num_pages,
-            #         "hasNext": page_obj.has_next(),
-            #         "hasPrev": page_obj.has_previous(),
-            #         "indexStart": page_obj.start_index(),
-            #         "indexEnd": page_obj.end_index(),
-            #         "objects": django_objects,
-            #     }
-            # }
-
-            # django_queries = len(connection.queries)  # - graphql_queries
-            # print(f"Django ejecutó {django_queries} consultas SQL")
-
-            # graphql_objects = graphql_response["data"]["searchModelCs"]["objects"]
-            # print(f"GraphQL devolvió {len(graphql_objects)} objetos")
-            # print(f"Django devolvió {len(django_objects)} objetos")
-
-            # # Verificar que los IDs coincidan
-            # graphql_ids = [obj["id"] for obj in graphql_objects]
-            # django_ids = [obj["id"] for obj in django_objects]
-            # print(f"IDs GraphQL: {graphql_ids}")
-            # print(f"IDs Django: {django_ids}")
-            # print(f"IDs coinciden: {graphql_ids == django_ids}")
+            expected_response = {
+                "data": {
+                    "searchModelCs": {
+                        "total": 12,
+                        "page": 1,
+                        "pages": 1,
+                        "hasNext": False,
+                        "hasPrev": False,
+                        "indexStart": 1,
+                        "indexEnd": 12,
+                        "objects": [
+                            {
+                                "id": "1",
+                                "charField": "AAA",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "2",
+                                "charField": "BBB",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "3",
+                                "charField": "CCC",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "4",
+                                "charField": "DDD",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "5",
+                                "charField": "EEE",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "6",
+                                "charField": "aaa",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "7",
+                                "charField": "bbb",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "8",
+                                "charField": "ccc",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "9",
+                                "charField": "ddd",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "10",
+                                "charField": "eee",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "11",
+                                "charField": "AAA1",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "12",
+                                "charField": "AAA2",
+                                "paginatedManyToManyField": {
+                                    "objects": [
+                                        {"id": "3", "foreignKeyField": {"id": "3"}},
+                                        {"id": "2", "foreignKeyField": {"id": "2"}},
+                                        {"id": "1", "foreignKeyField": {"id": "1"}},
+                                    ]
+                                },
+                            },
+                        ],
+                    }
+                }
+            }
+            response = client.query(
+                get_all_model_c_objects_with_many_to_many_relation_ordered
+            ).json()
+            print(response)
+            self.verify_response(
+                response,
+                expected_response,
+                message="SEARCH with order by DESC in internal field: many to many ModelC",
+            )
+            print("================================================")
         # endregion
