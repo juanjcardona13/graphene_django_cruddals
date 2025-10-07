@@ -1115,12 +1115,35 @@ def get_type_field(gql_type, gql_name):
             return name, field_type
 
 
-def get_order_by_list_from_arguments(args):
+def resolve_argument(input_type, argument):
+    if isinstance(argument, list):
+        ret = []
+        for arg in argument:
+            ret.append(resolve_argument(input_type, arg))
+    elif isinstance(argument, dict):
+        ret = {}
+        for gql_name, value in argument.items():
+            name, field_type = get_type_field(input_type, gql_name)
+            if isinstance(value, (dict, list)):
+                ret[name] = resolve_argument(field_type, value)
+            else:
+                ret[name] = value
+    else:
+        return argument
+    return ret
+
+
+def get_order_by_list_from_arguments(args, order_by_input_type=None):
     order_by_list = ["pk"]
     if "order_by" in args or "orderBy" in args:
         order_by = args.get("order_by") or args.get("orderBy")
         if isinstance(order_by, dict):
             order_by = [order_by]
         if order_by:
+            order_by = (
+                resolve_argument(order_by_input_type, order_by)
+                if order_by_input_type
+                else order_by
+            )
             order_by_list = order_by_input_to_args(order_by)
     return order_by_list

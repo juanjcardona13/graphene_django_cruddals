@@ -42,6 +42,7 @@ from graphene_django_cruddals.utils.main import (
     obj_to_modify_have_generic_foreign_key_input,
     paginate_queryset,
     parse_arguments_ast,
+    resolve_argument,
     toggle_active_status,
     update_dict_with_model_instance,
     where_input_to_Q,
@@ -134,6 +135,9 @@ def _queryset_factory_analyze(
                     ),
                 ):
                     related_model = model_field.remote_field.model
+                    registries_for_model = registry.get_registry_for_model(
+                        related_model
+                    )
 
                     if isinstance(
                         model_field, (OneToOneField, OneToOneRel, ForeignKey)
@@ -152,6 +156,7 @@ def _queryset_factory_analyze(
                     elif isinstance(
                         model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
                     ):
+                        related_queryset = related_model.objects.all()
                         order_by_list = ["pk"]
                         if hasattr(field, "arguments"):
                             field_args = parse_arguments_ast(
@@ -160,7 +165,21 @@ def _queryset_factory_analyze(
                                 if hasattr(info, "variable_values")
                                 else {},
                             )
-                            order_by_list = get_order_by_list_from_arguments(field_args)
+                            order_by_list = get_order_by_list_from_arguments(
+                                field_args,
+                                registries_for_model["input_object_type_for_order_by"],
+                            )
+
+                            if "where" in field_args.keys():
+                                where = resolve_argument(
+                                    registries_for_model[
+                                        "input_object_type_for_search"
+                                    ],
+                                    field_args.get("where", {}),
+                                )
+                                related_queryset = related_queryset.filter(
+                                    where_input_to_Q(where)
+                                )
 
                         related_ret = _queryset_factory_analyze(
                             info,
@@ -171,7 +190,6 @@ def _queryset_factory_analyze(
                             "",
                         )
 
-                        related_queryset = related_model.objects.all()
                         related_queryset = related_queryset.select_related(
                             *related_ret["select_related"]
                         )
@@ -446,8 +464,7 @@ def default_search_field_resolver(
             queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
     if "where" in args and not is_prefetched:
-        where = args["where"]
-        obj_q = where_input_to_Q(where)
+        obj_q = where_input_to_Q(args.get("where", {}))
         queryset = queryset.filter(obj_q)
 
     if not isinstance(queryset, list):

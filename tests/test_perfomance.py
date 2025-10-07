@@ -63,7 +63,7 @@ get_all_model_c_objects_without_relations_query = (
 """
 )
 
-get_all_model_c_objects_with_many_to_many_relation_ordered = (
+get_all_model_c_objects_with_many_to_many_relation_with_order_by = (
     pagination_fragment
     + """
     query searchModelCs($where: FilterModelCInput $orderBy: OrderByModelCInput $paginationConfig: PaginationConfigInput) {
@@ -73,6 +73,29 @@ get_all_model_c_objects_with_many_to_many_relation_ordered = (
                 id
                 charField
                 paginatedManyToManyField(orderBy: {foreignKeyField: {id: DESC}}) {
+                    objects {
+                        id
+                        foreignKeyField {
+                            id
+                        }
+                    }
+                }
+            }
+        }
+    }
+"""
+)
+
+get_all_model_c_objects_with_many_to_many_relation_with_where = (
+    pagination_fragment
+    + """
+    query searchModelCs($where: FilterModelCInput $orderBy: OrderByModelCInput $paginationConfig: PaginationConfigInput) {
+        searchModelCs(where: $where orderBy: $orderBy paginationConfig: $paginationConfig) {
+            ...paginationType
+            objects {
+                id
+                charField
+                paginatedManyToManyField(where: {foreignKeyField: {id: {in: [1,2]}}}) {
                     objects {
                         id
                         foreignKeyField {
@@ -402,13 +425,14 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
         # region SEARCH ModelC
 
         with override_settings(DEBUG=True):
-            # django_queries = get_all_model_c_objects_without_relations()
-            # connection.queries_log.clear()
-            # reset_queries()
-            # client.query(get_all_model_c_objects_without_relations_query).json()
-            # graphql_queries = len(connection.queries)
-            # self.assertLessEqual(graphql_queries, django_queries)
+            django_queries = get_all_model_c_objects_without_relations()
+            connection.queries_log.clear()
+            reset_queries()
+            client.query(get_all_model_c_objects_without_relations_query).json()
+            graphql_queries = len(connection.queries)
+            self.assertLessEqual(graphql_queries, django_queries)
 
+            # region SEARCH ModelC with order by DESC in internal field: many to many
             expected_response = {
                 "data": {
                     "searchModelCs": {
@@ -490,14 +514,113 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
                     }
                 }
             }
+            connection.queries_log.clear()
+            reset_queries()
             response = client.query(
-                get_all_model_c_objects_with_many_to_many_relation_ordered
+                get_all_model_c_objects_with_many_to_many_relation_with_order_by
             ).json()
-            print(response)
+            graphql_queries = len(connection.queries)
+            self.assertLessEqual(graphql_queries, 3)
             self.verify_response(
                 response,
                 expected_response,
                 message="SEARCH with order by DESC in internal field: many to many ModelC",
             )
+            # endregion
+
+            # region SEARCH ModelC with where in internal field: many to many
+            expected_response = {
+                "data": {
+                    "searchModelCs": {
+                        "total": 12,
+                        "page": 1,
+                        "pages": 1,
+                        "hasNext": False,
+                        "hasPrev": False,
+                        "indexStart": 1,
+                        "indexEnd": 12,
+                        "objects": [
+                            {
+                                "id": "1",
+                                "charField": "AAA",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "2",
+                                "charField": "BBB",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "3",
+                                "charField": "CCC",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "4",
+                                "charField": "DDD",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "5",
+                                "charField": "EEE",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "6",
+                                "charField": "aaa",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "7",
+                                "charField": "bbb",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "8",
+                                "charField": "ccc",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "9",
+                                "charField": "ddd",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "10",
+                                "charField": "eee",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "11",
+                                "charField": "AAA1",
+                                "paginatedManyToManyField": {"objects": []},
+                            },
+                            {
+                                "id": "12",
+                                "charField": "AAA2",
+                                "paginatedManyToManyField": {
+                                    "objects": [
+                                        {"id": "1", "foreignKeyField": {"id": "1"}},
+                                        {"id": "2", "foreignKeyField": {"id": "2"}},
+                                    ]
+                                },
+                            },
+                        ],
+                    }
+                }
+            }
+            connection.queries_log.clear()
+            reset_queries()
+            response = client.query(
+                get_all_model_c_objects_with_many_to_many_relation_with_where
+            ).json()
+            graphql_queries = len(connection.queries)
+            self.assertLessEqual(graphql_queries, 3)
+            self.verify_response(
+                response,
+                expected_response,
+                message="SEARCH with where in internal field: many to many ModelC",
+            )
+            # endregion
             print("================================================")
         # endregion
