@@ -279,6 +279,105 @@ def apply_queryset_optimizations(
     return queryset
 
 
+def apply_query_arguments(
+    queryset: Union[QuerySet, list, None],
+    args: dict,
+    model: DjangoModel,
+    registry: RegistryGlobal,
+    apply_where: bool = True,
+    apply_order_by: bool = True,
+    apply_distinct: bool = True,
+) -> Union[QuerySet, list, None]:
+    """
+    Función centralizada para aplicar argumentos de query (where, order_by, distinct).
+
+    Esta función procesa los argumentos comunes de GraphQL y los aplica al queryset de forma consistente.
+
+    Args:
+        queryset: El queryset a procesar
+        args: Diccionario con los argumentos de GraphQL (where, order_by, orderBy, etc.)
+        model: El modelo Django asociado
+        registry: El registro global
+        apply_where: Si aplicar filtros WHERE
+        apply_order_by: Si aplicar ORDER BY
+        apply_distinct: Si aplicar DISTINCT
+
+    Returns:
+        El queryset con los argumentos aplicados
+    """
+    if queryset is None:
+        return None
+
+    # Detectar si el queryset está prefetched
+    is_prefetched = isinstance(queryset, list) or (
+        isinstance(queryset, QuerySet)
+        and hasattr(queryset, "_result_cache")
+        and queryset._result_cache is not None
+    )
+
+    # Solo procesar si es un QuerySet no prefetched
+    if isinstance(queryset, QuerySet) and not is_prefetched:
+        # Aplicar filtros WHERE
+        if apply_where and "where" in args:
+            where = args["where"]
+            # Validar que el where no esté vacío
+            if where and any(where.values()):
+                obj_q = where_input_to_Q(where)
+                queryset = queryset.filter(obj_q)
+
+        # Aplicar ORDER BY
+        if apply_order_by and not isinstance(queryset, list):
+            # Obtener order_by de los argumentos (soporta tanto order_by como orderBy)
+            order_by_list = get_order_by_list_from_arguments(args)
+            if "order_by" in args or "orderBy" in args:
+                queryset = queryset.order_by(*order_by_list)
+            elif order_by_list and order_by_list != ["pk"]:  # Solo aplicar si hay orden específico
+                queryset = queryset.order_by(*order_by_list)
+
+        # Aplicar DISTINCT
+        if apply_distinct:
+            queryset = queryset.distinct()
+
+    return queryset
+
+
+def apply_get_objects_hook(
+    queryset: Union[QuerySet, list, None],
+    django_object_type: ModelObjectType,
+    info,
+) -> Union[QuerySet, list, None]:
+    """
+    Función centralizada para aplicar el hook get_objects de los ModelObjectType.
+
+    Args:
+        queryset: El queryset a procesar
+        django_object_type: El tipo de objeto Django con posible hook get_objects
+        info: GraphQL info object
+
+    Returns:
+        El queryset procesado por el hook get_objects
+    """
+    if not isinstance(queryset, QuerySet):
+        return queryset
+
+    if not hasattr(django_object_type, "get_objects"):
+        return queryset
+
+    get_objects = django_object_type.get_objects
+
+    if isinstance(get_objects, list):
+        for get_objects_func in get_objects:
+            queryset = maybe_queryset(get_objects_func(queryset, info))
+    elif callable(get_objects):
+        queryset = maybe_queryset(get_objects(queryset, info))
+    else:
+        raise ValueError(
+            "The get_objects attribute must be a callable or a list of callables."
+        )
+
+    return queryset
+
+
 def default_create_update_resolver(
     model, model_form_class, registry, root, info, **args
 ):
@@ -361,18 +460,32 @@ def default_read_field_resolver(
     info,
     **args,
 ):
-    django_object_type: ModelObjectType = registry.get_registry_for_model(model)[
-        "object_type"
-    ]
-    queryset: Union[QuerySet, None] = None
-    if "where" in args.keys():
-        queryset = maybe_queryset(default_manager)
-        where = args["where"]
-        obj_q = where_input_to_Q(where)
-        queryset = queryset.filter(obj_q)
-        queryset = queryset.distinct()
+    """
+    Resolver para operaciones de lectura de un objeto individual (read).
 
-    # Aplicar optimizaciones de queryset usando la función centralizada
+    Aplica:
+    1. Filtros WHERE
+    2. Optimizaciones de N+1 queries
+    3. Hook get_objects personalizado
+    """
+    registries_for_model = registry.get_registry_for_model(model)
+    django_object_type: ModelObjectType = registries_for_model["object_type"]
+
+    # Obtener queryset base
+    queryset = maybe_queryset(default_manager)
+
+    # Aplicar argumentos WHERE
+    queryset = apply_query_arguments(
+        queryset=queryset,
+        args=args,
+        model=model,
+        registry=registry,
+        apply_where=True,
+        apply_order_by=False,  # No necesario para read individual
+        apply_distinct=True,
+    )
+
+    # Aplicar optimizaciones de N+1 queries
     queryset = apply_queryset_optimizations(
         queryset=queryset,
         info=info,
@@ -381,19 +494,18 @@ def default_read_field_resolver(
         is_connection=False,
     )
 
-    if isinstance(queryset, QuerySet):
-        if hasattr(django_object_type, "get_objects"):
-            if isinstance(django_object_type.get_objects, list):
-                for get_objects_func in django_object_type.get_objects:
-                    queryset = maybe_queryset(get_objects_func(queryset, info))
-            elif callable(django_object_type.get_objects):
-                queryset = maybe_queryset(
-                    django_object_type.get_objects(queryset, info)
-                )
+    # Aplicar hook get_objects personalizado
+    queryset = apply_get_objects_hook(
+        queryset=queryset,
+        django_object_type=django_object_type,
+        info=info,
+    )
+
     if queryset is None:
         raise ValueError(
             "The queryset is None. Ensure that the 'where' clause is correct and the default manager returns a valid queryset."
         )
+
     return queryset.distinct().get()
 
 
@@ -468,7 +580,7 @@ def default_list_field_resolver(
     if resolver is not None and hasattr(resolver, "args"):
         queryset = maybe_queryset(
             resolver(root, info, **args)
-        )
+        )  # Por lo general este resolver es el resolver por defecto, en este caso es el dict_or_attr_resolver, y va usar el atr_resolver, y va a traer el attr 'objects' del obj, y este 'objects' es un queryset
     if queryset is None:
         queryset = maybe_queryset(default_manager)
 
@@ -493,14 +605,26 @@ def default_search_field_resolver(
     info,
     **args,
 ):
+    """
+    Resolver para operaciones de búsqueda y paginación (search).
+
+    Aplica:
+    1. Resolución de queryset (normal o nested paginated field)
+    2. Optimizaciones de N+1 queries
+    3. Filtros WHERE
+    4. Ordenamiento ORDER BY
+    5. DISTINCT
+    6. Hook get_objects personalizado
+    7. Paginación
+    """
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
     paginated_object_type: ModelPaginatedObjectType = registries_for_model[
         "paginated_object_type"
     ]
 
+    # Paso 1: Obtener el queryset base (resolver nested paginated fields si aplica)
     queryset = None
-    field_name_for_prefetch = None
     is_nested_paginated_field = False
 
     if resolver is not None and hasattr(resolver, "args"):
@@ -515,6 +639,7 @@ def default_search_field_resolver(
                 else posible_field_with_default_set
             )
 
+            # Intentar obtener del prefetch cache primero
             if (
                 hasattr(root, "_prefetched_objects_cache")
                 and field_name_for_prefetch in root._prefetched_objects_cache
@@ -536,10 +661,8 @@ def default_search_field_resolver(
             "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
         )
 
-    is_prefetched = isinstance(queryset, list) or (
-        hasattr(queryset, "_result_cache") and queryset._result_cache is not None
-    )
-
+    # Paso 2: Aplicar optimizaciones de N+1 queries
+    # (Solo si no es un nested paginated field ya optimizado)
     if not is_nested_paginated_field:
         queryset = apply_queryset_optimizations(
             queryset=queryset,
@@ -549,38 +672,29 @@ def default_search_field_resolver(
             is_connection=True,
         )
 
-    if "where" in args and not is_prefetched:
-        obj_q = where_input_to_Q(args.get("where", {}))
-        queryset = queryset.filter(obj_q)
+    # Paso 3: Aplicar argumentos de query (where, order_by, distinct)
+    queryset = apply_query_arguments(
+        queryset=queryset,
+        args=args,
+        model=model,
+        registry=registry,
+        apply_where=True,
+        apply_order_by=True,
+        apply_distinct=True,
+    )
 
-    if not isinstance(queryset, list):
-        order_by_list = get_order_by_list_from_arguments(args)
-        if "order_by" in args or "orderBy" in args:
-            queryset = queryset.order_by(*order_by_list)
-        elif not is_prefetched:
-            queryset = queryset.order_by(*order_by_list)
+    # Paso 4: Aplicar hook get_objects personalizado
+    queryset = apply_get_objects_hook(
+        queryset=queryset,
+        django_object_type=django_object_type,
+        info=info,
+    )
 
+    # Paso 5: Aplicar paginación
     pagination_config = args.get("pagination_config", {}) or args.get(
         "paginationConfig", {}
     )
-    if not is_prefetched and not isinstance(queryset, list):
-        queryset = queryset.distinct()
 
-    if isinstance(queryset, QuerySet):
-        if hasattr(django_object_type, "get_objects"):
-            if isinstance(django_object_type.get_objects, list):
-                for get_objects_func in django_object_type.get_objects:
-                    queryset = maybe_queryset(get_objects_func(queryset, info))
-            elif callable(django_object_type.get_objects):
-                queryset = maybe_queryset(
-                    django_object_type.get_objects(queryset, info)
-                )
-            else:
-                raise ValueError(
-                    "The get_objects method is not a list of functions or a callable."
-                )
-        else:
-            raise ValueError("The get_objects method is not defined.")
     return paginate_queryset(
         queryset,
         paginated_object_type,  # type: ignore

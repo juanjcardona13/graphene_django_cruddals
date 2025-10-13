@@ -1,4 +1,6 @@
 from graphene_django_cruddals.resolvers.main import (
+    apply_get_objects_hook,
+    apply_query_arguments,
     apply_queryset_optimizations,
     default_activate_field_resolver,
     default_create_update_resolver,
@@ -11,6 +13,8 @@ from graphene_django_cruddals.resolvers.main import (
 )
 
 __all__ = [
+    "apply_get_objects_hook",
+    "apply_query_arguments",
     "apply_queryset_optimizations",
     "default_activate_field_resolver",
     "default_create_update_resolver",
