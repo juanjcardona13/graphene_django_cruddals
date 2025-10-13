@@ -60,6 +60,7 @@ from .main import (
     DjangoProjectCruddals,
 )
 from .resolvers.main import (
+    apply_queryset_optimizations,
     default_activate_field_resolver,
     default_create_update_resolver,
     default_deactivate_field_resolver,
@@ -148,6 +149,7 @@ __all__ = [
     "maybe_queryset",
     "get_function_for_type",
     "resolve_for_relation_field",
+    "apply_queryset_optimizations",
     "default_create_update_resolver",
     "default_read_field_resolver",
     "default_update_resolver",

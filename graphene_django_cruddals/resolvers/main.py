@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 
 from django.db import transaction
 from django.db.models import (
@@ -215,6 +215,70 @@ def _queryset_factory_analyze(
     return ret
 
 
+def apply_queryset_optimizations(
+    queryset: Union[QuerySet, list, None],
+    info,
+    model: DjangoModel,
+    registry: RegistryGlobal,
+    is_connection: bool = False,
+    selection_set=None,
+) -> Union[QuerySet, list, None]:
+    """
+    Función centralizada para aplicar optimizaciones de queryset (select_related, prefetch_related, only).
+
+    Esta función detecta si el queryset ya está prefetched y solo aplica optimizaciones cuando es necesario.
+
+    Args:
+        queryset: El queryset a optimizar (puede ser QuerySet, list o None)
+        info: GraphQL info object que contiene el AST
+        model: El modelo Django asociado al queryset
+        registry: El registro global de graphene-django-cruddals
+        is_connection: Si el queryset representa una conexión paginada
+        selection_set: Selection set específico del AST (opcional, por defecto usa info.field_nodes[0].selection_set)
+
+    Returns:
+        El queryset optimizado con select_related, prefetch_related y only aplicados
+    """
+    if queryset is None:
+        return None
+
+    is_prefetched = isinstance(queryset, list) or (
+        isinstance(queryset, QuerySet)
+        and hasattr(queryset, "_result_cache")
+        and queryset._result_cache is not None
+    )
+
+    # Solo aplicar optimizaciones si el queryset no ha sido ejecutado
+    if not is_prefetched and isinstance(queryset, QuerySet):
+        # Determinar el selection_set a usar
+        if selection_set is None and hasattr(info, "field_nodes") and info.field_nodes:
+            selection_set = info.field_nodes[0].selection_set
+
+        if selection_set:
+            # Analizar el AST de GraphQL para determinar las optimizaciones necesarias
+            queryset_factory = _queryset_factory_analyze(
+                info,
+                selection_set=selection_set,
+                is_connection=is_connection,
+                model=model,
+                registry=registry,
+            )
+
+            # Aplicar select_related para relaciones OneToOne y ForeignKey
+            if queryset_factory["select_related"]:
+                queryset = queryset.select_related(*queryset_factory["select_related"])
+
+            # Aplicar only para cargar solo los campos necesarios
+            if queryset_factory["only"]:
+                queryset = queryset.only(*queryset_factory["only"])
+
+            # Aplicar prefetch_related para relaciones ManyToMany y reverse ForeignKey
+            if queryset_factory["prefetch_related"]:
+                queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
+
+    return queryset
+
+
 def default_create_update_resolver(
     model, model_form_class, registry, root, info, **args
 ):
@@ -307,6 +371,16 @@ def default_read_field_resolver(
         obj_q = where_input_to_Q(where)
         queryset = queryset.filter(obj_q)
         queryset = queryset.distinct()
+
+    # Aplicar optimizaciones de queryset usando la función centralizada
+    queryset = apply_queryset_optimizations(
+        queryset=queryset,
+        info=info,
+        model=model,
+        registry=registry,
+        is_connection=False,
+    )
+
     if isinstance(queryset, QuerySet):
         if hasattr(django_object_type, "get_objects"):
             if isinstance(django_object_type.get_objects, list):
@@ -381,14 +455,32 @@ def default_activate_field_resolver(
         return {"objects": queryset}
 
 
-def default_list_field_resolver(resolver, default_manager, root, info, **args):
+def default_list_field_resolver(
+    model: DjangoModel,
+    registry: RegistryGlobal,
+    resolver,
+    default_manager,
+    root,
+    info,
+    **args
+):
     queryset = None
     if resolver is not None and hasattr(resolver, "args"):
         queryset = maybe_queryset(
             resolver(root, info, **args)
-        )  # Por lo general este resolver es el resolver por defecto, en este caso es el dict_or_attr_resolver, y va usar el atr_resolver, y va a traer el attr 'objects' del obj, y este 'objects' es un queryset
+        )
     if queryset is None:
         queryset = maybe_queryset(default_manager)
+
+    # Aplicar optimizaciones de queryset usando la función centralizada
+    queryset = apply_queryset_optimizations(
+        queryset=queryset,
+        info=info,
+        model=model,
+        registry=registry,
+        is_connection=False,
+    )
+
     return queryset
 
 
@@ -448,20 +540,14 @@ def default_search_field_resolver(
         hasattr(queryset, "_result_cache") and queryset._result_cache is not None
     )
 
-    if not is_prefetched and not is_nested_paginated_field:
-        queryset_factory = _queryset_factory_analyze(
-            info,
-            selection_set=info.field_nodes[0].selection_set,
-            is_connection=True,
+    if not is_nested_paginated_field:
+        queryset = apply_queryset_optimizations(
+            queryset=queryset,
+            info=info,
             model=model,
             registry=registry,
+            is_connection=True,
         )
-        if queryset_factory["select_related"]:
-            queryset = queryset.select_related(*queryset_factory["select_related"])
-        if queryset_factory["only"]:
-            queryset = queryset.only(*queryset_factory["only"])
-        if queryset_factory["prefetch_related"]:
-            queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
     if "where" in args and not is_prefetched:
         obj_q = where_input_to_Q(args.get("where", {}))
