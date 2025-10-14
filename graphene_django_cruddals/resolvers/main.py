@@ -181,48 +181,61 @@ def _queryset_factory_analyze(
                     elif isinstance(
                         model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
                     ):
-                        related_queryset = related_model.objects.all()
-                        order_by_list = ["pk"]
-                        if hasattr(field, "arguments"):
-                            field_args = parse_arguments_ast(
-                                field.arguments,
-                                variable_values=info.variable_values
-                                if hasattr(info, "variable_values")
-                                else {},
+                        # CLAVE: Llamar al _queryset_factory del Type relacionado
+                        # Esto permite recursión completa con manejo de WHERE/ORDER BY
+                        related_object_type = registries_for_model.get("object_type")
+
+                        if related_object_type and hasattr(related_object_type, '_queryset_factory'):
+                            # El Type relacionado maneja TODO: optimizaciones + argumentos
+                            related_queryset = related_object_type._queryset_factory(
+                                info=info,
+                                field_ast=field,  # Incluye arguments del nested field
+                                is_connection=True,
                             )
-                            order_by_list = get_order_by_list_from_arguments(
-                                field_args,
-                                registries_for_model["input_object_type_for_order_by"],
+                        else:
+                            # Fallback al comportamiento original si no hay _queryset_factory
+                            related_queryset = related_model.objects.all()
+                            order_by_list = ["pk"]
+                            if hasattr(field, "arguments"):
+                                field_args = parse_arguments_ast(
+                                    field.arguments,
+                                    variable_values=info.variable_values
+                                    if hasattr(info, "variable_values")
+                                    else {},
+                                )
+                                order_by_list = get_order_by_list_from_arguments(
+                                    field_args,
+                                    registries_for_model["input_object_type_for_order_by"],
+                                )
+
+                                if "where" in field_args.keys():
+                                    where = resolve_argument(
+                                        registries_for_model[
+                                            "input_object_type_for_search"
+                                        ],
+                                        field_args.get("where", {}),
+                                    )
+                                    related_queryset = related_queryset.filter(
+                                        where_input_to_Q(where)
+                                    )
+
+                            related_ret = _queryset_factory_analyze(
+                                info,
+                                field.selection_set,
+                                True,
+                                related_model,
+                                registry,
+                                "",
                             )
 
-                            if "where" in field_args.keys():
-                                where = resolve_argument(
-                                    registries_for_model[
-                                        "input_object_type_for_search"
-                                    ],
-                                    field_args.get("where", {}),
-                                )
-                                related_queryset = related_queryset.filter(
-                                    where_input_to_Q(where)
-                                )
-
-                        related_ret = _queryset_factory_analyze(
-                            info,
-                            field.selection_set,
-                            True,
-                            related_model,
-                            registry,
-                            "",
-                        )
-
-                        related_queryset = related_queryset.select_related(
-                            *related_ret["select_related"]
-                        )
-                        related_queryset = related_queryset.only(*related_ret["only"])
-                        related_queryset = related_queryset.prefetch_related(
-                            *related_ret["prefetch_related"]
-                        )
-                        related_queryset = related_queryset.order_by(*order_by_list)
+                            related_queryset = related_queryset.select_related(
+                                *related_ret["select_related"]
+                            )
+                            related_queryset = related_queryset.only(*related_ret["only"])
+                            related_queryset = related_queryset.prefetch_related(
+                                *related_ret["prefetch_related"]
+                            )
+                            related_queryset = related_queryset.order_by(*order_by_list)
 
                         ret["prefetch_related"].append(
                             Prefetch(

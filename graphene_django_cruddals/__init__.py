@@ -1,5 +1,8 @@
 from graphene_cruddals.operation_fields.main import CruddalsRelationField
 
+# Apply type extensions (monkey-patch ModelObjectType with _queryset_factory)
+from . import type_extensions  # noqa: F401
+
 from .decorators import resolver_hints
 from .client.build_functions import (
     build_activate,
