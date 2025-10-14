@@ -1,5 +1,6 @@
 from graphene_cruddals.operation_fields.main import CruddalsRelationField
 
+from .decorators import resolver_hints
 from .client.build_functions import (
     build_activate,
     build_create,
@@ -71,6 +72,7 @@ from .resolvers.main import (
     default_read_field_resolver,
     default_search_field_resolver,
     default_update_resolver,
+    get_computed_field_hints,
 )
 from .utils.main import (
     add_mutate_errors,
@@ -113,6 +115,7 @@ __all__ = [
     "__version__",
     "CRUDDALSView",
     "CruddalsRelationField",
+    "resolver_hints",
     "get_apps_name",
     "part_of_import_js",
     "return_args_and_variables",
@@ -154,6 +157,7 @@ __all__ = [
     "apply_get_objects_hook",
     "apply_query_arguments",
     "apply_queryset_optimizations",
+    "get_computed_field_hints",
     "default_create_update_resolver",
     "default_read_field_resolver",
     "default_update_resolver",

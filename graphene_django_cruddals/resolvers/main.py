@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Union, Optional
+from typing import Union, Optional, Dict, Any
 
 from django.db import transaction
 from django.db.models import (
@@ -50,7 +50,7 @@ from graphene_django_cruddals.utils.main import (
 
 
 def _queryset_factory_analyze(
-    info, selection_set, is_connection, model, registry, suffix=""
+    info, selection_set, is_connection, model, registry, suffix="", computed_field_hints=None
 ):
     def fusion_ret(a, b):
         [
@@ -74,6 +74,10 @@ def _queryset_factory_analyze(
     }
 
     model_fields = get_model_fields_for_output(model)
+
+    # Obtener computed field hints si no se proporcionaron
+    if computed_field_hints is None:
+        computed_field_hints = get_computed_field_hints(registry, model)
 
     for field in selection_set.selections:
         field_name = field.name.value
@@ -120,6 +124,27 @@ def _queryset_factory_analyze(
             try:
                 model_field = model_fields[real_name]
             except KeyError:
+                # No es un model field, verificar si es un computed field con hints
+                if real_name in computed_field_hints:
+                    hints = computed_field_hints[real_name]
+                    # Aplicar hints al ret actual
+                    for sr in hints["select_related"]:
+                        prefixed_sr = new_suffix + sr if new_suffix else sr
+                        if prefixed_sr not in ret["select_related"]:
+                            ret["select_related"].append(prefixed_sr)
+
+                    for pr in hints["prefetch_related"]:
+                        prefixed_pr = new_suffix + pr if new_suffix else pr
+                        if prefixed_pr not in [
+                            p.prefetch_to if isinstance(p, Prefetch) else p
+                            for p in ret["prefetch_related"]
+                        ]:
+                            ret["prefetch_related"].append(prefixed_pr)
+
+                    for only_field in hints["only"]:
+                        prefixed_only = new_suffix + only_field if new_suffix else only_field
+                        if prefixed_only not in ret["only"]:
+                            ret["only"].append(prefixed_only)
                 continue
 
             if getattr(field, "selection_set", None):
@@ -213,6 +238,73 @@ def _queryset_factory_analyze(
                 ret["only"].append(new_suffix + real_name)
 
     return ret
+
+
+def get_computed_field_hints(
+    registry: RegistryGlobal,
+    model: DjangoModel,
+) -> Dict[str, Dict[str, Any]]:
+    """
+    Extrae hints de optimización de computed fields decorados con @resolver_hints.
+
+    Args:
+        registry: Registro global de graphene-django-cruddals
+        model: Modelo Django del cual extraer computed fields
+
+    Returns:
+        Diccionario con hints por campo:
+        {
+            "field_name": {
+                "select_related": [...],
+                "prefetch_related": [...],
+                "only": [...]
+            }
+        }
+    """
+    computed_field_hints = {}
+
+    try:
+        registries_for_model = registry.get_registry_for_model(model)
+        object_type = registries_for_model.get("object_type")
+
+        if not object_type:
+            return computed_field_hints
+
+        # Obtener model fields para excluirlos
+        model_fields_names = get_model_fields_for_output(
+            model=model,
+            registry=registry,
+            for_object_type=object_type,
+        )
+
+        # Iterar sobre todos los campos del Type
+        if hasattr(object_type, "_meta") and hasattr(object_type._meta, "fields"):
+            for field_name, field_obj in object_type._meta.fields.items():
+                # Skip model fields
+                if field_name in model_fields_names:
+                    continue
+
+                # Buscar resolver
+                resolver = None
+                if hasattr(field_obj, "resolver") and field_obj.resolver is not None:
+                    resolver = field_obj.resolver
+                elif hasattr(object_type, f"resolve_{field_name}"):
+                    resolver = getattr(object_type, f"resolve_{field_name}")
+
+                # Verificar si tiene hints
+                if resolver and hasattr(resolver, "have_resolver_hints"):
+                    computed_field_hints[field_name] = {
+                        "select_related": getattr(resolver, "select_related", []),
+                        "prefetch_related": getattr(resolver, "prefetch_related", []),
+                        "only": getattr(resolver, "only", []),
+                    }
+
+    except Exception:
+        # Si hay algún error, retornar diccionario vacío
+        # (mejor fallar silenciosamente que romper queries)
+        pass
+
+    return computed_field_hints
 
 
 def apply_queryset_optimizations(

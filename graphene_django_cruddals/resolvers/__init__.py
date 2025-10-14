@@ -10,6 +10,7 @@ from graphene_django_cruddals.resolvers.main import (
     default_read_field_resolver,
     default_search_field_resolver,
     default_update_resolver,
+    get_computed_field_hints,
 )
 
 __all__ = [
@@ -24,4 +25,5 @@ __all__ = [
     "default_read_field_resolver",
     "default_search_field_resolver",
     "default_update_resolver",
+    "get_computed_field_hints",
 ]
