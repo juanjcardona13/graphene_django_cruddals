@@ -730,3 +730,486 @@ class N1OptimizationsTestCase(TestCase):
 
         # Pages should be ceil(6/2) = 3
         self.assertEqual(data["pages"], 3)
+
+    # ==================== READ RESOLVER OPTIMIZATION TESTS ====================
+
+    def test_read_basic_optimizations(self):
+        """
+        Test: Read query with select_related and prefetch_related.
+
+        Verifies that:
+        - select_related loads OneToOneField with a single JOIN
+        - prefetch_related loads ManyToMany efficiently
+        - There are no N+1 queries
+        """
+        client = Client()
+        query = """
+        query {
+            readModelC(where: {charField: {exact: "AAA1"}}) {
+                id
+                charField
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                    }
+                }
+                paginatedManyToManyField {
+                    objects {
+                        id
+                    }
+                }
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            response = client.query(query).json()
+            query_count = len(connection.queries)
+
+            # Validate response
+            self.assertIsNone(response.get("errors"))
+            self.assertIn("data", response)
+
+            # Expected queries for read:
+            # 1. SELECT ModelC with JOIN ModelD (select_related)
+            # 2. Prefetch ManyToMany (if any)
+            # Total: ~2-4 queries (should be much less than search)
+            self.assertLess(
+                query_count, 6, f"Expected < 6 queries for read, got {query_count}"
+            )
+
+    def test_read_onetoone_no_additional_queries(self):
+        """
+        Test: Read OneToOneField does not execute additional queries.
+
+        Verifies that resolve_for_relation_field detects instances
+        already loaded by select_related and returns them directly
+        without executing additional queries.
+        """
+        client = Client()
+        query = """
+        query {
+            readModelC(where: {charField: {exact: "AAA1"}}) {
+                id
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                    }
+                }
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            response = client.query(query).json()
+            queries = connection.queries
+
+            # Validate response
+            self.assertIsNone(response.get("errors"))
+
+            # Look for individual ModelD queries (would indicate N+1)
+            individual_queries = [
+                q for q in queries if 'WHERE "tests_modeld"."id" =' in q["sql"]
+            ]
+
+            self.assertEqual(
+                len(individual_queries),
+                0,
+                f"Found {len(individual_queries)} individual ModelD queries (N+1 problem)",
+            )
+
+    def test_read_deep_relations_optimization(self):
+        """
+        Test: Read query with deep relations (3+ levels) optimized.
+
+        Verifies that queries with deep relations do not generate N+1.
+        """
+        client = Client()
+        query = """
+        query {
+            readModelC(where: {charField: {exact: "AAA1"}}) {
+                id
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                    }
+                    paginatedForeignKeyERelated {
+                        objects {
+                            id
+                            foreignKeyFieldDeep {
+                                id
+                                foreignKeyField {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            response = client.query(query).json()
+            query_count = len(connection.queries)
+
+            # Validate response
+            self.assertIsNone(response.get("errors"))
+
+            # With optimizations, even deep relation read queries should be < 8 queries
+            self.assertLess(
+                query_count,
+                8,
+                f"Deep relation read query should be < 8 queries, got {query_count}",
+            )
+
+    def test_read_data_integrity(self):
+        """
+        Test: Read returns correct data with all relations.
+
+        Validates that the read operation returns the expected data.
+        """
+        client = Client()
+        query = """
+        query {
+            readModelC(where: {charField: {exact: "AAA1"}}) {
+                id
+                charField
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                        charField
+                    }
+                }
+            }
+        }
+        """
+
+        response = client.query(query).json()
+
+        # Validate response
+        self.assertIsNone(response.get("errors"))
+        obj = response["data"]["readModelC"]
+
+        # mc11 has oneToOneField -> md1 -> mc1
+        self.assertEqual(obj["charField"], "AAA1")
+        self.assertIsNotNone(obj["oneToOneField"])
+        self.assertEqual(obj["oneToOneField"]["foreignKeyField"]["charField"], "AAA")
+
+    # ==================== LIST RESOLVER OPTIMIZATION TESTS ====================
+
+    def test_list_basic_optimizations(self):
+        """
+        Test: List query with select_related and prefetch_related.
+
+        Verifies that:
+        - select_related loads OneToOneField with a single JOIN
+        - prefetch_related loads ManyToMany efficiently
+        - There are no N+1 queries
+        """
+        client = Client()
+        query = """
+        query {
+            listModelCs {
+                id
+                charField
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                    }
+                }
+                paginatedManyToManyField {
+                    objects {
+                        id
+                    }
+                }
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            response = client.query(query).json()
+            query_count = len(connection.queries)
+
+            # Validate response
+            self.assertIsNone(response.get("errors"))
+            self.assertIn("data", response)
+
+            # Expected queries for list:
+            # 1. COUNT for pagination
+            # 2. SELECT ModelC with JOIN ModelD (select_related)
+            # 3. Prefetch ManyToMany
+            # Total: ~3-5 queries
+            self.assertLess(
+                query_count, 10, f"Expected < 10 queries for list, got {query_count}"
+            )
+
+    def test_list_onetoone_no_additional_queries(self):
+        """
+        Test: List OneToOneField does not execute additional queries.
+
+        Verifies that resolve_for_relation_field detects instances
+        already loaded by select_related and returns them directly
+        without executing additional queries.
+        """
+        client = Client()
+        query = """
+        query {
+            listModelCs {
+                id
+                oneToOneField {
+                    id
+                }
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            response = client.query(query).json()
+            queries = connection.queries
+
+            # Validate response
+            self.assertIsNone(response.get("errors"))
+
+            # Look for individual ModelD queries (would indicate N+1)
+            individual_queries = [
+                q for q in queries if 'WHERE "tests_modeld"."id" =' in q["sql"]
+            ]
+
+            self.assertEqual(
+                len(individual_queries),
+                0,
+                f"Found {len(individual_queries)} individual ModelD queries (N+1 problem)",
+            )
+
+    def test_list_no_count_queries(self):
+        """
+        Test: List does not execute COUNT queries.
+
+        Verifies that list operations return all objects without pagination
+        and thus do not execute COUNT queries.
+        """
+        client = Client()
+        query = """
+        query {
+            listModelCs {
+                id
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            client.query(query).json()
+            queries = connection.queries
+
+            # Count COUNT queries
+            count_queries = [q for q in queries if "COUNT(" in q["sql"].upper()]
+
+            # There should be no COUNT queries for list
+            self.assertEqual(
+                len(count_queries),
+                0,
+                f"Expected 0 COUNT queries for list, got {len(count_queries)}",
+            )
+
+    def test_list_deep_relations_optimization(self):
+        """
+        Test: List query with deep relations (3+ levels) optimized.
+
+        Verifies that queries with deep relations do not generate N+1.
+        """
+        client = Client()
+        query = """
+        query {
+            listModelCs {
+                id
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                    }
+                    paginatedForeignKeyERelated {
+                        objects {
+                            id
+                            foreignKeyFieldDeep {
+                                id
+                                foreignKeyField {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            response = client.query(query).json()
+            query_count = len(connection.queries)
+
+            # Validate response
+            self.assertIsNone(response.get("errors"))
+
+            # With optimizations, even deep relation list queries should be < 12 queries
+            self.assertLess(
+                query_count,
+                12,
+                f"Deep relation list query should be < 12 queries, got {query_count}",
+            )
+
+    def test_list_full_optimization(self):
+        """
+        Test: Full list query with all relation types optimized.
+
+        This is the main test that validates the full optimization
+        for list operations works correctly.
+        """
+        client = Client()
+        query = """
+        query {
+            listModelCs {
+                id
+                charField
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                    }
+                    paginatedForeignKeyERelated {
+                        objects {
+                            id
+                            foreignKeyFieldDeep {
+                                id
+                                foreignKeyField {
+                                    id
+                                }
+                            }
+                        }
+                    }
+                }
+                paginatedManyToManyField {
+                    objects {
+                        id
+                        foreignKeyField {
+                            id
+                        }
+                    }
+                }
+                paginatedForeignKeyDRelated {
+                    objects {
+                        id
+                    }
+                }
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            response = client.query(query).json()
+            query_count = len(connection.queries)
+
+            # Debug: print queries if it fails
+            if query_count > 10:
+                print(f"\n=== Expected ≤10 queries, got {query_count} ===")
+                for i, q in enumerate(connection.queries, 1):
+                    print(f"{i}. {q['sql'][:100]}...")
+
+            # Validate response
+            self.assertIsNone(response.get("errors"))
+
+            # Main goal: at most 10 queries (similar to search)
+            self.assertLessEqual(
+                query_count,
+                10,
+                f"Expected at most 10 queries with full optimization, got {query_count}",
+            )
+
+    def test_list_data_integrity_basic_fields(self):
+        """
+        Test: List returns basic fields correctly.
+
+        Validates that the basic fields return the expected values.
+        """
+        client = Client()
+        query = """
+        query {
+            listModelCs {
+                id
+                charField
+                integerField
+                booleanField
+            }
+        }
+        """
+
+        response = client.query(query).json()
+
+        # Validate response
+        self.assertIsNone(response.get("errors"))
+        objects = response["data"]["listModelCs"]
+
+        # Should return multiple objects
+        self.assertGreater(len(objects), 0)
+
+        # Validate that objects have the expected fields
+        for obj in objects:
+            self.assertIn("id", obj)
+            self.assertIn("charField", obj)
+            self.assertIn("integerField", obj)
+            self.assertIn("booleanField", obj)
+
+    def test_list_data_integrity_onetoone_relation(self):
+        """
+        Test: List OneToOne relationship returns the correct data.
+
+        Validates that oneToOneField points to the correct related object.
+        """
+        client = Client()
+        query = """
+        query {
+            listModelCs {
+                id
+                charField
+                oneToOneField {
+                    id
+                    foreignKeyField {
+                        id
+                        charField
+                    }
+                }
+            }
+        }
+        """
+
+        response = client.query(query).json()
+
+        # Validate response
+        self.assertIsNone(response.get("errors"))
+        objects = response["data"]["listModelCs"]
+
+        # Find mc11 which has oneToOneField -> md1 -> mc1
+        mc11_obj = None
+        for obj in objects:
+            if obj["charField"] == "AAA1":
+                mc11_obj = obj
+                break
+
+        self.assertIsNotNone(mc11_obj, "Should find mc11 in results")
+        self.assertIsNotNone(mc11_obj["oneToOneField"])
+        self.assertEqual(
+            mc11_obj["oneToOneField"]["foreignKeyField"]["charField"], "AAA"
+        )

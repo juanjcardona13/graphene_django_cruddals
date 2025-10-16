@@ -129,7 +129,7 @@ def get_cruddals_config_for_model(
             model, field_for_activate_deactivate, root, info, **kwargs
         ),
         list_resolver=lambda root, info, **kwargs: default_list_field_resolver(
-            None, model._default_manager, root, info, **kwargs
+            model, registry, None, model._default_manager, root, info, **kwargs
         ),
         search_resolver=lambda root, info, **kwargs: default_search_field_resolver(
             model,
