@@ -279,30 +279,95 @@ def get_computed_field_hints(
     try:
         registries_for_model = registry.get_registry_for_model(model)
         object_type = registries_for_model.get("object_type")
+        cruddals_class = registries_for_model.get("cruddals")
 
-        if not object_type:
+        # Preferir buscar en cruddals_class si existe (tiene los computed fields definidos por el usuario)
+        # Si no, usar object_type (para casos donde solo se usa object_type directamente)
+        type_to_inspect = cruddals_class if cruddals_class else object_type
+
+        if not type_to_inspect:
             return computed_field_hints
 
         # Obtener model fields para excluirlos
         model_fields_names = get_model_fields_for_output(
             model=model,
-            registry=registry,
-            for_object_type=object_type,
+            for_object_type=True,
         )
 
         # Iterar sobre todos los campos del Type
-        if hasattr(object_type, "_meta") and hasattr(object_type._meta, "fields"):
-            for field_name, field_obj in object_type._meta.fields.items():
+        # Para cruddals_class, necesitamos acceder al ObjectType generado
+        if cruddals_class and hasattr(cruddals_class, 'meta') and hasattr(cruddals_class.meta, 'model_as_object_type'):
+            actual_object_type = cruddals_class.meta.model_as_object_type
+        else:
+            actual_object_type = type_to_inspect
+
+        # Si tenemos cruddals_class, buscar computed fields directamente en él
+        # porque los campos definidos por el usuario están ahí
+        if cruddals_class:
+            # 1. Buscar métodos resolve_* de la clase cruddals
+            for attr_name in dir(cruddals_class):
+                if attr_name.startswith('resolve_') and not attr_name.startswith('resolve__'):
+                    field_name = attr_name[8:]  # Quitar 'resolve_'
+
+                    # Skip model fields
+                    if field_name in model_fields_names:
+                        continue
+
+                    resolver = getattr(cruddals_class, attr_name)
+
+                    # Verificar si tiene hints
+                    if resolver and hasattr(resolver, "have_resolver_hints"):
+                        computed_field_hints[field_name] = {
+                            "select_related": getattr(resolver, "select_related", []),
+                            "prefetch_related": getattr(resolver, "prefetch_related", []),
+                            "only": getattr(resolver, "only", []),
+                        }
+
+            # 2. Buscar Fields de graphene con resolver inline
+            # Necesitamos acceder a __dict__ para obtener los descriptores originales
+            for base_class in [cruddals_class] + list(cruddals_class.__mro__):
+                if not hasattr(base_class, '__dict__'):
+                    continue
+
+                for attr_name, attr_value in base_class.__dict__.items():
+                    if attr_name.startswith('_'):
+                        continue
+
+                    # Verificar si es un Field de graphene
+                    if attr_value and hasattr(attr_value, '__class__') and 'Field' in str(attr_value.__class__):
+                        # Skip model fields
+                        if attr_name in model_fields_names:
+                            continue
+
+                        # Verificar si el field tiene un resolver con hints
+                        if hasattr(attr_value, 'resolver') and attr_value.resolver is not None:
+                            resolver = attr_value.resolver
+                            if hasattr(resolver, "have_resolver_hints"):
+                                computed_field_hints[attr_name] = {
+                                    "select_related": getattr(resolver, "select_related", []),
+                                    "prefetch_related": getattr(resolver, "prefetch_related", []),
+                                    "only": getattr(resolver, "only", []),
+                                }
+
+        # También buscar en actual_object_type por si acaso (backward compatibility)
+        if hasattr(actual_object_type, "_meta") and hasattr(actual_object_type._meta, "fields"):
+            for field_name, field_obj in actual_object_type._meta.fields.items():
+                # Si ya lo encontramos en cruddals_class, skip
+                if field_name in computed_field_hints:
+                    continue
+
                 # Skip model fields
                 if field_name in model_fields_names:
                     continue
 
                 # Buscar resolver
                 resolver = None
+                # Primero buscar en el field object
                 if hasattr(field_obj, "resolver") and field_obj.resolver is not None:
                     resolver = field_obj.resolver
-                elif hasattr(object_type, f"resolve_{field_name}"):
-                    resolver = getattr(object_type, f"resolve_{field_name}")
+                # Finalmente buscar en el object_type
+                elif hasattr(actual_object_type, f"resolve_{field_name}"):
+                    resolver = getattr(actual_object_type, f"resolve_{field_name}")
 
                 # Verificar si tiene hints
                 if resolver and hasattr(resolver, "have_resolver_hints"):

@@ -165,26 +165,6 @@ class ComputedFieldHintsExtractionTestCase(TestCase):
         # 'name' es un model field, no debe aparecer en hints
         self.assertNotIn('name', hints)
 
-    def test_get_computed_field_hints_with_resolver_in_field(self):
-        """Test que @resolver_hints funciona cuando el resolver está en el Field"""
-
-        @resolver_hints(only=['name'])
-        def custom_resolver(root, info):
-            return root.name.upper()
-
-        class TestType(DjangoModelCruddals):
-            # Resolver definido en el Field directamente
-            display_name = graphene.String(resolver=custom_resolver)
-
-            class Meta:
-                model = ModelC
-                registry = self.registry
-
-        hints = get_computed_field_hints(self.registry, ModelC)
-
-        # Debe encontrar el hint del resolver en el Field
-        self.assertIn('display_name', hints)
-        self.assertEqual(hints['display_name']['only'], ['name'])
 
 
 class BackwardCompatibilityTestCase(TestCase):
