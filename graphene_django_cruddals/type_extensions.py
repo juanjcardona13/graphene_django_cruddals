@@ -56,8 +56,8 @@ def _queryset_factory(cls, info, field_ast: Optional[FieldNode] = None, is_conne
     # Get dependencies
     deps = get_dependencies()
 
-    # Paso 1: Obtener queryset base
-    queryset = cls.get_objects_queryset(info)
+    # Paso 1: Obtener queryset base (SIN get_objects todavía)
+    queryset = cls._meta.model.objects.all()
 
     # Paso 2: Analizar AST y obtener optimizaciones necesarias
     selection_set = field_ast.selection_set if field_ast else info.field_nodes[0].selection_set
@@ -87,10 +87,11 @@ def _queryset_factory(cls, info, field_ast: Optional[FieldNode] = None, is_conne
             variable_values=info.variable_values if hasattr(info, 'variable_values') else {}
         )
 
+        # Obtener registries una sola vez para WHERE y ORDER BY
+        registries_for_model = cls._meta.registry.get_registry_for_model(cls._meta.model)
+
         # Aplicar WHERE
         if "where" in arguments:
-            # Obtener WhereInputType desde el registro
-            registries_for_model = cls._meta.registry.get_registry_for_model(cls._meta.model)
             where_input_type = registries_for_model.get("input_object_type_for_search")
 
             if where_input_type:
@@ -99,12 +100,26 @@ def _queryset_factory(cls, info, field_ast: Optional[FieldNode] = None, is_conne
 
         # Aplicar ORDER BY
         if "order_by" in arguments or "orderBy" in arguments:
-            order_by_list = deps['get_order_by_list_from_arguments'](arguments)
+            # Obtener order_by_input_type para la conversión correcta
+            order_by_input_type = registries_for_model.get("input_object_type_for_order_by")
+            order_by_list = deps['get_order_by_list_from_arguments'](arguments, order_by_input_type)
             if order_by_list:
                 queryset = queryset.order_by(*order_by_list)
 
     # Paso 5: Aplicar DISTINCT
     queryset = queryset.distinct()
+
+    # Paso 6: Aplicar get_objects DESPUÉS de WHERE (como en el código original)
+    # Esto permite que get_objects reciba un queryset ya filtrado
+    if hasattr(cls, 'get_objects'):
+        get_objects = cls.get_objects
+
+        if isinstance(get_objects, list):
+            for func in get_objects:
+                if callable(func):
+                    queryset = func(queryset, info)
+        elif callable(get_objects):
+            queryset = get_objects(queryset, info)
 
     return queryset
 
@@ -127,6 +142,8 @@ def get_objects_queryset(cls, info) -> QuerySet:
     queryset = cls._meta.model.objects.all()
 
     # Aplicar hook get_objects si existe
+    # IMPORTANTE: get_objects en cruddals tiene firma (cls, objects, info, **kwargs)
+    # Como es un @classmethod, cuando lo obtenemos ya está bound, así que pasamos (objects, info)
     if hasattr(cls, 'get_objects'):
         get_objects = cls.get_objects
 
@@ -134,9 +151,11 @@ def get_objects_queryset(cls, info) -> QuerySet:
             # Lista de funciones
             for func in get_objects:
                 if callable(func):
+                    # Cada función debería ser un bound classmethod
                     queryset = func(queryset, info)
         elif callable(get_objects):
-            # Función única
+            # Función única - ya es un bound classmethod, así que solo pasamos (objects, info)
+            # El primer parámetro 'cls' ya está incluido en el bound method
             queryset = get_objects(queryset, info)
 
     return queryset

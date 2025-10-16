@@ -568,50 +568,53 @@ def default_read_field_resolver(
     """
     Resolver para operaciones de lectura de un objeto individual (read).
 
-    Aplica:
-    1. Filtros WHERE
-    2. Optimizaciones de N+1 queries
-    3. Hook get_objects personalizado
+    NUEVA ARQUITECTURA: Usa Type._queryset_factory para centralizar toda la lógica.
     """
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
 
-    # Obtener queryset base
-    queryset = maybe_queryset(default_manager)
+    # NUEVO: Usar _queryset_factory del Type si está disponible
+    if hasattr(django_object_type, '_queryset_factory'):
+        # El Type maneja TODO: optimizaciones, WHERE, get_objects
+        queryset = django_object_type._queryset_factory(
+            info=info,
+            field_ast=info.field_nodes[0],  # AST incluye los arguments
+            is_connection=False,
+        )
+    else:
+        # Fallback al comportamiento anterior
+        queryset = maybe_queryset(default_manager)
 
-    # Aplicar argumentos WHERE
-    queryset = apply_query_arguments(
-        queryset=queryset,
-        args=args,
-        model=model,
-        registry=registry,
-        apply_where=True,
-        apply_order_by=False,  # No necesario para read individual
-        apply_distinct=True,
-    )
+        queryset = apply_query_arguments(
+            queryset=queryset,
+            args=args,
+            model=model,
+            registry=registry,
+            apply_where=True,
+            apply_order_by=False,
+            apply_distinct=True,
+        )
 
-    # Aplicar optimizaciones de N+1 queries
-    queryset = apply_queryset_optimizations(
-        queryset=queryset,
-        info=info,
-        model=model,
-        registry=registry,
-        is_connection=False,
-    )
+        queryset = apply_queryset_optimizations(
+            queryset=queryset,
+            info=info,
+            model=model,
+            registry=registry,
+            is_connection=False,
+        )
 
-    # Aplicar hook get_objects personalizado
-    queryset = apply_get_objects_hook(
-        queryset=queryset,
-        django_object_type=django_object_type,
-        info=info,
-    )
+        queryset = apply_get_objects_hook(
+            queryset=queryset,
+            django_object_type=django_object_type,
+            info=info,
+        )
 
     if queryset is None:
         raise ValueError(
             "The queryset is None. Ensure that the 'where' clause is correct and the default manager returns a valid queryset."
         )
 
-    return queryset.distinct().get()
+    return queryset.get()
 
 
 def default_update_resolver(model, model_form_class, registry, root, info, **args):
@@ -627,6 +630,12 @@ def default_update_resolver(model, model_form_class, registry, root, info, **arg
 
 
 def default_delete_field_resolver(model: DjangoModel, root, info, **args):
+    """
+    Resolver para operación de eliminación (delete).
+
+    NOTA: Las mutations no necesitan optimizaciones de prefetch porque
+    no retornan objetos anidados, solo éxito/fallo.
+    """
     if "where" in args.keys():
         where = args["where"]
         for value in where.values():
@@ -641,14 +650,20 @@ def default_delete_field_resolver(model: DjangoModel, root, info, **args):
 def default_deactivate_field_resolver(
     model, field_for_activate_deactivate, root, info, **args
 ):
+    """
+    Resolver para operación de desactivación (deactivate).
+
+    NOTA: Las mutations retornan objetos pero no reciben registry,
+    así que no podemos aplicar optimizaciones automáticas aquí.
+    Las optimizaciones deberían aplicarse en el field resolver del tipo de retorno.
+    """
     if "where" in args.keys():
         where = args["where"]
         for value in where.values():
             if not value:
                 return {"objects": []}
         obj_q = where_input_to_Q(where)
-        queryset = model.objects.filter(obj_q)
-        queryset = queryset.distinct()
+        queryset = model.objects.filter(obj_q).distinct()
         queryset = toggle_active_status(
             "DEACTIVATE", queryset, field_for_activate_deactivate
         )
@@ -658,14 +673,20 @@ def default_deactivate_field_resolver(
 def default_activate_field_resolver(
     model, field_for_activate_deactivate, root, info, **args
 ):
+    """
+    Resolver para operación de activación (activate).
+
+    NOTA: Las mutations retornan objetos pero no reciben registry,
+    así que no podemos aplicar optimizaciones automáticas aquí.
+    Las optimizaciones deberían aplicarse en el field resolver del tipo de retorno.
+    """
     if "where" in args.keys():
         where = args["where"]
         for value in where.values():
             if not value:
                 return {"objects": []}
         obj_q = where_input_to_Q(where)
-        queryset = model.objects.filter(obj_q)
-        queryset = queryset.distinct()
+        queryset = model.objects.filter(obj_q).distinct()
         queryset = toggle_active_status(
             "ACTIVATE", queryset, field_for_activate_deactivate
         )
@@ -681,22 +702,37 @@ def default_list_field_resolver(
     info,
     **args
 ):
-    queryset = None
-    if resolver is not None and hasattr(resolver, "args"):
-        queryset = maybe_queryset(
-            resolver(root, info, **args)
-        )  # Por lo general este resolver es el resolver por defecto, en este caso es el dict_or_attr_resolver, y va usar el atr_resolver, y va a traer el attr 'objects' del obj, y este 'objects' es un queryset
-    if queryset is None:
-        queryset = maybe_queryset(default_manager)
+    """
+    Resolver para operaciones de listado (list).
 
-    # Aplicar optimizaciones de queryset usando la función centralizada
-    queryset = apply_queryset_optimizations(
-        queryset=queryset,
-        info=info,
-        model=model,
-        registry=registry,
-        is_connection=False,
-    )
+    NUEVA ARQUITECTURA: Usa Type._queryset_factory para centralizar toda la lógica.
+    """
+    registries_for_model = registry.get_registry_for_model(model)
+    django_object_type: ModelObjectType = registries_for_model["object_type"]
+
+    # NUEVO: Usar _queryset_factory del Type si está disponible
+    if hasattr(django_object_type, '_queryset_factory'):
+        # El Type maneja TODO: optimizaciones, WHERE, ORDER BY, get_objects
+        queryset = django_object_type._queryset_factory(
+            info=info,
+            field_ast=info.field_nodes[0],
+            is_connection=False,
+        )
+    else:
+        # Fallback al comportamiento anterior
+        queryset = None
+        if resolver is not None and hasattr(resolver, "args"):
+            queryset = maybe_queryset(resolver(root, info, **args))
+        if queryset is None:
+            queryset = maybe_queryset(default_manager)
+
+        queryset = apply_queryset_optimizations(
+            queryset=queryset,
+            info=info,
+            model=model,
+            registry=registry,
+            is_connection=False,
+        )
 
     return queryset
 
@@ -713,14 +749,8 @@ def default_search_field_resolver(
     """
     Resolver para operaciones de búsqueda y paginación (search).
 
-    Aplica:
-    1. Resolución de queryset (normal o nested paginated field)
-    2. Optimizaciones de N+1 queries
-    3. Filtros WHERE
-    4. Ordenamiento ORDER BY
-    5. DISTINCT
-    6. Hook get_objects personalizado
-    7. Paginación
+    NUEVA ARQUITECTURA: Usa Type._queryset_factory cuando es posible,
+    pero mantiene lógica especial para nested paginated fields.
     """
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
@@ -728,7 +758,7 @@ def default_search_field_resolver(
         "paginated_object_type"
     ]
 
-    # Paso 1: Obtener el queryset base (resolver nested paginated fields si aplica)
+    # Paso 1: Detectar si es un nested paginated field
     queryset = None
     is_nested_paginated_field = False
 
@@ -758,44 +788,52 @@ def default_search_field_resolver(
                     )
                 queryset = maybe_queryset(maybe_manager)
 
-    if queryset is None:
-        queryset = maybe_queryset(default_manager)
-
-    if queryset is None:
-        raise ValueError(
-            "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
-        )
-
-    # Paso 2: Aplicar optimizaciones de N+1 queries
-    # (Solo si no es un nested paginated field ya optimizado)
-    if not is_nested_paginated_field:
-        queryset = apply_queryset_optimizations(
-            queryset=queryset,
+    # Paso 2: Si NO es nested paginated field, usar _queryset_factory
+    if not is_nested_paginated_field and hasattr(django_object_type, '_queryset_factory'):
+        # NUEVO: El Type maneja TODO automáticamente
+        queryset = django_object_type._queryset_factory(
             info=info,
-            model=model,
-            registry=registry,
+            field_ast=info.field_nodes[0],
             is_connection=True,
         )
+    elif queryset is None:
+        # Fallback: obtener queryset base y aplicar optimizaciones manualmente
+        queryset = maybe_queryset(default_manager)
 
-    # Paso 3: Aplicar argumentos de query (where, order_by, distinct)
-    queryset = apply_query_arguments(
-        queryset=queryset,
-        args=args,
-        model=model,
-        registry=registry,
-        apply_where=True,
-        apply_order_by=True,
-        apply_distinct=True,
-    )
+        if queryset is None:
+            raise ValueError(
+                "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
+            )
 
-    # Paso 4: Aplicar hook get_objects personalizado
-    queryset = apply_get_objects_hook(
-        queryset=queryset,
-        django_object_type=django_object_type,
-        info=info,
-    )
+        # Aplicar optimizaciones solo si no es nested paginated field
+        if not is_nested_paginated_field:
+            queryset = apply_queryset_optimizations(
+                queryset=queryset,
+                info=info,
+                model=model,
+                registry=registry,
+                is_connection=True,
+            )
 
-    # Paso 5: Aplicar paginación
+        # Aplicar argumentos de query
+        queryset = apply_query_arguments(
+            queryset=queryset,
+            args=args,
+            model=model,
+            registry=registry,
+            apply_where=True,
+            apply_order_by=True,
+            apply_distinct=True,
+        )
+
+        # Aplicar hook get_objects
+        queryset = apply_get_objects_hook(
+            queryset=queryset,
+            django_object_type=django_object_type,
+            info=info,
+        )
+
+    # Paso 3: Aplicar paginación
     pagination_config = args.get("pagination_config", {}) or args.get(
         "paginationConfig", {}
     )
