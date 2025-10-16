@@ -11,7 +11,6 @@ from graphene_cruddals.types.main import ModelObjectType
 from graphene_cruddals import RegistryGlobal
 from graphql.language.ast import FieldNode
 
-# Use late imports to avoid circular dependencies
 def get_dependencies():
     """Lazy import of dependencies to avoid circular imports."""
     from graphene_django_cruddals.resolvers.main import (
@@ -53,13 +52,10 @@ def _queryset_factory(cls, info, field_ast: Optional[FieldNode] = None, is_conne
     Returns:
         QuerySet optimizado y filtrado
     """
-    # Get dependencies
     deps = get_dependencies()
 
-    # Paso 1: Obtener queryset base (SIN get_objects todavía)
     queryset = cls._meta.model.objects.all()
 
-    # Paso 2: Analizar AST y obtener optimizaciones necesarias
     selection_set = field_ast.selection_set if field_ast else info.field_nodes[0].selection_set
 
     queryset_factory = deps['_queryset_factory_analyze'](
@@ -69,10 +65,9 @@ def _queryset_factory(cls, info, field_ast: Optional[FieldNode] = None, is_conne
         model=cls._meta.model,
         registry=cls._meta.registry,
         suffix="",
-        computed_field_hints=None,  # Se carga automáticamente dentro de la función
+        computed_field_hints=None,
     )
 
-    # Paso 3: Aplicar optimizaciones
     if queryset_factory["select_related"]:
         queryset = queryset.select_related(*queryset_factory["select_related"])
     if queryset_factory["only"]:
@@ -80,17 +75,14 @@ def _queryset_factory(cls, info, field_ast: Optional[FieldNode] = None, is_conne
     if queryset_factory["prefetch_related"]:
         queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
-    # Paso 4: Procesar argumentos WHERE y ORDER BY si field_ast está disponible
     if field_ast and hasattr(field_ast, 'arguments'):
         arguments = deps['parse_arguments_ast'](
             field_ast.arguments,
             variable_values=info.variable_values if hasattr(info, 'variable_values') else {}
         )
 
-        # Obtener registries una sola vez para WHERE y ORDER BY
         registries_for_model = cls._meta.registry.get_registry_for_model(cls._meta.model)
 
-        # Aplicar WHERE
         if "where" in arguments:
             where_input_type = registries_for_model.get("input_object_type_for_search")
 
@@ -98,19 +90,15 @@ def _queryset_factory(cls, info, field_ast: Optional[FieldNode] = None, is_conne
                 where = deps['resolve_argument'](where_input_type, arguments["where"])
                 queryset = queryset.filter(deps['where_input_to_Q'](where))
 
-        # Aplicar ORDER BY
         if "order_by" in arguments or "orderBy" in arguments:
-            # Obtener order_by_input_type para la conversión correcta
             order_by_input_type = registries_for_model.get("input_object_type_for_order_by")
             order_by_list = deps['get_order_by_list_from_arguments'](arguments, order_by_input_type)
             if order_by_list:
                 queryset = queryset.order_by(*order_by_list)
 
-    # Paso 5: Aplicar DISTINCT
     queryset = queryset.distinct()
 
-    # Paso 6: Aplicar get_objects DESPUÉS de WHERE (como en el código original)
-    # Esto permite que get_objects reciba un queryset ya filtrado
+    # Aplicar get_objects después de WHERE para que reciba un queryset filtrado
     if hasattr(cls, 'get_objects'):
         get_objects = cls.get_objects
 

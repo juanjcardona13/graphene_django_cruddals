@@ -281,41 +281,34 @@ def get_computed_field_hints(
         object_type = registries_for_model.get("object_type")
         cruddals_class = registries_for_model.get("cruddals")
 
-        # Preferir buscar en cruddals_class si existe (tiene los computed fields definidos por el usuario)
-        # Si no, usar object_type (para casos donde solo se usa object_type directamente)
+        # Preferir cruddals_class porque contiene los campos definidos por el usuario
         type_to_inspect = cruddals_class if cruddals_class else object_type
 
         if not type_to_inspect:
             return computed_field_hints
 
-        # Obtener model fields para excluirlos
         model_fields_names = get_model_fields_for_output(
             model=model,
             for_object_type=True,
         )
 
-        # Iterar sobre todos los campos del Type
-        # Para cruddals_class, necesitamos acceder al ObjectType generado
+        # Obtener el ObjectType real para verificar campos
         if cruddals_class and hasattr(cruddals_class, 'meta') and hasattr(cruddals_class.meta, 'model_as_object_type'):
             actual_object_type = cruddals_class.meta.model_as_object_type
         else:
             actual_object_type = type_to_inspect
 
-        # Si tenemos cruddals_class, buscar computed fields directamente en él
-        # porque los campos definidos por el usuario están ahí
+        # 1. Buscar métodos resolve_* en cruddals_class
         if cruddals_class:
-            # 1. Buscar métodos resolve_* de la clase cruddals
             for attr_name in dir(cruddals_class):
                 if attr_name.startswith('resolve_') and not attr_name.startswith('resolve__'):
-                    field_name = attr_name[8:]  # Quitar 'resolve_'
+                    field_name = attr_name[8:]
 
-                    # Skip model fields
                     if field_name in model_fields_names:
                         continue
 
                     resolver = getattr(cruddals_class, attr_name)
 
-                    # Verificar si tiene hints
                     if resolver and hasattr(resolver, "have_resolver_hints"):
                         computed_field_hints[field_name] = {
                             "select_related": getattr(resolver, "select_related", []),
@@ -323,8 +316,8 @@ def get_computed_field_hints(
                             "only": getattr(resolver, "only", []),
                         }
 
-            # 2. Buscar Fields de graphene con resolver inline
-            # Necesitamos acceder a __dict__ para obtener los descriptores originales
+            # 2. Buscar Fields de Graphene con resolver inline
+            # Accedemos a __dict__ para obtener los descriptores originales
             for base_class in [cruddals_class] + list(cruddals_class.__mro__):
                 if not hasattr(base_class, '__dict__'):
                     continue
@@ -333,13 +326,10 @@ def get_computed_field_hints(
                     if attr_name.startswith('_'):
                         continue
 
-                    # Verificar si es un Field de graphene
                     if attr_value and hasattr(attr_value, '__class__') and 'Field' in str(attr_value.__class__):
-                        # Skip model fields
                         if attr_name in model_fields_names:
                             continue
 
-                        # Verificar si el field tiene un resolver con hints
                         if hasattr(attr_value, 'resolver') and attr_value.resolver is not None:
                             resolver = attr_value.resolver
                             if hasattr(resolver, "have_resolver_hints"):
@@ -349,27 +339,18 @@ def get_computed_field_hints(
                                     "only": getattr(resolver, "only", []),
                                 }
 
-        # También buscar en actual_object_type por si acaso (backward compatibility)
+        # 3. Buscar en actual_object_type (retrocompatibilidad)
         if hasattr(actual_object_type, "_meta") and hasattr(actual_object_type._meta, "fields"):
             for field_name, field_obj in actual_object_type._meta.fields.items():
-                # Si ya lo encontramos en cruddals_class, skip
-                if field_name in computed_field_hints:
+                if field_name in computed_field_hints or field_name in model_fields_names:
                     continue
 
-                # Skip model fields
-                if field_name in model_fields_names:
-                    continue
-
-                # Buscar resolver
                 resolver = None
-                # Primero buscar en el field object
                 if hasattr(field_obj, "resolver") and field_obj.resolver is not None:
                     resolver = field_obj.resolver
-                # Finalmente buscar en el object_type
                 elif hasattr(actual_object_type, f"resolve_{field_name}"):
                     resolver = getattr(actual_object_type, f"resolve_{field_name}")
 
-                # Verificar si tiene hints
                 if resolver and hasattr(resolver, "have_resolver_hints"):
                     computed_field_hints[field_name] = {
                         "select_related": getattr(resolver, "select_related", []),
@@ -378,8 +359,7 @@ def get_computed_field_hints(
                     }
 
     except Exception:
-        # Si hay algún error, retornar diccionario vacío
-        # (mejor fallar silenciosamente que romper queries)
+        # Fallar silenciosamente para no romper queries
         pass
 
     return computed_field_hints
@@ -418,14 +398,11 @@ def apply_queryset_optimizations(
         and queryset._result_cache is not None
     )
 
-    # Solo aplicar optimizaciones si el queryset no ha sido ejecutado
     if not is_prefetched and isinstance(queryset, QuerySet):
-        # Determinar el selection_set a usar
         if selection_set is None and hasattr(info, "field_nodes") and info.field_nodes:
             selection_set = info.field_nodes[0].selection_set
 
         if selection_set:
-            # Analizar el AST de GraphQL para determinar las optimizaciones necesarias
             queryset_factory = _queryset_factory_analyze(
                 info,
                 selection_set=selection_set,
@@ -434,15 +411,12 @@ def apply_queryset_optimizations(
                 registry=registry,
             )
 
-            # Aplicar select_related para relaciones OneToOne y ForeignKey
             if queryset_factory["select_related"]:
                 queryset = queryset.select_related(*queryset_factory["select_related"])
 
-            # Aplicar only para cargar solo los campos necesarios
             if queryset_factory["only"]:
                 queryset = queryset.only(*queryset_factory["only"])
 
-            # Aplicar prefetch_related para relaciones ManyToMany y reverse ForeignKey
             if queryset_factory["prefetch_related"]:
                 queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
@@ -633,21 +607,18 @@ def default_read_field_resolver(
     """
     Resolver para operaciones de lectura de un objeto individual (read).
 
-    NUEVA ARQUITECTURA: Usa Type._queryset_factory para centralizar toda la lógica.
+    Aplica optimizaciones transversales para evitar problemas N+1.
     """
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
 
-    # NUEVO: Usar _queryset_factory del Type si está disponible
     if hasattr(django_object_type, '_queryset_factory'):
-        # El Type maneja TODO: optimizaciones, WHERE, get_objects
         queryset = django_object_type._queryset_factory(
             info=info,
-            field_ast=info.field_nodes[0],  # AST incluye los arguments
+            field_ast=info.field_nodes[0],
             is_connection=False,
         )
     else:
-        # Fallback al comportamiento anterior
         queryset = maybe_queryset(default_manager)
 
         queryset = apply_query_arguments(
@@ -770,21 +741,18 @@ def default_list_field_resolver(
     """
     Resolver para operaciones de listado (list).
 
-    NUEVA ARQUITECTURA: Usa Type._queryset_factory para centralizar toda la lógica.
+    Aplica optimizaciones transversales para evitar problemas N+1.
     """
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
 
-    # NUEVO: Usar _queryset_factory del Type si está disponible
     if hasattr(django_object_type, '_queryset_factory'):
-        # El Type maneja TODO: optimizaciones, WHERE, ORDER BY, get_objects
         queryset = django_object_type._queryset_factory(
             info=info,
             field_ast=info.field_nodes[0],
             is_connection=False,
         )
     else:
-        # Fallback al comportamiento anterior
         queryset = None
         if resolver is not None and hasattr(resolver, "args"):
             queryset = maybe_queryset(resolver(root, info, **args))
@@ -814,8 +782,8 @@ def default_search_field_resolver(
     """
     Resolver para operaciones de búsqueda y paginación (search).
 
-    NUEVA ARQUITECTURA: Usa Type._queryset_factory cuando es posible,
-    pero mantiene lógica especial para nested paginated fields.
+    Aplica optimizaciones transversales para evitar problemas N+1.
+    Maneja lógica especial para campos paginados anidados.
     """
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
@@ -823,7 +791,6 @@ def default_search_field_resolver(
         "paginated_object_type"
     ]
 
-    # Paso 1: Detectar si es un nested paginated field
     queryset = None
     is_nested_paginated_field = False
 
@@ -839,7 +806,6 @@ def default_search_field_resolver(
                 else posible_field_with_default_set
             )
 
-            # Intentar obtener del prefetch cache primero
             if (
                 hasattr(root, "_prefetched_objects_cache")
                 and field_name_for_prefetch in root._prefetched_objects_cache
@@ -853,16 +819,13 @@ def default_search_field_resolver(
                     )
                 queryset = maybe_queryset(maybe_manager)
 
-    # Paso 2: Si NO es nested paginated field, usar _queryset_factory
     if not is_nested_paginated_field and hasattr(django_object_type, '_queryset_factory'):
-        # NUEVO: El Type maneja TODO automáticamente
         queryset = django_object_type._queryset_factory(
             info=info,
             field_ast=info.field_nodes[0],
             is_connection=True,
         )
     elif queryset is None:
-        # Fallback: obtener queryset base y aplicar optimizaciones manualmente
         queryset = maybe_queryset(default_manager)
 
         if queryset is None:
@@ -870,7 +833,6 @@ def default_search_field_resolver(
                 "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
             )
 
-        # Aplicar optimizaciones solo si no es nested paginated field
         if not is_nested_paginated_field:
             queryset = apply_queryset_optimizations(
                 queryset=queryset,
@@ -880,7 +842,6 @@ def default_search_field_resolver(
                 is_connection=True,
             )
 
-        # Aplicar argumentos de query
         queryset = apply_query_arguments(
             queryset=queryset,
             args=args,
