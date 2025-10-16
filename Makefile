@@ -10,7 +10,7 @@ dev-setup:
 
 .PHONY: tests ## Run unit tests
 tests:
-	PYTHONPATH=. pytest tests --cov=graphene_django_cruddals -vv
+	PYTHONPATH=. pytest tests --cov=graphene_django_cruddals -vv --cov-report=term-missing
 
 .PHONY: format ## Format code
 format:

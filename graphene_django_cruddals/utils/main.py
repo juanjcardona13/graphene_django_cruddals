@@ -1,4 +1,3 @@
-import math
 from itertools import chain
 from typing import Any, List, Literal, Sequence, Type, Union
 
@@ -452,101 +451,47 @@ def paginate_queryset(
         Type: An instance of paginated_type with pagination information and objects.
     """
 
-    # old = False
-    old = True
+    try:
+        page = int(page)
+    except (TypeError, ValueError):
+        page = 1
 
-    if old:
-        try:
-            page = int(page)
-        except (TypeError, ValueError):
-            page = 1
+    if page < 1:
+        page = 1
 
-        if page < 1:
-            page = 1
-
-        if isinstance(qs, DjangoQuerySet):
-            total_count = qs.count()
-        else:
-            total_count = len(qs)  # type: ignore[arg-type]
-
-        if items_per_page == "All" and total_count > 0:
-            per_page = total_count
-        else:
-            try:
-                per_page = int(items_per_page)  # type: ignore[arg-type]
-            except (TypeError, ValueError):
-                per_page = min_per_page
-
-        p = PaginatorWithCount(qs, per_page, count=total_count)
-
-        try:
-            page_obj = p.page(page)
-        except PageNotAnInteger:
-            page_obj = p.page(1)
-        except EmptyPage:
-            page_obj = p.page(p.num_pages)
-
-        return paginated_type(
-            total=total_count,
-            page=page_obj.number,
-            pages=p.num_pages,
-            has_next=page_obj.has_next(),
-            has_prev=page_obj.has_previous(),
-            index_start=page_obj.start_index(),
-            index_end=page_obj.end_index(),
-            objects=page_obj.object_list,
-            **kwargs,
-        )
+    if isinstance(qs, DjangoQuerySet):
+        total_count = qs.count()
     else:
-        if isinstance(qs, list):
-            total_count = len(qs)
-        else:
-            total_count = qs.count()
+        total_count = len(qs)  # type: ignore[arg-type]
 
-        if items_per_page == "All":
-            items_per_page = total_count
-
+    if items_per_page == "All" and total_count > 0:
+        per_page = total_count
+    else:
         try:
-            page = int(page)
-            items_per_page = int(items_per_page)
-        except Exception:
-            page = 1
-            items_per_page = 1
+            per_page = int(items_per_page)  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            per_page = min_per_page
 
-        if page == 0:
-            page = 1
+    p = PaginatorWithCount(qs, per_page, count=total_count)
 
-        items_per_page = max(1, items_per_page)
+    try:
+        page_obj = p.page(page)
+    except PageNotAnInteger:
+        page_obj = p.page(1)
+    except EmptyPage:
+        page_obj = p.page(p.num_pages)
 
-        num_pages = max(math.ceil(total_count / items_per_page), 1)
-
-        if page < 1:
-            page = 1
-        elif page > num_pages and num_pages > 0:
-            page = num_pages
-
-        start_index = (page - 1) * items_per_page
-        end_index = start_index + items_per_page
-
-        if isinstance(qs, list):
-            page_objects = qs[start_index:end_index]
-        else:
-            page_objects = list(qs[start_index:end_index])
-
-        index_start = start_index + 1 if total_count > 0 else 0
-        index_end = min(end_index, total_count)
-
-        return paginated_type(
-            total=total_count,
-            page=page,
-            pages=num_pages,
-            has_next=page < num_pages,
-            has_prev=page > 1,
-            index_start=index_start,
-            index_end=index_end,
-            objects=page_objects,
-            **kwargs,
-        )
+    return paginated_type(
+        total=total_count,
+        page=page_obj.number,
+        pages=p.num_pages,
+        has_next=page_obj.has_next(),
+        has_prev=page_obj.has_previous(),
+        index_start=page_obj.start_index(),
+        index_end=page_obj.end_index(),
+        objects=page_obj.object_list,
+        **kwargs,
+    )
 
 
 def add_mutate_errors(responses, object_counter, internal_arr_errors, transaction=None):
@@ -1108,8 +1053,10 @@ def get_type_field(gql_type, gql_name):
                 field = field
             if isinstance(field, GrapheneList):
                 field_type = field.of_type
-            else:
+            elif hasattr(field, "type"):
                 field_type = field.type
+            else:
+                field_type = field
             if isinstance(field_type, GrapheneList):
                 field_type = field_type.of_type
             return name, field_type
