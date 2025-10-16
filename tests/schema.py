@@ -201,8 +201,3 @@ project_schema = graphene.Schema(
         .meta.model_as_input_object_type,
     ],
 )
-
-# Export ObjectTypes for testing
-ModelCType = CruddalsModelC.meta.model_as_object_type
-ModelDType = CruddalsModelD.meta.model_as_object_type
-ModelEType = CruddalsModelE.meta.model_as_object_type

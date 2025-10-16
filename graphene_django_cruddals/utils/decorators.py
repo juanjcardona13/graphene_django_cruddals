@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Decoradores para optimización de resolvers y computed fields.
-"""
-
 from typing import List, Optional
 
 
@@ -12,17 +7,17 @@ def resolver_hints(
     only: Optional[List[str]] = None,
 ):
     """
-    Decorador para declarar hints de optimización en computed fields.
+    Decorator to declare optimization hints in computed fields.
 
-    Este decorador permite que los computed fields (campos calculados/virtuales)
-    declaren qué campos del modelo necesitan para funcionar. El sistema de
-    optimizaciones usará estos hints para aplicar select_related, prefetch_related
-    y only automáticamente cuando el campo sea solicitado.
+    This decorator allows computed fields (calculated/virtual fields)
+    to declare which model fields they need to function. The optimization
+    system will use these hints to apply select_related, prefetch_related
+    and only automatically when the field is requested.
 
     Args:
-        select_related: Lista de relaciones OneToOne/ForeignKey a optimizar con JOIN
-        prefetch_related: Lista de relaciones ManyToMany/reverse FK a prefetch
-        only: Lista de campos específicos del modelo a cargar
+        select_related: List of OneToOne/ForeignKey relationships to optimize with JOIN
+        prefetch_related: List of ManyToMany/reverse FK relationships to prefetch
+        only: List of specific model fields to load
 
     Example:
         ```python
@@ -37,7 +32,7 @@ def resolver_hints(
                 return f"{self.first_name} {self.last_name}"
         ```
 
-    Example con prefetch_related:
+    Example with prefetch_related:
         ```python
         class PostType(ModelObjectType):
             comment_count = graphene.Int()
@@ -50,8 +45,9 @@ def resolver_hints(
         ```
 
     Returns:
-        Función decorada con atributos de hints para el sistema de optimizaciones
+        Decorated function with hint attributes for the optimization system
     """
+
     def wrapper(f):
         f.select_related = select_related or []
         f.prefetch_related = prefetch_related or []

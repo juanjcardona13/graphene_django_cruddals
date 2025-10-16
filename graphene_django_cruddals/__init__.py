@@ -1,9 +1,5 @@
 from graphene_cruddals.operation_fields.main import CruddalsRelationField
 
-# Apply type extensions (monkey-patch ModelObjectType with _queryset_factory)
-from . import type_extensions  # noqa: F401
-
-from .decorators import resolver_hints
 from .client.build_functions import (
     build_activate,
     build_create,
@@ -66,7 +62,6 @@ from .main import (
 from .resolvers.main import (
     apply_get_objects_hook,
     apply_query_arguments,
-    apply_queryset_optimizations,
     default_activate_field_resolver,
     default_create_update_resolver,
     default_deactivate_field_resolver,
@@ -77,6 +72,7 @@ from .resolvers.main import (
     default_update_resolver,
     get_computed_field_hints,
 )
+from .utils.decorators import resolver_hints
 from .utils.main import (
     add_mutate_errors,
     apply_relation_mutations,
@@ -112,7 +108,7 @@ from .utils.main import (
 )
 from .views.cruddals_views import CRUDDALSView
 
-__version__ = "0.1.17"
+__version__ = "0.1.20"
 
 __all__ = [
     "__version__",
@@ -159,7 +155,6 @@ __all__ = [
     "resolve_for_relation_field",
     "apply_get_objects_hook",
     "apply_query_arguments",
-    "apply_queryset_optimizations",
     "get_computed_field_hints",
     "default_create_update_resolver",
     "default_read_field_resolver",

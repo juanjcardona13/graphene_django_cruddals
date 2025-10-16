@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Union, Optional, Dict, Any
+from typing import Any, Dict, Optional, Union
 
 from django.db import transaction
 from django.db.models import (
@@ -26,6 +26,7 @@ from graphene_cruddals import (
     RegistryGlobal,
 )
 from graphql.language.ast import (
+    FieldNode,
     FragmentSpreadNode as FragmentSpread,
     InlineFragmentNode as InlineFragment,
 )
@@ -50,7 +51,13 @@ from graphene_django_cruddals.utils.main import (
 
 
 def _queryset_factory_analyze(
-    info, selection_set, is_connection, model, registry, suffix="", computed_field_hints=None
+    info,
+    selection_set,
+    is_connection,
+    model,
+    registry,
+    suffix="",
+    computed_field_hints=None,
 ):
     def fusion_ret(a, b):
         [
@@ -75,7 +82,6 @@ def _queryset_factory_analyze(
 
     model_fields = get_model_fields_for_output(model)
 
-    # Obtener computed field hints si no se proporcionaron
     if computed_field_hints is None:
         computed_field_hints = get_computed_field_hints(registry, model)
 
@@ -124,10 +130,8 @@ def _queryset_factory_analyze(
             try:
                 model_field = model_fields[real_name]
             except KeyError:
-                # No es un model field, verificar si es un computed field con hints
                 if real_name in computed_field_hints:
                     hints = computed_field_hints[real_name]
-                    # Aplicar hints al ret actual
                     for sr in hints["select_related"]:
                         prefixed_sr = new_suffix + sr if new_suffix else sr
                         if prefixed_sr not in ret["select_related"]:
@@ -142,7 +146,9 @@ def _queryset_factory_analyze(
                             ret["prefetch_related"].append(prefixed_pr)
 
                     for only_field in hints["only"]:
-                        prefixed_only = new_suffix + only_field if new_suffix else only_field
+                        prefixed_only = (
+                            new_suffix + only_field if new_suffix else only_field
+                        )
                         if prefixed_only not in ret["only"]:
                             ret["only"].append(prefixed_only)
                 continue
@@ -181,62 +187,13 @@ def _queryset_factory_analyze(
                     elif isinstance(
                         model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
                     ):
-                        # CLAVE: Llamar al _queryset_factory del Type relacionado
-                        # Esto permite recursión completa con manejo de WHERE/ORDER BY
-                        related_object_type = registries_for_model.get("object_type")
-
-                        if related_object_type and hasattr(related_object_type, '_queryset_factory'):
-                            # El Type relacionado maneja TODO: optimizaciones + argumentos
-                            related_queryset = related_object_type._queryset_factory(
-                                info=info,
-                                field_ast=field,  # Incluye arguments del nested field
-                                is_connection=True,
-                            )
-                        else:
-                            # Fallback al comportamiento original si no hay _queryset_factory
-                            related_queryset = related_model.objects.all()
-                            order_by_list = ["pk"]
-                            if hasattr(field, "arguments"):
-                                field_args = parse_arguments_ast(
-                                    field.arguments,
-                                    variable_values=info.variable_values
-                                    if hasattr(info, "variable_values")
-                                    else {},
-                                )
-                                order_by_list = get_order_by_list_from_arguments(
-                                    field_args,
-                                    registries_for_model["input_object_type_for_order_by"],
-                                )
-
-                                if "where" in field_args.keys():
-                                    where = resolve_argument(
-                                        registries_for_model[
-                                            "input_object_type_for_search"
-                                        ],
-                                        field_args.get("where", {}),
-                                    )
-                                    related_queryset = related_queryset.filter(
-                                        where_input_to_Q(where)
-                                    )
-
-                            related_ret = _queryset_factory_analyze(
-                                info,
-                                field.selection_set,
-                                True,
-                                related_model,
-                                registry,
-                                "",
-                            )
-
-                            related_queryset = related_queryset.select_related(
-                                *related_ret["select_related"]
-                            )
-                            related_queryset = related_queryset.only(*related_ret["only"])
-                            related_queryset = related_queryset.prefetch_related(
-                                *related_ret["prefetch_related"]
-                            )
-                            related_queryset = related_queryset.order_by(*order_by_list)
-
+                        related_queryset = _queryset_factory(
+                            model=related_model,
+                            registry=registry,
+                            info=info,
+                            field_ast=field,  # Incluye arguments del nested field
+                            is_connection=True,
+                        )
                         ret["prefetch_related"].append(
                             Prefetch(
                                 new_suffix + real_name,
@@ -251,6 +208,99 @@ def _queryset_factory_analyze(
                 ret["only"].append(new_suffix + real_name)
 
     return ret
+
+
+def _queryset_factory(
+    model,
+    registry,
+    info,
+    field_ast: Optional[FieldNode] = None,
+    is_connection: bool = True,
+    **kwargs,
+) -> QuerySet:
+    """
+    Punto de entrada único para crear y optimizar querysets.
+
+    Este método centraliza toda la lógica de optimización:
+    - Análisis del AST de GraphQL para detectar campos solicitados
+    - Aplicación de select_related, prefetch_related, only
+    - Procesamiento de argumentos WHERE y ORDER BY
+    - Aplicación del hook get_objects si existe
+
+    Args:
+        info: GraphQL ResolveInfo
+        field_ast: Nodo AST del field (para obtener arguments y selection_set)
+        is_connection: Si el queryset es para una conexión/lista o un objeto individual
+        **kwargs: Argumentos adicionales
+
+    Returns:
+        QuerySet optimizado y filtrado
+    """
+    queryset = model.objects.all()
+
+    selection_set = (
+        field_ast.selection_set if field_ast else info.field_nodes[0].selection_set
+    )
+
+    queryset_factory = _queryset_factory_analyze(
+        info=info,
+        selection_set=selection_set,
+        is_connection=is_connection,
+        model=model,
+        registry=registry,
+        suffix="",
+        computed_field_hints=None,
+    )
+
+    if queryset_factory["select_related"]:
+        queryset = queryset.select_related(*queryset_factory["select_related"])
+    if queryset_factory["only"]:
+        queryset = queryset.only(*queryset_factory["only"])
+    if queryset_factory["prefetch_related"]:
+        queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
+
+    if field_ast and hasattr(field_ast, "arguments"):
+        arguments = parse_arguments_ast(
+            field_ast.arguments,
+            variable_values=info.variable_values
+            if hasattr(info, "variable_values")
+            else {},
+        )
+
+        registries_for_model = registry.get_registry_for_model(model)
+
+        if "where" in arguments:
+            where_input_type = registries_for_model.get("input_object_type_for_search")
+
+            if where_input_type:
+                where = resolve_argument(where_input_type, arguments["where"])
+                queryset = queryset.filter(where_input_to_Q(where))
+
+        if "order_by" in arguments or "orderBy" in arguments:
+            order_by_input_type = registries_for_model.get(
+                "input_object_type_for_order_by"
+            )
+            order_by_list = get_order_by_list_from_arguments(
+                arguments, order_by_input_type
+            )
+            if order_by_list:
+                queryset = queryset.order_by(*order_by_list)
+
+    queryset = queryset.distinct()
+
+    # TODO: REVISAR
+    # Aplicar get_objects después de WHERE para que reciba un queryset filtrado
+    # if hasattr(cls, 'get_objects'):
+    #     get_objects = cls.get_objects
+
+    #     if isinstance(get_objects, list):
+    #         for func in get_objects:
+    #             if callable(func):
+    #                 queryset = func(queryset, info)
+    #     elif callable(get_objects):
+    #         queryset = get_objects(queryset, info)
+
+    return queryset
 
 
 def get_computed_field_hints(
@@ -281,7 +331,6 @@ def get_computed_field_hints(
         object_type = registries_for_model.get("object_type")
         cruddals_class = registries_for_model.get("cruddals")
 
-        # Preferir cruddals_class porque contiene los campos definidos por el usuario
         type_to_inspect = cruddals_class if cruddals_class else object_type
 
         if not type_to_inspect:
@@ -292,16 +341,20 @@ def get_computed_field_hints(
             for_object_type=True,
         )
 
-        # Obtener el ObjectType real para verificar campos
-        if cruddals_class and hasattr(cruddals_class, 'meta') and hasattr(cruddals_class.meta, 'model_as_object_type'):
+        if (
+            cruddals_class
+            and hasattr(cruddals_class, "meta")
+            and hasattr(cruddals_class.meta, "model_as_object_type")
+        ):
             actual_object_type = cruddals_class.meta.model_as_object_type
         else:
             actual_object_type = type_to_inspect
 
-        # 1. Buscar métodos resolve_* en cruddals_class
         if cruddals_class:
             for attr_name in dir(cruddals_class):
-                if attr_name.startswith('resolve_') and not attr_name.startswith('resolve__'):
+                if attr_name.startswith("resolve_") and not attr_name.startswith(
+                    "resolve__"
+                ):
                     field_name = attr_name[8:]
 
                     if field_name in model_fields_names:
@@ -312,37 +365,52 @@ def get_computed_field_hints(
                     if resolver and hasattr(resolver, "have_resolver_hints"):
                         computed_field_hints[field_name] = {
                             "select_related": getattr(resolver, "select_related", []),
-                            "prefetch_related": getattr(resolver, "prefetch_related", []),
+                            "prefetch_related": getattr(
+                                resolver, "prefetch_related", []
+                            ),
                             "only": getattr(resolver, "only", []),
                         }
 
-            # 2. Buscar Fields de Graphene con resolver inline
-            # Accedemos a __dict__ para obtener los descriptores originales
             for base_class in [cruddals_class] + list(cruddals_class.__mro__):
-                if not hasattr(base_class, '__dict__'):
+                if not hasattr(base_class, "__dict__"):
                     continue
 
                 for attr_name, attr_value in base_class.__dict__.items():
-                    if attr_name.startswith('_'):
+                    if attr_name.startswith("_"):
                         continue
 
-                    if attr_value and hasattr(attr_value, '__class__') and 'Field' in str(attr_value.__class__):
+                    if (
+                        attr_value
+                        and hasattr(attr_value, "__class__")
+                        and "Field" in str(attr_value.__class__)
+                    ):
                         if attr_name in model_fields_names:
                             continue
 
-                        if hasattr(attr_value, 'resolver') and attr_value.resolver is not None:
+                        if (
+                            hasattr(attr_value, "resolver")
+                            and attr_value.resolver is not None
+                        ):
                             resolver = attr_value.resolver
                             if hasattr(resolver, "have_resolver_hints"):
                                 computed_field_hints[attr_name] = {
-                                    "select_related": getattr(resolver, "select_related", []),
-                                    "prefetch_related": getattr(resolver, "prefetch_related", []),
+                                    "select_related": getattr(
+                                        resolver, "select_related", []
+                                    ),
+                                    "prefetch_related": getattr(
+                                        resolver, "prefetch_related", []
+                                    ),
                                     "only": getattr(resolver, "only", []),
                                 }
 
-        # 3. Buscar en actual_object_type (retrocompatibilidad)
-        if hasattr(actual_object_type, "_meta") and hasattr(actual_object_type._meta, "fields"):
+        if hasattr(actual_object_type, "_meta") and hasattr(
+            actual_object_type._meta, "fields"
+        ):
             for field_name, field_obj in actual_object_type._meta.fields.items():
-                if field_name in computed_field_hints or field_name in model_fields_names:
+                if (
+                    field_name in computed_field_hints
+                    or field_name in model_fields_names
+                ):
                     continue
 
                 resolver = None
@@ -359,68 +427,9 @@ def get_computed_field_hints(
                     }
 
     except Exception:
-        # Fallar silenciosamente para no romper queries
         pass
 
     return computed_field_hints
-
-
-def apply_queryset_optimizations(
-    queryset: Union[QuerySet, list, None],
-    info,
-    model: DjangoModel,
-    registry: RegistryGlobal,
-    is_connection: bool = False,
-    selection_set=None,
-) -> Union[QuerySet, list, None]:
-    """
-    Función centralizada para aplicar optimizaciones de queryset (select_related, prefetch_related, only).
-
-    Esta función detecta si el queryset ya está prefetched y solo aplica optimizaciones cuando es necesario.
-
-    Args:
-        queryset: El queryset a optimizar (puede ser QuerySet, list o None)
-        info: GraphQL info object que contiene el AST
-        model: El modelo Django asociado al queryset
-        registry: El registro global de graphene-django-cruddals
-        is_connection: Si el queryset representa una conexión paginada
-        selection_set: Selection set específico del AST (opcional, por defecto usa info.field_nodes[0].selection_set)
-
-    Returns:
-        El queryset optimizado con select_related, prefetch_related y only aplicados
-    """
-    if queryset is None:
-        return None
-
-    is_prefetched = isinstance(queryset, list) or (
-        isinstance(queryset, QuerySet)
-        and hasattr(queryset, "_result_cache")
-        and queryset._result_cache is not None
-    )
-
-    if not is_prefetched and isinstance(queryset, QuerySet):
-        if selection_set is None and hasattr(info, "field_nodes") and info.field_nodes:
-            selection_set = info.field_nodes[0].selection_set
-
-        if selection_set:
-            queryset_factory = _queryset_factory_analyze(
-                info,
-                selection_set=selection_set,
-                is_connection=is_connection,
-                model=model,
-                registry=registry,
-            )
-
-            if queryset_factory["select_related"]:
-                queryset = queryset.select_related(*queryset_factory["select_related"])
-
-            if queryset_factory["only"]:
-                queryset = queryset.only(*queryset_factory["only"])
-
-            if queryset_factory["prefetch_related"]:
-                queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
-
-    return queryset
 
 
 def apply_query_arguments(
@@ -452,33 +461,26 @@ def apply_query_arguments(
     if queryset is None:
         return None
 
-    # Detectar si el queryset está prefetched
     is_prefetched = isinstance(queryset, list) or (
         isinstance(queryset, QuerySet)
         and hasattr(queryset, "_result_cache")
         and queryset._result_cache is not None
     )
 
-    # Solo procesar si es un QuerySet no prefetched
     if isinstance(queryset, QuerySet) and not is_prefetched:
-        # Aplicar filtros WHERE
         if apply_where and "where" in args:
             where = args["where"]
-            # Validar que el where no esté vacío
             if where and any(where.values()):
                 obj_q = where_input_to_Q(where)
                 queryset = queryset.filter(obj_q)
 
-        # Aplicar ORDER BY
         if apply_order_by and not isinstance(queryset, list):
-            # Obtener order_by de los argumentos (soporta tanto order_by como orderBy)
             order_by_list = get_order_by_list_from_arguments(args)
             if "order_by" in args or "orderBy" in args:
                 queryset = queryset.order_by(*order_by_list)
-            elif order_by_list and order_by_list != ["pk"]:  # Solo aplicar si hay orden específico
+            elif order_by_list and order_by_list != ["pk"]:
                 queryset = queryset.order_by(*order_by_list)
 
-        # Aplicar DISTINCT
         if apply_distinct:
             queryset = queryset.distinct()
 
@@ -604,52 +606,27 @@ def default_read_field_resolver(
     info,
     **args,
 ):
-    """
-    Resolver para operaciones de lectura de un objeto individual (read).
-
-    Aplica optimizaciones transversales para evitar problemas N+1.
-    """
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
 
-    if hasattr(django_object_type, '_queryset_factory'):
-        queryset = django_object_type._queryset_factory(
-            info=info,
-            field_ast=info.field_nodes[0],
-            is_connection=False,
-        )
-    else:
-        queryset = maybe_queryset(default_manager)
+    queryset = _queryset_factory(
+        model=model,
+        registry=registry,
+        info=info,
+        field_ast=info.field_nodes[0],
+        is_connection=False,
+    )
 
-        queryset = apply_query_arguments(
-            queryset=queryset,
-            args=args,
-            model=model,
-            registry=registry,
-            apply_where=True,
-            apply_order_by=False,
-            apply_distinct=True,
-        )
-
-        queryset = apply_queryset_optimizations(
-            queryset=queryset,
-            info=info,
-            model=model,
-            registry=registry,
-            is_connection=False,
-        )
-
-        queryset = apply_get_objects_hook(
-            queryset=queryset,
-            django_object_type=django_object_type,
-            info=info,
-        )
+    queryset = apply_get_objects_hook(
+        queryset=queryset,
+        django_object_type=django_object_type,
+        info=info,
+    )
 
     if queryset is None:
         raise ValueError(
             "The queryset is None. Ensure that the 'where' clause is correct and the default manager returns a valid queryset."
         )
-
     return queryset.get()
 
 
@@ -666,12 +643,6 @@ def default_update_resolver(model, model_form_class, registry, root, info, **arg
 
 
 def default_delete_field_resolver(model: DjangoModel, root, info, **args):
-    """
-    Resolver para operación de eliminación (delete).
-
-    NOTA: Las mutations no necesitan optimizaciones de prefetch porque
-    no retornan objetos anidados, solo éxito/fallo.
-    """
     if "where" in args.keys():
         where = args["where"]
         for value in where.values():
@@ -686,13 +657,6 @@ def default_delete_field_resolver(model: DjangoModel, root, info, **args):
 def default_deactivate_field_resolver(
     model, field_for_activate_deactivate, root, info, **args
 ):
-    """
-    Resolver para operación de desactivación (deactivate).
-
-    NOTA: Las mutations retornan objetos pero no reciben registry,
-    así que no podemos aplicar optimizaciones automáticas aquí.
-    Las optimizaciones deberían aplicarse en el field resolver del tipo de retorno.
-    """
     if "where" in args.keys():
         where = args["where"]
         for value in where.values():
@@ -709,13 +673,6 @@ def default_deactivate_field_resolver(
 def default_activate_field_resolver(
     model, field_for_activate_deactivate, root, info, **args
 ):
-    """
-    Resolver para operación de activación (activate).
-
-    NOTA: Las mutations retornan objetos pero no reciben registry,
-    así que no podemos aplicar optimizaciones automáticas aquí.
-    Las optimizaciones deberían aplicarse en el field resolver del tipo de retorno.
-    """
     if "where" in args.keys():
         where = args["where"]
         for value in where.values():
@@ -736,37 +693,15 @@ def default_list_field_resolver(
     default_manager,
     root,
     info,
-    **args
+    **args,
 ):
-    """
-    Resolver para operaciones de listado (list).
-
-    Aplica optimizaciones transversales para evitar problemas N+1.
-    """
-    registries_for_model = registry.get_registry_for_model(model)
-    django_object_type: ModelObjectType = registries_for_model["object_type"]
-
-    if hasattr(django_object_type, '_queryset_factory'):
-        queryset = django_object_type._queryset_factory(
-            info=info,
-            field_ast=info.field_nodes[0],
-            is_connection=False,
-        )
-    else:
-        queryset = None
-        if resolver is not None and hasattr(resolver, "args"):
-            queryset = maybe_queryset(resolver(root, info, **args))
-        if queryset is None:
-            queryset = maybe_queryset(default_manager)
-
-        queryset = apply_queryset_optimizations(
-            queryset=queryset,
-            info=info,
-            model=model,
-            registry=registry,
-            is_connection=False,
-        )
-
+    queryset = _queryset_factory(
+        model=model,
+        registry=registry,
+        info=info,
+        field_ast=info.field_nodes[0],
+        is_connection=False,
+    )
     return queryset
 
 
@@ -779,12 +714,6 @@ def default_search_field_resolver(
     info,
     **args,
 ):
-    """
-    Resolver para operaciones de búsqueda y paginación (search).
-
-    Aplica optimizaciones transversales para evitar problemas N+1.
-    Maneja lógica especial para campos paginados anidados.
-    """
     registries_for_model = registry.get_registry_for_model(model)
     django_object_type: ModelObjectType = registries_for_model["object_type"]
     paginated_object_type: ModelPaginatedObjectType = registries_for_model[
@@ -819,8 +748,10 @@ def default_search_field_resolver(
                     )
                 queryset = maybe_queryset(maybe_manager)
 
-    if not is_nested_paginated_field and hasattr(django_object_type, '_queryset_factory'):
-        queryset = django_object_type._queryset_factory(
+    if not is_nested_paginated_field:
+        queryset = _queryset_factory(
+            model=model,
+            registry=registry,
             info=info,
             field_ast=info.field_nodes[0],
             is_connection=True,
@@ -833,15 +764,6 @@ def default_search_field_resolver(
                 "The queryset is None. Ensure that the resolver or default manager returns a valid queryset."
             )
 
-        if not is_nested_paginated_field:
-            queryset = apply_queryset_optimizations(
-                queryset=queryset,
-                info=info,
-                model=model,
-                registry=registry,
-                is_connection=True,
-            )
-
         queryset = apply_query_arguments(
             queryset=queryset,
             args=args,
@@ -852,14 +774,12 @@ def default_search_field_resolver(
             apply_distinct=True,
         )
 
-        # Aplicar hook get_objects
         queryset = apply_get_objects_hook(
             queryset=queryset,
             django_object_type=django_object_type,
             info=info,
         )
 
-    # Paso 3: Aplicar paginación
     pagination_config = args.get("pagination_config", {}) or args.get(
         "paginationConfig", {}
     )
