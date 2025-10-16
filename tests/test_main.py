@@ -1024,7 +1024,7 @@ class TestInternalGetObjectsModelG(SchemaTestCase):
         response = client.query(create_model_g_mutation, variables=variables).json()
         self.verify_response(response, expected_response, message="CREATE ModelG")
 
-        # region READ ModelC
+        # region READ ModelG using get_objects
         variables = {"where": {"id": {"exact": "1"}}}
         expected_response = {
             "data": {

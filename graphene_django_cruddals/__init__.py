@@ -60,6 +60,8 @@ from .main import (
     DjangoProjectCruddals,
 )
 from .resolvers.main import (
+    apply_get_objects_hook,
+    apply_query_arguments,
     default_activate_field_resolver,
     default_create_update_resolver,
     default_deactivate_field_resolver,
@@ -68,7 +70,9 @@ from .resolvers.main import (
     default_read_field_resolver,
     default_search_field_resolver,
     default_update_resolver,
+    get_computed_field_hints,
 )
+from .utils.decorators import resolver_hints
 from .utils.main import (
     add_mutate_errors,
     apply_relation_mutations,
@@ -110,6 +114,7 @@ __all__ = [
     "__version__",
     "CRUDDALSView",
     "CruddalsRelationField",
+    "resolver_hints",
     "get_apps_name",
     "part_of_import_js",
     "return_args_and_variables",
@@ -148,6 +153,9 @@ __all__ = [
     "maybe_queryset",
     "get_function_for_type",
     "resolve_for_relation_field",
+    "apply_get_objects_hook",
+    "apply_query_arguments",
+    "get_computed_field_hints",
     "default_create_update_resolver",
     "default_read_field_resolver",
     "default_update_resolver",
