@@ -1040,6 +1040,37 @@ class TestInternalGetObjectsModelG(SchemaTestCase):
         self.verify_response(response, expected_response, message="READ ModelG")
         # endregion
 
+        # region SEARCH ModelG using get_objects
+        variables = {"where": {"id": {"exact": "1"}}}
+        expected_response = {
+            "data": {
+                "searchModelGs": {
+                    "total": 2,
+                    "page": 1,
+                    "pages": 1,
+                    "hasNext": False,
+                    "hasPrev": False,
+                    "indexStart": 1,
+                    "indexEnd": 2,
+                    "objects": [
+                        {
+                            "id": "2",
+                            "name": "MODEL G FROM GET OBJECTS",
+                            "paginatedForeignKeyHRelated": {"objects": []},
+                        },
+                        {
+                            "id": "3",
+                            "name": "MODEL G FROM GET OBJECTS",
+                            "paginatedForeignKeyHRelated": {"objects": []},
+                        },
+                    ],
+                }
+            }
+        }
+        response = client.query(search_model_g_query, variables=variables).json()
+        self.verify_response(response, expected_response, message="READ ModelG")
+        # endregion
+
 
 class TestModifyArgumentsModelHCruddalsInterface(SchemaTestCase):
     def test_modify_arguments(self):

@@ -790,11 +790,11 @@ def default_search_field_resolver(
             apply_distinct=True,
         )
 
-        queryset = apply_get_objects_hook(
-            queryset=queryset,
-            django_object_type=django_object_type,
-            info=info,
-        )
+    queryset = apply_get_objects_hook(
+        queryset=queryset,
+        django_object_type=django_object_type,
+        info=info,
+    )
 
     pagination_config = args.get("pagination_config", {}) or args.get(
         "paginationConfig", {}
