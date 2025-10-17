@@ -96,10 +96,24 @@ class FieldRelationModelH:
         many_to_many_field = CruddalsRelationField()
 
 
+class ModifyArgumentsModelHCruddalsInterface:
+    class ModelReadField:
+        class Meta:
+            extra_arguments = {"me": graphene.Boolean()}
+
+        def pre_resolver(self, info, **kwargs):
+            if "me" in kwargs:
+                kwargs = {"where": {"id": {"exact": 2}}}
+            return self, info, kwargs
+
+
 class CruddalsModelH(DjangoModelCruddals):
     class Meta:
         model = ModelH
-        cruddals_interfaces = (FieldRelationModelH,)
+        cruddals_interfaces = (
+            FieldRelationModelH,
+            ModifyArgumentsModelHCruddalsInterface,
+        )
 
 
 class Query(
@@ -153,7 +167,12 @@ class SchemaCruddalsApp(DjangoAppCruddals):
         settings_for_model = {
             "ModelF": {"cruddals_interfaces": (CustomResolverModelF,)},
             "ModelG": {"cruddals_interfaces": (ExtraFieldsModelG,)},
-            "ModelH": {"cruddals_interfaces": (FieldRelationModelH,)},
+            "ModelH": {
+                "cruddals_interfaces": (
+                    FieldRelationModelH,
+                    ModifyArgumentsModelHCruddalsInterface,
+                )
+            },
         }
 
 
@@ -186,7 +205,12 @@ class SchemaCruddalsProject(DjangoProjectCruddals):
                 "settings_for_model": {
                     "ModelF": {"cruddals_interfaces": (CustomResolverModelF,)},
                     "ModelG": {"cruddals_interfaces": (ExtraFieldsModelG,)},
-                    "ModelH": {"cruddals_interfaces": (FieldRelationModelH,)},
+                    "ModelH": {
+                        "cruddals_interfaces": (
+                            FieldRelationModelH,
+                            ModifyArgumentsModelHCruddalsInterface,
+                        )
+                    },
                 },
             }
         }

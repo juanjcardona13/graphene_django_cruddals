@@ -376,6 +376,12 @@ class ModelE(models.Model):
         null=True,
         blank=True,
     )
+    foreign_key_field_without_related_name = models.ForeignKey(
+        "ModelD",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
 
 
 class ModelF(models.Model):

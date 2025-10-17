@@ -1454,6 +1454,16 @@
                       "ofType": null
                     }
                   }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "me",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
                 }
               ],
               "deprecationReason": null,
@@ -12652,6 +12662,49 @@
                 "name": "ModelEPaginatedType",
                 "ofType": null
               }
+            },
+            {
+              "args": [
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "where",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "FilterModelEInput",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "orderBy",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "OrderByModelEInput",
+                    "ofType": null
+                  }
+                },
+                {
+                  "defaultValue": null,
+                  "description": null,
+                  "name": "paginationConfig",
+                  "type": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "PaginationConfigInput",
+                    "ofType": null
+                  }
+                }
+              ],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "paginatedModele",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ModelEPaginatedType",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -13223,6 +13276,16 @@
             {
               "defaultValue": null,
               "description": null,
+              "name": "modele",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "FilterModelEInput",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
               "name": "AND",
               "type": {
                 "kind": "LIST",
@@ -13283,6 +13346,16 @@
               "defaultValue": null,
               "description": null,
               "name": "foreignKeyFieldDeep",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "FilterModelDInput",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "foreignKeyFieldWithoutRelatedName",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "FilterModelDInput",
@@ -13609,6 +13682,18 @@
                 "name": "ModelDType",
                 "ofType": null
               }
+            },
+            {
+              "args": [],
+              "deprecationReason": null,
+              "description": null,
+              "isDeprecated": false,
+              "name": "foreignKeyFieldWithoutRelatedName",
+              "type": {
+                "kind": "OBJECT",
+                "name": "ModelDType",
+                "ofType": null
+              }
             }
           ],
           "inputFields": null,
@@ -13636,6 +13721,16 @@
               "defaultValue": null,
               "description": null,
               "name": "foreignKeyFieldDeep",
+              "type": {
+                "kind": "INPUT_OBJECT",
+                "name": "OrderByModelDInput",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "foreignKeyFieldWithoutRelatedName",
               "type": {
                 "kind": "INPUT_OBJECT",
                 "name": "OrderByModelDInput",
@@ -16717,6 +16812,16 @@
                 "name": "ID",
                 "ofType": null
               }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "foreignKeyFieldWithoutRelatedName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
             }
           ],
           "interfaces": null,
@@ -16790,6 +16895,16 @@
               "defaultValue": null,
               "description": null,
               "name": "foreignKeyFieldDeep",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            {
+              "defaultValue": null,
+              "description": null,
+              "name": "foreignKeyFieldWithoutRelatedName",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID",

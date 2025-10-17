@@ -752,8 +752,8 @@ mutation activateModelGs($where: FilterModelGInput! ) {
 
 #region ============= MODELH
 
-query readModelH($where: FilterModelHInput! ) {
-    readModelH(where: $where ) {
+query readModelH($where: FilterModelHInput! $me: Boolean ) {
+    readModelH(where: $where me: $me ) {
         id
     }
 }

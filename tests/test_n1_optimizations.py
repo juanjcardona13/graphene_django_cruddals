@@ -375,12 +375,6 @@ class N1OptimizationsTestCase(TestCase):
             response = client.query(query).json()
             query_count = len(connection.queries)
 
-            # Debug: print queries if it fails
-            if query_count > 10:
-                print(f"\n=== Expected ≤10 queries, got {query_count} ===")
-                for i, q in enumerate(connection.queries, 1):
-                    print(f"{i}. {q['sql'][:100]}...")
-
             # Validate response
             self.assertIsNone(response.get("errors"))
 
@@ -436,12 +430,6 @@ class N1OptimizationsTestCase(TestCase):
             ]
             join_queries = [q for q in select_queries if "JOIN" in q["sql"].upper()]
             prefetch_queries = [q for q in select_queries if "IN (" in q["sql"]]
-
-            print("\n=== Query Breakdown ===")
-            print(f"Total queries: {len(queries)}")
-            print(f"COUNT queries: {len(count_queries)}")
-            print(f"SELECT with JOIN (select_related): {len(join_queries)}")
-            print(f"Prefetch (IN clause): {len(prefetch_queries)}")
 
             # Validations
             self.assertGreaterEqual(
@@ -1121,12 +1109,6 @@ class N1OptimizationsTestCase(TestCase):
             reset_queries()
             response = client.query(query).json()
             query_count = len(connection.queries)
-
-            # Debug: print queries if it fails
-            if query_count > 10:
-                print(f"\n=== Expected ≤10 queries, got {query_count} ===")
-                for i, q in enumerate(connection.queries, 1):
-                    print(f"{i}. {q['sql'][:100]}...")
 
             # Validate response
             self.assertIsNone(response.get("errors"))

@@ -269,7 +269,7 @@ in fields, resolvers and input.
 scalar UUID
 
 type Query {
-  readModelH(where: FilterModelHInput!): ModelHType
+  readModelH(where: FilterModelHInput!, me: Boolean): ModelHType
   listModelHs: [ModelHType!]
   searchModelHs(where: FilterModelHInput, orderBy: OrderByModelHInput, paginationConfig: PaginationConfigInput): ModelHPaginatedType
   readModelG(where: FilterModelGInput!): ModelGType
@@ -1322,6 +1322,7 @@ type ModelDType {
   oneToOneCRelated: ModelCType
   paginatedManyToManyCRelated(where: FilterModelCInput, orderBy: OrderByModelCInput, paginationConfig: PaginationConfigInput): ModelCPaginatedType
   paginatedForeignKeyERelated(where: FilterModelEInput, orderBy: OrderByModelEInput, paginationConfig: PaginationConfigInput): ModelEPaginatedType
+  paginatedModele(where: FilterModelEInput, orderBy: OrderByModelEInput, paginationConfig: PaginationConfigInput): ModelEPaginatedType
 }
 
 type ModelCPaginatedType implements PaginationInterface {
@@ -1382,6 +1383,7 @@ input FilterModelDInput {
   oneToOneCRelated: FilterModelCInput
   manyToManyCRelated: FilterModelCInput
   foreignKeyERelated: FilterModelEInput
+  modele: FilterModelEInput
   AND: [FilterModelDInput]
   OR: [FilterModelDInput]
   NOT: FilterModelDInput
@@ -1390,6 +1392,7 @@ input FilterModelDInput {
 input FilterModelEInput {
   id: IDFilter
   foreignKeyFieldDeep: FilterModelDInput
+  foreignKeyFieldWithoutRelatedName: FilterModelDInput
   AND: [FilterModelEInput]
   OR: [FilterModelEInput]
   NOT: FilterModelEInput
@@ -1426,11 +1429,13 @@ type ModelEPaginatedType implements PaginationInterface {
 type ModelEType {
   id: ID
   foreignKeyFieldDeep: ModelDType
+  foreignKeyFieldWithoutRelatedName: ModelDType
 }
 
 input OrderByModelEInput {
   id: OrderEnum
   foreignKeyFieldDeep: OrderByModelDInput
+  foreignKeyFieldWithoutRelatedName: OrderByModelDInput
 }
 
 type ModelDPaginatedType implements PaginationInterface {
@@ -1707,6 +1712,7 @@ type CreateModelEsPayload {
 
 input CreateModelEInput {
   foreignKeyFieldDeep: ID
+  foreignKeyFieldWithoutRelatedName: ID
 }
 
 type UpdateModelEsPayload {
@@ -1717,6 +1723,7 @@ type UpdateModelEsPayload {
 input UpdateModelEInput {
   id: ID!
   foreignKeyFieldDeep: ID
+  foreignKeyFieldWithoutRelatedName: ID
 }
 
 type DeleteModelEsPayload {

@@ -412,8 +412,8 @@ export function readModelH(fields, extraArgs=[]) {
     const selectedFields = fields ? fields : defaultFields;
 
     const query = gql`
-        query readModelH($where: FilterModelHInput!  ${varsStr}) {
-            readModelH(where: $where ) {
+        query readModelH($where: FilterModelHInput! $me: Boolean  ${varsStr}) {
+            readModelH(where: $where me: $me ) {
                 ${selectedFields}
             }
         }

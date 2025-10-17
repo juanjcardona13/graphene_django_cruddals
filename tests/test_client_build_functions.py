@@ -66,15 +66,16 @@ class TestClientBuildFunctions(unittest.TestCase):
             ) as expected_file:
                 assert file.read().strip() == expected_file.read().strip()
 
+    def test_build_schema_gql(self):
+        with open(f"{PATH_CLIENT}/schema.gql", encoding="utf-8") as file:
+            with open(
+                "tests/schema_client_js/schema_cruddals/schema.gql", encoding="utf-8"
+            ) as expected_file:
+                assert file.read().strip() == expected_file.read().strip()
 
-# with open(f"{PATH_CLIENT}/schema.gql", encoding="utf-8") as file:
-#     with open(
-#         "tests/schema_client_js/schema_cruddals/schema.gql", encoding="utf-8"
-#     ) as expected_file:
-#         assert file.read().strip() == expected_file.read().strip()
-
-# with open(f"{PATH_CLIENT}/schema.json", encoding="utf-8") as file:
-#     with open(
-#         "tests/schema_client_js/schema_cruddals/schema.json", encoding="utf-8"
-#     ) as expected_file:
-#         assert file.read().strip() == expected_file.read().strip()
+    def test_build_schema_json(self):
+        with open(f"{PATH_CLIENT}/schema.json", encoding="utf-8") as file:
+            with open(
+                "tests/schema_client_js/schema_cruddals/schema.json", encoding="utf-8"
+            ) as expected_file:
+                assert file.read().strip() == expected_file.read().strip()

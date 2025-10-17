@@ -194,6 +194,10 @@ def _queryset_factory_analyze(
                             field_ast=field,  # Incluye arguments del nested field
                             is_connection=True,
                         )
+                        if hasattr(model_field, "get_attname"):
+                            real_name = model_field.get_attname()
+                        elif hasattr(model_field, "get_accessor_name"):
+                            real_name = model_field.get_accessor_name()
                         ret["prefetch_related"].append(
                             Prefetch(
                                 new_suffix + real_name,
@@ -259,32 +263,41 @@ def _queryset_factory(
     if queryset_factory["prefetch_related"]:
         queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
-    if field_ast and hasattr(field_ast, "arguments"):
+    obj_where_q = None
+    if "where" in kwargs and kwargs["where"]:
+        obj_where_q = where_input_to_Q(kwargs["where"])
+    elif field_ast and hasattr(field_ast, "arguments"):
         arguments = parse_arguments_ast(
             field_ast.arguments,
             variable_values=info.variable_values
             if hasattr(info, "variable_values")
             else {},
         )
-
         registries_for_model = registry.get_registry_for_model(model)
+        where_input_type = registries_for_model.get("input_object_type_for_search")
 
-        if "where" in arguments:
-            where_input_type = registries_for_model.get("input_object_type_for_search")
+        if where_input_type and "where" in arguments and arguments["where"]:
+            where = resolve_argument(where_input_type, arguments["where"])
+            obj_where_q = where_input_to_Q(where)
+    if obj_where_q:
+        queryset = queryset.filter(obj_where_q)
 
-            if where_input_type:
-                where = resolve_argument(where_input_type, arguments["where"])
-                queryset = queryset.filter(where_input_to_Q(where))
+    order_by_list = None
+    if "order_by" in kwargs or "orderBy" in kwargs:
+        order_by_list = get_order_by_list_from_arguments(kwargs)
+    elif field_ast and hasattr(field_ast, "arguments"):
+        arguments = parse_arguments_ast(
+            field_ast.arguments,
+            variable_values=info.variable_values
+            if hasattr(info, "variable_values")
+            else {},
+        )
+        registries_for_model = registry.get_registry_for_model(model)
+        order_by_input_type = registries_for_model.get("input_object_type_for_order_by")
+        order_by_list = get_order_by_list_from_arguments(arguments, order_by_input_type)
 
-        if "order_by" in arguments or "orderBy" in arguments:
-            order_by_input_type = registries_for_model.get(
-                "input_object_type_for_order_by"
-            )
-            order_by_list = get_order_by_list_from_arguments(
-                arguments, order_by_input_type
-            )
-            if order_by_list:
-                queryset = queryset.order_by(*order_by_list)
+    if order_by_list:
+        queryset = queryset.order_by(*order_by_list)
 
     queryset = queryset.distinct()
 
@@ -615,6 +628,7 @@ def default_read_field_resolver(
         info=info,
         field_ast=info.field_nodes[0],
         is_connection=False,
+        **args,
     )
 
     queryset = apply_get_objects_hook(
@@ -701,6 +715,7 @@ def default_list_field_resolver(
         info=info,
         field_ast=info.field_nodes[0],
         is_connection=False,
+        **args,
     )
     return queryset
 
@@ -755,6 +770,7 @@ def default_search_field_resolver(
             info=info,
             field_ast=info.field_nodes[0],
             is_connection=True,
+            **args,
         )
     elif queryset is None:
         queryset = maybe_queryset(default_manager)

@@ -37,6 +37,7 @@ from tests.gql_types.OrderByModelGInput import OrderByModelGInput
 from tests.gql_types.UpdateModelAInput import UpdateModelAInput
 from tests.gql_types.UpdateModelGInput import UpdateModelGInput
 from tests.gql_types.UpdateModelHInput import UpdateModelHInput
+from tests.models import ModelC, ModelD, ModelE
 from tests.utils import Client, SchemaTestCase
 
 
@@ -905,8 +906,8 @@ create_model_h_mutation = (
 read_model_h_query = (
     model_h_fragment
     + """
-    query readModelH($where: FilterModelHInput!) {
-        readModelH(where: $where) {
+    query readModelH($where: FilterModelHInput! $me: Boolean) {
+        readModelH(where: $where me: $me) {
             ...modelHType
         }
     }
@@ -1037,6 +1038,80 @@ class TestInternalGetObjectsModelG(SchemaTestCase):
         }
         response = client.query(read_model_g_query, variables=variables).json()
         self.verify_response(response, expected_response, message="READ ModelG")
+        # endregion
+
+
+class TestModifyArgumentsModelHCruddalsInterface(SchemaTestCase):
+    def test_modify_arguments(self):
+        client = Client()
+
+        variables = {"input": [{"name": "MODEL H NAME 1"}, {"name": "MODEL H NAME 2"}]}
+        expected_response = {
+            "data": {
+                "createModelHs": {
+                    "objects": [
+                        {"id": "1", "name": "MODEL H NAME 1", "foreignKeyField": None},
+                        {
+                            "id": "2",
+                            "name": "MODEL H NAME 2",
+                            "foreignKeyField": None,
+                        },
+                    ],
+                    "errorsReport": None,
+                }
+            }
+        }
+        response = client.query(create_model_h_mutation, variables=variables).json()
+        self.verify_response(response, expected_response, message="CREATE ModelH")
+
+        # region READ ModelH modify argument "where"
+        variables = {"me": True, "where": {"id": {"exact": "1"}}}
+        expected_response = {
+            "data": {
+                "readModelH": {
+                    "id": "2",
+                    "name": "MODEL H NAME 2",
+                    "foreignKeyField": None,
+                }
+            }
+        }
+        response = client.query(read_model_h_query, variables=variables).json()
+        self.verify_response(response, expected_response, message="READ ModelH")
+        # endregion
+
+
+class TestReadModelDWithRelatedField(SchemaTestCase):
+    def test_read_model_d_with_related_field(self):
+        client = Client()
+
+        model_c = ModelC.objects.create(char_field="MODEL C CHAR FIELD")
+        model_d = ModelD.objects.create(foreign_key_field=model_c)
+        model_e = ModelE.objects.create(foreign_key_field_without_related_name=model_d)
+
+        # region READ ModelD
+        variables = {"where": {"id": {"exact": model_d.id}}}
+        expected_response = {
+            "data": {
+                "readModelD": {
+                    "id": str(model_d.id),
+                    "paginatedModele": {"objects": [{"id": str(model_e.id)}]},
+                }
+            }
+        }
+        query = """
+        query readModelD($where: FilterModelDInput!) {
+            readModelD(where: $where) {
+                id
+                paginatedModele {
+                    objects {
+                        id
+                    }
+                    }
+                }
+            }
+        """
+        response = client.query(query, variables=variables).json()
+        self.verify_response(response, expected_response, message="READ ModelD")
         # endregion
 
 

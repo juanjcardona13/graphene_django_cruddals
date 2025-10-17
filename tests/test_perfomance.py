@@ -622,5 +622,4 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
                 message="SEARCH with where in internal field: many to many ModelC",
             )
             # endregion
-            print("================================================")
         # endregion
