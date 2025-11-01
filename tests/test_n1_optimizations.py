@@ -719,8 +719,6 @@ class N1OptimizationsTestCase(TestCase):
         # Pages should be ceil(6/2) = 3
         self.assertEqual(data["pages"], 3)
 
-    # ==================== READ RESOLVER OPTIMIZATION TESTS ====================
-
     def test_read_basic_optimizations(self):
         """
         Test: Read query with select_related and prefetch_related.
@@ -1195,3 +1193,64 @@ class N1OptimizationsTestCase(TestCase):
         self.assertEqual(
             mc11_obj["oneToOneField"]["foreignKeyField"]["charField"], "AAA"
         )
+
+    def test_nested_paginated_fields_no_n1(self):
+        """
+        Test: Campos paginados anidados NO generan N+1.
+
+        Este es el caso más complejo:
+        searchModelCs {
+          oneToOneField {              # ← OneToOneField
+            paginatedForeignKeyERelated {  # ← Campo paginado NESTED
+              objects { id }
+            }
+          }
+        }
+
+        Verifica que el prefetch anidado se configure correctamente
+        usando Prefetch con queryset personalizado en lugar de
+        select_related + prefetch plano.
+        """
+        client = Client()
+        query = """
+        query {
+            searchModelCs {
+                total
+                objects {
+                    id
+                    oneToOneField {
+                        id
+                        paginatedForeignKeyERelated {
+                            objects {
+                                id
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+
+        with override_settings(DEBUG=True):
+            reset_queries()
+            response = client.query(query).json()
+            queries = connection.queries
+
+            self.assertIsNone(response.get("errors"))
+
+            individual_e_queries = [
+                q for q in queries
+                if 'SELECT' in q['sql'].upper()
+                and 'modele' in q['sql'].lower()
+                and 'WHERE' in q['sql'].upper()
+                and 'IN (' not in q['sql'].upper()
+            ]
+
+            if individual_e_queries:
+                print("\nFound individual ModelE queries (N+1):")
+                for i, q in enumerate(individual_e_queries[:3], 1):
+                    print(f"{i}. {q['sql'][:120]}...")
+
+            self.assertEqual(len(individual_e_queries), 0,
+                f"Found {len(individual_e_queries)} individual ModelE queries. "
+                f"Nested paginated fields should use Prefetch with custom queryset.")

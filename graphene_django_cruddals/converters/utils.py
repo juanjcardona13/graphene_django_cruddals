@@ -212,15 +212,18 @@ def resolve_for_relation_field(field, model, _type, root, info, **args):
     attname = field.name
     default_value = getattr(field, "default", None)
     instance = getattr(root, attname, default_value)
+
     if instance is None:
         return None
     try:
-        if isinstance(instance, model):
+        is_instance_of_model = isinstance(instance, model)
+        if is_instance_of_model:
             # TODO: Revisar como manejar esto, ya que no pasa por el get_objects
             return instance
-    except TypeError:
+    except TypeError as e:
         # model is not a valid type (e.g., MagicMock in tests)
         pass
+
     if isinstance(instance, Manager):
         queryset = instance.get_queryset()
     else:

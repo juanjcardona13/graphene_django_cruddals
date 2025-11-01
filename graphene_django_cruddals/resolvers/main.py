@@ -173,7 +173,6 @@ def _queryset_factory_analyze(
                     if isinstance(
                         model_field, (OneToOneField, OneToOneRel, ForeignKey)
                     ):
-                        ret["select_related"].append(new_suffix + real_name)
                         new_ret = _queryset_factory_analyze(
                             info,
                             field.selection_set,
@@ -182,7 +181,29 @@ def _queryset_factory_analyze(
                             registry,
                             new_suffix + real_name,
                         )
+
+                        nested_prefetches = [
+                            p for p in new_ret["prefetch_related"]
+                            if isinstance(p, Prefetch) and p.prefetch_to.startswith(new_suffix + real_name + "__")
+                        ]
+
+                        ret["select_related"].append(new_suffix + real_name)
+
+                        if nested_prefetches:
+                            for p in nested_prefetches:
+                                ret["prefetch_related"].append(p)
+
+
+                            new_ret["prefetch_related"] = [
+                                p for p in new_ret["prefetch_related"]
+                                if p not in nested_prefetches
+                            ]
+
                         ret = fusion_ret(ret, new_ret)
+
+                        for only_field in new_ret["only"]:
+                            if only_field not in ret["only"]:
+                                ret["only"].append(only_field)
 
                     elif isinstance(
                         model_field, (ManyToManyField, ManyToManyRel, ManyToOneRel)
@@ -258,8 +279,20 @@ def _queryset_factory(
 
     if queryset_factory["select_related"]:
         queryset = queryset.select_related(*queryset_factory["select_related"])
+
     if queryset_factory["only"]:
-        queryset = queryset.only(*queryset_factory["only"])
+        # OPTIMIZACIÓN: Agregar automáticamente campos FK al .only()
+        # Sin esto, acceder a campos FK causa queries individuales (deferred fields)
+        only_fields = list(queryset_factory["only"])
+
+        for field in model._meta.get_fields():
+            if isinstance(field, (ForeignKey, OneToOneField)):
+                fk_field_name = field.attname
+                if fk_field_name not in only_fields:
+                    only_fields.append(fk_field_name)
+
+        queryset = queryset.only(*only_fields)
+
     if queryset_factory["prefetch_related"]:
         queryset = queryset.prefetch_related(*queryset_factory["prefetch_related"])
 
@@ -755,12 +788,19 @@ def default_search_field_resolver(
                 and field_name_for_prefetch in root._prefetched_objects_cache
             ):
                 queryset = list(root._prefetched_objects_cache[field_name_for_prefetch])
+
+            elif hasattr(root, field_name_for_prefetch):
+                maybe_manager = getattr(root, field_name_for_prefetch, default_value)
+
+                qs = maybe_queryset(maybe_manager)
+
+                if hasattr(qs, '_result_cache') and qs._result_cache is not None:
+                    queryset = list(qs._result_cache)
+                else:
+                    queryset = qs
+
             else:
                 maybe_manager = resolver(root, info, **args)
-                if hasattr(root, field_name_for_prefetch):
-                    maybe_manager = getattr(
-                        root, field_name_for_prefetch, default_value
-                    )
                 queryset = maybe_queryset(maybe_manager)
 
     if not is_nested_paginated_field:
