@@ -30,9 +30,7 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
         # Escenario 1: ModelC con OneToOne a ModelD (con ModelEs)
         model_d1 = ModelD.objects.create()
         model_c1 = ModelC.objects.create(
-            char_field="C1",
-            integer_field=1,
-            one_to_one_field=model_d1
+            char_field="C1", integer_field=1, one_to_one_field=model_d1
         )
         ModelE.objects.create(foreign_key_field_deep=model_d1)
         ModelE.objects.create(foreign_key_field_deep=model_d1)
@@ -40,27 +38,19 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
 
         # Escenario 2: ModelC con OneToOne a ModelD (sin ModelEs)
         model_d2 = ModelD.objects.create()
-        model_c2 = ModelC.objects.create(
-            char_field="C2",
-            integer_field=2,
-            one_to_one_field=model_d2
+        ModelC.objects.create(
+            char_field="C2", integer_field=2, one_to_one_field=model_d2
         )
 
         # Escenario 3: ModelC SIN OneToOne (null)
-        model_c3 = ModelC.objects.create(
-            char_field="C3",
-            integer_field=3,
-            one_to_one_field=None
-        )
+        ModelC.objects.create(char_field="C3", integer_field=3, one_to_one_field=None)
 
         # Escenario 4: ModelC con OneToOne a ModelD (muchos ModelEs)
         model_d4 = ModelD.objects.create()
-        model_c4 = ModelC.objects.create(
-            char_field="C4",
-            integer_field=4,
-            one_to_one_field=model_d4
+        ModelC.objects.create(
+            char_field="C4", integer_field=4, one_to_one_field=model_d4
         )
-        for i in range(10):
+        for _i in range(10):
             ModelE.objects.create(foreign_key_field_deep=model_d4)
 
         # Escenario 5: ModelD huérfano (sin ModelC, con ForeignKey a ModelC)
@@ -118,35 +108,48 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
             self.assertGreater(data["total"], 0)
 
             # Total de queries debe ser exactamente 3
-            self.assertEqual(len(queries), 3,
-                f"Expected 3 queries (COUNT + SELECT + Prefetch), got {len(queries)}")
+            self.assertEqual(
+                len(queries),
+                3,
+                f"Expected 3 queries (COUNT + SELECT + Prefetch), got {len(queries)}",
+            )
 
             # Verificar que NO hay queries individuales de ModelE
             individual_e_queries = [
-                q for q in queries
-                if 'SELECT' in q['sql'].upper()
-                and 'modele' in q['sql'].lower()
-                and 'WHERE' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()  # No es Prefetch
-                and 'LIMIT 21' in q['sql'].upper()  # Query individual
+                q
+                for q in queries
+                if "SELECT" in q["sql"].upper()
+                and "modele" in q["sql"].lower()
+                and "WHERE" in q["sql"].upper()
+                and "IN (" not in q["sql"].upper()  # No es Prefetch
+                and "LIMIT 21" in q["sql"].upper()  # Query individual
             ]
 
-            self.assertEqual(len(individual_e_queries), 0,
-                f"Found {len(individual_e_queries)} N+1 queries. Should be 0.")
+            self.assertEqual(
+                len(individual_e_queries),
+                0,
+                f"Found {len(individual_e_queries)} N+1 queries. Should be 0.",
+            )
 
             # Verificar que SÍ hay un Prefetch con IN
             prefetch_queries = [
-                q for q in queries
-                if 'modele' in q['sql'].lower()
-                and 'IN (' in q['sql'].upper()
+                q
+                for q in queries
+                if "modele" in q["sql"].lower() and "IN (" in q["sql"].upper()
             ]
-            self.assertEqual(len(prefetch_queries), 1,
-                "Should have exactly 1 Prefetch query with IN clause")
+            self.assertEqual(
+                len(prefetch_queries),
+                1,
+                "Should have exactly 1 Prefetch query with IN clause",
+            )
 
             # Verificar que el Prefetch incluye el FK field
-            prefetch_sql = prefetch_queries[0]['sql']
-            self.assertIn('foreign_key_field_deep_id', prefetch_sql.lower(),
-                "Prefetch query should include FK field to prevent deferred queries")
+            prefetch_sql = prefetch_queries[0]["sql"]
+            self.assertIn(
+                "foreign_key_field_deep_id",
+                prefetch_sql.lower(),
+                "Prefetch query should include FK field to prevent deferred queries",
+            )
 
     def test_foreignkey_reverse_nested_paginated_no_n1(self):
         """
@@ -197,25 +200,32 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
 
             # Verificar que NO hay queries individuales
             individual_queries = [
-                q for q in queries
-                if 'LIMIT 21' in q['sql'].upper()
-                and 'WHERE' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()
+                q
+                for q in queries
+                if "LIMIT 21" in q["sql"].upper()
+                and "WHERE" in q["sql"].upper()
+                and "IN (" not in q["sql"].upper()
             ]
 
-            self.assertEqual(len(individual_queries), 0,
-                f"Found {len(individual_queries)} N+1 queries. Should be 0.")
+            self.assertEqual(
+                len(individual_queries),
+                0,
+                f"Found {len(individual_queries)} N+1 queries. Should be 0.",
+            )
 
             # Todas las queries de ModelE deben usar IN
             modele_queries = [
-                q for q in queries
-                if 'modele' in q['sql'].lower()
-                and 'SELECT' in q['sql'].upper()
+                q
+                for q in queries
+                if "modele" in q["sql"].lower() and "SELECT" in q["sql"].upper()
             ]
 
             for q in modele_queries:
-                self.assertIn('IN (', q['sql'].upper(),
-                    f"ModelE query should use IN clause:\n{q['sql']}")
+                self.assertIn(
+                    "IN (",
+                    q["sql"].upper(),
+                    f"ModelE query should use IN clause:\n{q['sql']}",
+                )
 
     def test_multiple_nesting_levels_no_n1(self):
         """
@@ -257,10 +267,11 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
 
             # Verificar que NO hay queries individuales
             individual_queries = [
-                q for q in queries
-                if 'LIMIT 21' in q['sql'].upper()
-                and 'WHERE' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()
+                q
+                for q in queries
+                if "LIMIT 21" in q["sql"].upper()
+                and "WHERE" in q["sql"].upper()
+                and "IN (" not in q["sql"].upper()
             ]
 
             if individual_queries:
@@ -268,8 +279,11 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
                 for i, q in enumerate(individual_queries[:5], 1):
                     print(f"{i}. {q['sql'][:150]}...")
 
-            self.assertEqual(len(individual_queries), 0,
-                f"Multi-level nesting should not generate N+1 queries")
+            self.assertEqual(
+                len(individual_queries),
+                0,
+                "Multi-level nesting should not generate N+1 queries",
+            )
 
     def test_null_relations_handled_correctly(self):
         """
@@ -318,21 +332,21 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
             self.assertIsNone(data[0]["oneToOneField"])
 
             # No debe haber queries de ModelE (porque no hay relación)
-            modele_queries = [
-                q for q in queries
-                if 'modele' in q['sql'].lower()
-            ]
+            modele_queries = [q for q in queries if "modele" in q["sql"].lower()]
 
             # Puede haber 0 o 1 query de ModelE (Prefetch puede ejecutarse aunque no haya datos)
             # Lo importante es que NO haya queries individuales
             individual_e_queries = [
-                q for q in modele_queries
-                if 'LIMIT 21' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()
+                q
+                for q in modele_queries
+                if "LIMIT 21" in q["sql"].upper() and "IN (" not in q["sql"].upper()
             ]
 
-            self.assertEqual(len(individual_e_queries), 0,
-                "NULL relations should not trigger individual queries")
+            self.assertEqual(
+                len(individual_e_queries),
+                0,
+                "NULL relations should not trigger individual queries",
+            )
 
     def test_list_query_uses_optimization(self):
         """
@@ -368,15 +382,19 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
 
             # Verificar que NO hay queries individuales
             individual_e_queries = [
-                q for q in queries
-                if 'SELECT' in q['sql'].upper()
-                and 'modele' in q['sql'].lower()
-                and 'LIMIT 21' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()
+                q
+                for q in queries
+                if "SELECT" in q["sql"].upper()
+                and "modele" in q["sql"].lower()
+                and "LIMIT 21" in q["sql"].upper()
+                and "IN (" not in q["sql"].upper()
             ]
 
-            self.assertEqual(len(individual_e_queries), 0,
-                f"listModelCs should also use optimization. Found {len(individual_e_queries)} N+1 queries.")
+            self.assertEqual(
+                len(individual_e_queries),
+                0,
+                f"listModelCs should also use optimization. Found {len(individual_e_queries)} N+1 queries.",
+            )
 
     def test_fk_fields_included_in_only(self):
         """
@@ -420,33 +438,44 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
 
             # Buscar el Prefetch de ModelE
             modele_prefetch = [
-                q for q in queries
-                if 'modele' in q['sql'].lower()
-                and 'IN (' in q['sql'].upper()
+                q
+                for q in queries
+                if "modele" in q["sql"].lower() and "IN (" in q["sql"].upper()
             ]
 
-            self.assertGreater(len(modele_prefetch), 0,
-                "Should have at least one ModelE Prefetch query")
+            self.assertGreater(
+                len(modele_prefetch),
+                0,
+                "Should have at least one ModelE Prefetch query",
+            )
 
             # Verificar que el Prefetch incluye el FK field
-            prefetch_sql = modele_prefetch[0]['sql']
+            prefetch_sql = modele_prefetch[0]["sql"]
 
             # Debe tener ambos: id Y foreign_key_field_deep_id
-            self.assertIn('"tests_modele"."id"', prefetch_sql,
-                "Prefetch should select 'id' field")
-            self.assertIn('foreign_key_field_deep_id', prefetch_sql.lower(),
-                "Prefetch should select FK field to prevent deferred queries")
+            self.assertIn(
+                '"tests_modele"."id"', prefetch_sql, "Prefetch should select 'id' field"
+            )
+            self.assertIn(
+                "foreign_key_field_deep_id",
+                prefetch_sql.lower(),
+                "Prefetch should select FK field to prevent deferred queries",
+            )
 
             # NO debe haber queries adicionales de ModelE para obtener el FK
             individual_e_for_fk = [
-                q for q in queries
-                if 'modele' in q['sql'].lower()
-                and 'WHERE' in q['sql'].upper()
+                q
+                for q in queries
+                if "modele" in q["sql"].lower()
+                and "WHERE" in q["sql"].upper()
                 and q not in modele_prefetch
             ]
 
-            self.assertEqual(len(individual_e_for_fk), 0,
-                f"FK fields should be loaded in Prefetch. Found {len(individual_e_for_fk)} deferred field queries.")
+            self.assertEqual(
+                len(individual_e_for_fk),
+                0,
+                f"FK fields should be loaded in Prefetch. Found {len(individual_e_for_fk)} deferred field queries.",
+            )
 
     def test_empty_paginated_relation_no_errors(self):
         """
@@ -499,13 +528,16 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
 
             # No debe haber queries individuales
             individual_queries = [
-                q for q in queries
-                if 'LIMIT 21' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()
+                q
+                for q in queries
+                if "LIMIT 21" in q["sql"].upper() and "IN (" not in q["sql"].upper()
             ]
 
-            self.assertEqual(len(individual_queries), 0,
-                "Empty paginated relations should not trigger individual queries")
+            self.assertEqual(
+                len(individual_queries),
+                0,
+                "Empty paginated relations should not trigger individual queries",
+            )
 
     def test_many_objects_with_nested_pagination(self):
         """
@@ -555,14 +587,18 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
 
             # NO debe haber queries individuales (10 queries serían N+1)
             individual_queries = [
-                q for q in queries
-                if 'modele' in q['sql'].lower()
-                and 'LIMIT 21' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()
+                q
+                for q in queries
+                if "modele" in q["sql"].lower()
+                and "LIMIT 21" in q["sql"].upper()
+                and "IN (" not in q["sql"].upper()
             ]
 
-            self.assertEqual(len(individual_queries), 0,
-                f"Should use Prefetch, not {len(individual_queries)} individual queries")
+            self.assertEqual(
+                len(individual_queries),
+                0,
+                f"Should use Prefetch, not {len(individual_queries)} individual queries",
+            )
 
     def test_query_count_consistency(self):
         """
@@ -621,9 +657,12 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
         # (puede variar en ±1 por diferencias en filtros/counts)
         difference = abs(queries_many_objects - queries_one_object)
 
-        self.assertLessEqual(difference, 1,
+        self.assertLessEqual(
+            difference,
+            1,
             f"Query count should be constant. 1 object: {queries_one_object}, "
-            f"many objects: {queries_many_objects}. Difference: {difference}")
+            f"many objects: {queries_many_objects}. Difference: {difference}",
+        )
 
     def test_read_query_uses_optimization(self):
         """
@@ -680,11 +719,12 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
 
             # Verificar que NO hay queries individuales de ModelE
             individual_e_queries = [
-                q for q in queries
-                if 'SELECT' in q['sql'].upper()
-                and 'modele' in q['sql'].lower()
-                and 'LIMIT 21' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()
+                q
+                for q in queries
+                if "SELECT" in q["sql"].upper()
+                and "modele" in q["sql"].lower()
+                and "LIMIT 21" in q["sql"].upper()
+                and "IN (" not in q["sql"].upper()
             ]
 
             if individual_e_queries:
@@ -692,26 +732,38 @@ class NestedPaginatedFieldsComprehensiveTestCase(TestCase):
                 for i, q in enumerate(individual_e_queries[:3], 1):
                     print(f"{i}. {q['sql'][:150]}...")
 
-            self.assertEqual(len(individual_e_queries), 0,
-                f"readModelC should use optimization. Found {len(individual_e_queries)} N+1 queries.")
+            self.assertEqual(
+                len(individual_e_queries),
+                0,
+                f"readModelC should use optimization. Found {len(individual_e_queries)} N+1 queries.",
+            )
 
             # Verificar que SÍ hay un Prefetch con IN
             prefetch_queries = [
-                q for q in queries
-                if 'modele' in q['sql'].lower()
-                and 'IN (' in q['sql'].upper()
+                q
+                for q in queries
+                if "modele" in q["sql"].lower() and "IN (" in q["sql"].upper()
             ]
 
-            self.assertGreaterEqual(len(prefetch_queries), 1,
-                "Should have at least 1 Prefetch query with IN clause for ModelE")
+            self.assertGreaterEqual(
+                len(prefetch_queries),
+                1,
+                "Should have at least 1 Prefetch query with IN clause for ModelE",
+            )
 
             # Verificar que el Prefetch incluye FK fields
             if prefetch_queries:
-                prefetch_sql = prefetch_queries[0]['sql']
-                self.assertIn('foreign_key_field_deep_id', prefetch_sql.lower(),
-                    "Prefetch should include FK field")
+                prefetch_sql = prefetch_queries[0]["sql"]
+                self.assertIn(
+                    "foreign_key_field_deep_id",
+                    prefetch_sql.lower(),
+                    "Prefetch should include FK field",
+                )
 
             # Total de queries debe ser razonable (2-3 queries)
             # 1 SELECT principal + 1-2 Prefetch
-            self.assertLessEqual(len(queries), 3,
-                f"readModelC should have ≤3 queries, got {len(queries)}")
+            self.assertLessEqual(
+                len(queries),
+                3,
+                f"readModelC should have ≤3 queries, got {len(queries)}",
+            )

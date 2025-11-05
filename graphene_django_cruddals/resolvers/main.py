@@ -183,8 +183,10 @@ def _queryset_factory_analyze(
                         )
 
                         nested_prefetches = [
-                            p for p in new_ret["prefetch_related"]
-                            if isinstance(p, Prefetch) and p.prefetch_to.startswith(new_suffix + real_name + "__")
+                            p
+                            for p in new_ret["prefetch_related"]
+                            if isinstance(p, Prefetch)
+                            and p.prefetch_to.startswith(new_suffix + real_name + "__")
                         ]
 
                         ret["select_related"].append(new_suffix + real_name)
@@ -193,9 +195,9 @@ def _queryset_factory_analyze(
                             for p in nested_prefetches:
                                 ret["prefetch_related"].append(p)
 
-
                             new_ret["prefetch_related"] = [
-                                p for p in new_ret["prefetch_related"]
+                                p
+                                for p in new_ret["prefetch_related"]
                                 if p not in nested_prefetches
                             ]
 
@@ -794,7 +796,7 @@ def default_search_field_resolver(
 
                 qs = maybe_queryset(maybe_manager)
 
-                if hasattr(qs, '_result_cache') and qs._result_cache is not None:
+                if hasattr(qs, "_result_cache") and qs._result_cache is not None:
                     queryset = list(qs._result_cache)
                 else:
                     queryset = qs
