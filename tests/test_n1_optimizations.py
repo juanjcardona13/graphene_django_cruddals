@@ -719,6 +719,8 @@ class N1OptimizationsTestCase(TestCase):
         # Pages should be ceil(6/2) = 3
         self.assertEqual(data["pages"], 3)
 
+    # ==================== READ RESOLVER OPTIMIZATION TESTS ====================
+
     def test_read_basic_optimizations(self):
         """
         Test: Read query with select_related and prefetch_related.
@@ -1239,11 +1241,12 @@ class N1OptimizationsTestCase(TestCase):
             self.assertIsNone(response.get("errors"))
 
             individual_e_queries = [
-                q for q in queries
-                if 'SELECT' in q['sql'].upper()
-                and 'modele' in q['sql'].lower()
-                and 'WHERE' in q['sql'].upper()
-                and 'IN (' not in q['sql'].upper()
+                q
+                for q in queries
+                if "SELECT" in q["sql"].upper()
+                and "modele" in q["sql"].lower()
+                and "WHERE" in q["sql"].upper()
+                and "IN (" not in q["sql"].upper()
             ]
 
             if individual_e_queries:
@@ -1251,6 +1254,9 @@ class N1OptimizationsTestCase(TestCase):
                 for i, q in enumerate(individual_e_queries[:3], 1):
                     print(f"{i}. {q['sql'][:120]}...")
 
-            self.assertEqual(len(individual_e_queries), 0,
+            self.assertEqual(
+                len(individual_e_queries),
+                0,
                 f"Found {len(individual_e_queries)} individual ModelE queries. "
-                f"Nested paginated fields should use Prefetch with custom queryset.")
+                f"Nested paginated fields should use Prefetch with custom queryset.",
+            )
