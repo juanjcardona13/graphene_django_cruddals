@@ -1,6 +1,8 @@
 import os
 import unittest
 
+from graphql.version import version_info
+
 from graphene_django_cruddals.client.build_functions import (
     PATH_CLIENT,
     build_files_for_client_schema_cruddals,
@@ -47,11 +49,21 @@ class TestClientBuildFunctions(unittest.TestCase):
                 assert file.read().strip() == expected_file.read().strip()
 
     def test_build_schema_introspect_gql(self):
+        # Select the expected file based on graphql-core version
+        # Version 3.2.6 and below: use schema-introspect-3-2-6.gql
+        # Version 3.2.7 and above: use schema-introspect-3-2-7.gql
+        current_version = (version_info.major, version_info.minor, version_info.micro)
+        if current_version <= (3, 2, 6):
+            expected_file_path = (
+                "tests/schema_client_js/schema_cruddals/schema-introspect-3-2-6.gql"
+            )
+        else:
+            expected_file_path = (
+                "tests/schema_client_js/schema_cruddals/schema-introspect-3-2-7.gql"
+            )
+
         with open(f"{PATH_CLIENT}/schema-introspect.gql", encoding="utf-8") as file:
-            with open(
-                "tests/schema_client_js/schema_cruddals/schema-introspect.gql",
-                encoding="utf-8",
-            ) as expected_file:
+            with open(expected_file_path, encoding="utf-8") as expected_file:
                 assert normalize_text(file.read().strip()) == normalize_text(
                     expected_file.read().strip()
                 )
