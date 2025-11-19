@@ -1,4 +1,5 @@
 import pytest
+from graphene_cruddals import get_global_registry
 
 from graphene_django_cruddals.converters.converter_filter_input import (
     convert_django_field_to_filter_input,
@@ -37,7 +38,7 @@ from tests.gql_types.OrderByModelGInput import OrderByModelGInput
 from tests.gql_types.UpdateModelAInput import UpdateModelAInput
 from tests.gql_types.UpdateModelGInput import UpdateModelGInput
 from tests.gql_types.UpdateModelHInput import UpdateModelHInput
-from tests.models import ModelC, ModelD, ModelE
+from tests.models import ModelC, ModelD, ModelE, ModelG
 from tests.utils import Client, SchemaTestCase
 
 
@@ -1070,6 +1071,88 @@ class TestInternalGetObjectsModelG(SchemaTestCase):
         response = client.query(search_model_g_query, variables=variables).json()
         self.verify_response(response, expected_response, message="READ ModelG")
         # endregion
+
+
+class TestGetObjectsReceivesArguments(SchemaTestCase):
+    """Test that get_objects hook receives arguments (where, order_by, etc.) correctly."""
+
+    def test_get_objects_receives_arguments(self):
+        # Create test objects
+        ModelG.objects.all().delete()
+        ModelG.objects.create(name="Test A")
+        ModelG.objects.create(name="Test B")
+        ModelG.objects.create(name="Test C")
+
+        # Get the ObjectType for ModelG from the schema
+        registry = get_global_registry()
+        registries_for_model = registry.get_registry_for_model(ModelG)
+        object_type = registries_for_model["object_type"]
+
+        # Store original get_objects
+        original_get_objects = object_type.get_objects
+
+        # Track arguments passed to get_objects
+        captured_args = {}
+
+        def mock_get_objects(queryset, info, **kwargs):
+            """Mock get_objects that captures arguments and returns original queryset."""
+            captured_args["kwargs"] = kwargs
+            captured_args["queryset_count"] = queryset.count()
+            # Return the original queryset to not break existing behavior
+            return queryset
+
+        # Temporarily replace get_objects
+        object_type.get_objects = mock_get_objects
+
+        try:
+            client = Client()
+
+            # Test with where and order_by arguments
+            variables = {
+                "where": {"name": {"icontains": "Test"}},
+                "orderBy": {"name": "DESC"},
+            }
+
+            query = """
+            query searchModelGs($where: FilterModelGInput $orderBy: OrderByModelGInput) {
+                searchModelGs(where: $where orderBy: $orderBy) {
+                    total
+                    objects {
+                        id
+                        name
+                    }
+                }
+            }
+            """
+
+            response = client.query(query, variables=variables).json()
+
+            # Verify the query was successful
+            self.assertIn("data", response)
+            self.assertIn("searchModelGs", response["data"])
+
+            # Verify that get_objects was called with the correct arguments
+            self.assertIn("kwargs", captured_args)
+            self.assertIn("where", captured_args["kwargs"])
+            # Note: orderBy is normalized to order_by in the arguments
+            self.assertIn("order_by", captured_args["kwargs"])
+
+            # Verify where argument structure
+            where_arg = captured_args["kwargs"]["where"]
+            self.assertIn("name", where_arg)
+            self.assertIn("icontains", where_arg["name"])
+            self.assertEqual(where_arg["name"]["icontains"], "Test")
+
+            # Verify order_by argument (normalized from orderBy)
+            order_by_arg = captured_args["kwargs"]["order_by"]
+            self.assertIn("name", order_by_arg)
+            # The value might be an Enum, so we check the string representation
+            order_by_value = str(order_by_arg["name"])
+            self.assertIn("DESC", order_by_value)
+
+        finally:
+            # Restore original get_objects
+            object_type.get_objects = original_get_objects
 
 
 class TestModifyArgumentsModelHCruddalsInterface(SchemaTestCase):

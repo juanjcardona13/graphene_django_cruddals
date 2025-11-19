@@ -214,7 +214,7 @@ def _queryset_factory_analyze(
                             model=related_model,
                             registry=registry,
                             info=info,
-                            field_ast=field,  # Incluye arguments del nested field
+                            field_ast=field,  # Includes arguments from the nested field
                             is_connection=True,
                         )
                         if hasattr(model_field, "get_attname"):
@@ -246,22 +246,22 @@ def _queryset_factory(
     **kwargs,
 ) -> QuerySet:
     """
-    Punto de entrada único para crear y optimizar querysets.
+    Single entry point for creating and optimizing querysets.
 
-    Este método centraliza toda la lógica de optimización:
-    - Análisis del AST de GraphQL para detectar campos solicitados
-    - Aplicación de select_related, prefetch_related, only
-    - Procesamiento de argumentos WHERE y ORDER BY
-    - Aplicación del hook get_objects si existe
+    This method centralizes all optimization logic:
+    - Analysis of GraphQL AST to detect requested fields
+    - Application of select_related, prefetch_related, only
+    - Processing of WHERE and ORDER BY arguments
+    - Application of get_objects hook if it exists
 
     Args:
         info: GraphQL ResolveInfo
-        field_ast: Nodo AST del field (para obtener arguments y selection_set)
-        is_connection: Si el queryset es para una conexión/lista o un objeto individual
-        **kwargs: Argumentos adicionales
+        field_ast: AST node of the field (to get arguments and selection_set)
+        is_connection: Whether the queryset is for a connection/list or an individual object
+        **kwargs: Additional arguments
 
     Returns:
-        QuerySet optimizado y filtrado
+        Optimized and filtered QuerySet
     """
     queryset = model.objects.all()
 
@@ -283,8 +283,8 @@ def _queryset_factory(
         queryset = queryset.select_related(*queryset_factory["select_related"])
 
     if queryset_factory["only"]:
-        # OPTIMIZACIÓN: Agregar automáticamente campos FK al .only()
-        # Sin esto, acceder a campos FK causa queries individuales (deferred fields)
+        # OPTIMIZATION: Automatically add FK fields to .only()
+        # Without this, accessing FK fields causes individual queries (deferred fields)
         only_fields = list(queryset_factory["only"])
 
         for field in model._meta.get_fields():
@@ -336,18 +336,6 @@ def _queryset_factory(
 
     queryset = queryset.distinct()
 
-    # TODO: REVISAR
-    # Aplicar get_objects después de WHERE para que reciba un queryset filtrado
-    # if hasattr(cls, 'get_objects'):
-    #     get_objects = cls.get_objects
-
-    #     if isinstance(get_objects, list):
-    #         for func in get_objects:
-    #             if callable(func):
-    #                 queryset = func(queryset, info)
-    #     elif callable(get_objects):
-    #         queryset = get_objects(queryset, info)
-
     return queryset
 
 
@@ -356,14 +344,14 @@ def get_computed_field_hints(
     model: DjangoModel,
 ) -> Dict[str, Dict[str, Any]]:
     """
-    Extrae hints de optimización de computed fields decorados con @resolver_hints.
+    Extracts optimization hints from computed fields decorated with @resolver_hints.
 
     Args:
-        registry: Registro global de graphene-django-cruddals
-        model: Modelo Django del cual extraer computed fields
+        registry: Global registry of graphene-django-cruddals
+        model: Django model from which to extract computed fields
 
     Returns:
-        Diccionario con hints por campo:
+        Dictionary with hints per field:
         {
             "field_name": {
                 "select_related": [...],
@@ -490,21 +478,21 @@ def apply_query_arguments(
     apply_distinct: bool = True,
 ) -> Union[QuerySet, list, None]:
     """
-    Función centralizada para aplicar argumentos de query (where, order_by, distinct).
+    Centralized function to apply query arguments (where, order_by, distinct).
 
-    Esta función procesa los argumentos comunes de GraphQL y los aplica al queryset de forma consistente.
+    This function processes common GraphQL arguments and applies them to the queryset consistently.
 
     Args:
-        queryset: El queryset a procesar
-        args: Diccionario con los argumentos de GraphQL (where, order_by, orderBy, etc.)
-        model: El modelo Django asociado
-        registry: El registro global
-        apply_where: Si aplicar filtros WHERE
-        apply_order_by: Si aplicar ORDER BY
-        apply_distinct: Si aplicar DISTINCT
+        queryset: The queryset to process
+        args: Dictionary with GraphQL arguments (where, order_by, orderBy, etc.)
+        model: The associated Django model
+        registry: The global registry
+        apply_where: Whether to apply WHERE filters
+        apply_order_by: Whether to apply ORDER BY
+        apply_distinct: Whether to apply DISTINCT
 
     Returns:
-        El queryset con los argumentos aplicados
+        The queryset with the arguments applied
     """
     if queryset is None:
         return None
@@ -539,17 +527,18 @@ def apply_get_objects_hook(
     queryset: Union[QuerySet, list, None],
     django_object_type: ModelObjectType,
     info,
+    **args,
 ) -> Union[QuerySet, list, None]:
     """
-    Función centralizada para aplicar el hook get_objects de los ModelObjectType.
+    Centralized function to apply the get_objects hook from ModelObjectType.
 
     Args:
-        queryset: El queryset a procesar
-        django_object_type: El tipo de objeto Django con posible hook get_objects
+        queryset: The queryset to process
+        django_object_type: The Django object type with possible get_objects hook
         info: GraphQL info object
 
     Returns:
-        El queryset procesado por el hook get_objects
+        The queryset processed by the get_objects hook
     """
     if not isinstance(queryset, QuerySet):
         return queryset
@@ -561,9 +550,9 @@ def apply_get_objects_hook(
 
     if isinstance(get_objects, list):
         for get_objects_func in get_objects:
-            queryset = maybe_queryset(get_objects_func(queryset, info))
+            queryset = maybe_queryset(get_objects_func(queryset, info, **args))
     elif callable(get_objects):
-        queryset = maybe_queryset(get_objects(queryset, info))
+        queryset = maybe_queryset(get_objects(queryset, info, **args))
     else:
         raise ValueError(
             "The get_objects attribute must be a callable or a list of callables."
@@ -670,6 +659,7 @@ def default_read_field_resolver(
         queryset=queryset,
         django_object_type=django_object_type,
         info=info,
+        **args,
     )
 
     if queryset is None:
@@ -836,6 +826,7 @@ def default_search_field_resolver(
         queryset=queryset,
         django_object_type=django_object_type,
         info=info,
+        **args,
     )
 
     pagination_config = args.get("pagination_config", {}) or args.get(

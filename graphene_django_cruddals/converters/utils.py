@@ -231,12 +231,12 @@ def resolve_for_relation_field(field, model, _type, root, info, **args):
             for get_objects_func in _type.get_objects:
                 if isinstance(get_objects_func, classmethod):
                     queryset = maybe_queryset(
-                        get_objects_func.__func__(_type, queryset, info)
+                        get_objects_func.__func__(_type, queryset, info, **args)
                     )
                 else:
-                    queryset = maybe_queryset(get_objects_func(queryset, info))
+                    queryset = maybe_queryset(get_objects_func(queryset, info, **args))
         else:
-            queryset = maybe_queryset(_type.get_objects(queryset, info))
+            queryset = maybe_queryset(_type.get_objects(queryset, info, **args))
     else:
         raise ValueError("The get_objects method is not defined.")
     try:

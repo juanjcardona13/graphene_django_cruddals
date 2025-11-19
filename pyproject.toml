@@ -30,7 +30,7 @@ classifiers = [
 requires-python = ">=3.6"
 dependencies = [
     "graphene-django>=3.0.0",
-    "graphene-cruddals>=0.2.13"
+    "graphene-cruddals>=0.2.14"
 ]
 
 [project.urls]

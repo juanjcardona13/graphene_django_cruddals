@@ -14,8 +14,8 @@ tests:
 
 .PHONY: format ## Format code
 format:
-	ruff format graphene_django_cruddals tests docs
+	pre-commit run ruff-format --all-files
 
 .PHONY: lint ## Lint code
 lint:
-	ruff graphene_django_cruddals tests docs
+	pre-commit run ruff --all-files
