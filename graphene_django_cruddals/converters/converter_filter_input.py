@@ -42,6 +42,30 @@ from graphene_django_cruddals.scalars_type import (
 from .compat import HStoreField, JSONField, PGJSONField
 
 
+def _is_text_type(type_of_field) -> bool:
+    """
+    Check if the field type is a text type that can use text lookups.
+    These types include: String, Email, Slug, URL, UUID, IP, IPv4.
+    Excludes: Int, Boolean, Date, DateTime, Time, Decimal, Float, Duration, etc.
+
+    Text lookups (icontains, startswith, etc.) only make sense for text fields,
+    as they allow partial searches without strict format validation.
+    For example, allows searching for emails starting with "a" without requiring a complete valid email.
+    """
+    text_types = (
+        String,
+        Email,
+        Slug,
+        URL,
+        UUID,
+        IP,
+        IPv4,
+    )
+    if isinstance(type_of_field, type):
+        return type_of_field in text_types
+    return type(type_of_field) in text_types
+
+
 def get_filter_input_object_type(
     django_field: DjangoField, type_of_field, name: str
 ) -> Type[graphene.InputObjectType]:
@@ -56,6 +80,20 @@ def get_filter_input_object_type(
             )
         elif name_lookup == "isnull":
             input_fields[name_lookup] = graphene.InputField(type_=graphene.Boolean)
+        elif name_lookup in (
+            "icontains",
+            "istartswith",
+            "iendswith",
+            "contains",
+            "startswith",
+            "endswith",
+        ):
+            # Only apply text lookups to text types (String, Email, Slug, URL, UUID, IP, etc.)
+            # To allow partial searches without strict format validation
+            if _is_text_type(type_of_field):
+                input_fields[name_lookup] = graphene.InputField(type_=graphene.String)
+            else:
+                input_fields[name_lookup] = graphene.InputField(type_=type_of_field)
         else:
             input_fields[name_lookup] = graphene.InputField(type_=type_of_field)
 

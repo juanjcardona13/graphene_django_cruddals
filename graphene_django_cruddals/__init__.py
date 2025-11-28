@@ -108,7 +108,7 @@ from .utils.main import (
 )
 from .views.cruddals_views import CRUDDALSView
 
-__version__ = "0.1.25"
+__version__ = "0.1.26"
 
 __all__ = [
     "__version__",

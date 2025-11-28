@@ -1,7 +1,10 @@
 import pytest
 from graphene_cruddals import get_global_registry
 
+import graphene
+from graphene import UUID, Boolean, Date, DateTime, Int, String
 from graphene_django_cruddals.converters.converter_filter_input import (
+    _is_text_type,
     convert_django_field_to_filter_input,
 )
 from graphene_django_cruddals.converters.converter_input import (
@@ -16,6 +19,7 @@ from graphene_django_cruddals.converters.converter_order_by_input import (
 from graphene_django_cruddals.converters.converter_output import (
     convert_django_field_to_output,
 )
+from graphene_django_cruddals.scalars_type import IP, URL, Email, IPv4, Slug
 from tests.gql_fields.activateModelCs import activateModelCs
 from tests.gql_fields.createModelCs import createModelCs
 from tests.gql_fields.createModelHs import createModelHs
@@ -38,7 +42,7 @@ from tests.gql_types.OrderByModelGInput import OrderByModelGInput
 from tests.gql_types.UpdateModelAInput import UpdateModelAInput
 from tests.gql_types.UpdateModelGInput import UpdateModelGInput
 from tests.gql_types.UpdateModelHInput import UpdateModelHInput
-from tests.models import ModelC, ModelD, ModelE, ModelG
+from tests.models import ModelA, ModelC, ModelD, ModelE, ModelG
 from tests.utils import Client, SchemaTestCase
 
 
@@ -115,6 +119,98 @@ class CruddalsModelSchemaTestTypes(SchemaTestCase):
             str(e.value)
             == "Don't know how to convert the Django field None (<class 'NoneType'>)"
         )
+
+    def test_is_text_type_with_text_types(self):
+        """Test that _is_text_type correctly identifies text types."""
+        # Text types should return True
+        assert _is_text_type(String) is True
+        assert _is_text_type(Email) is True
+        assert _is_text_type(Slug) is True
+        assert _is_text_type(URL) is True
+        assert _is_text_type(UUID) is True
+        assert _is_text_type(IP) is True
+        assert _is_text_type(IPv4) is True
+
+    def test_is_text_type_with_non_text_types(self):
+        """Test that _is_text_type correctly identifies non-text types."""
+        # Non-text types should return False
+        assert _is_text_type(Int) is False
+        assert _is_text_type(Boolean) is False
+        assert _is_text_type(Date) is False
+        assert _is_text_type(DateTime) is False
+
+    def test_filter_input_text_lookups_for_email_field(self):
+        """Test that text lookups (startswith, istartswith, etc.) use String type for EmailField."""
+        registry = get_global_registry()
+        email_field = ModelA._meta.get_field("email_field_required")
+        filter_input = convert_django_field_to_filter_input(
+            "email_field_required", email_field, ModelA, registry
+        )
+
+        # Get the filter input type
+        filter_type = type(filter_input)
+
+        # Check that text lookups use String type
+        assert hasattr(filter_type, "startswith")
+        assert hasattr(filter_type, "istartswith")
+        assert hasattr(filter_type, "contains")
+        assert hasattr(filter_type, "icontains")
+
+        # Verify the type is String (not Email) for text lookups
+        startswith_field = filter_type._meta.fields.get("startswith")
+        assert startswith_field is not None
+        assert startswith_field.type == graphene.String
+
+    def test_filter_input_text_lookups_for_slug_field(self):
+        """Test that text lookups use String type for SlugField."""
+        registry = get_global_registry()
+        slug_field = ModelA._meta.get_field("slug_field_required")
+        filter_input = convert_django_field_to_filter_input(
+            "slug_field_required", slug_field, ModelA, registry
+        )
+
+        filter_type = type(filter_input)
+
+        # Check that text lookups use String type
+        assert hasattr(filter_type, "startswith")
+        startswith_field = filter_type._meta.fields.get("startswith")
+        assert startswith_field is not None
+        assert startswith_field.type == graphene.String
+
+    def test_filter_input_text_lookups_for_url_field(self):
+        """Test that text lookups use String type for URLField."""
+        registry = get_global_registry()
+        url_field = ModelA._meta.get_field("url_field_required")
+        filter_input = convert_django_field_to_filter_input(
+            "url_field_required", url_field, ModelA, registry
+        )
+
+        filter_type = type(filter_input)
+
+        # Check that text lookups use String type
+        assert hasattr(filter_type, "startswith")
+        startswith_field = filter_type._meta.fields.get("startswith")
+        assert startswith_field is not None
+        assert startswith_field.type == graphene.String
+
+    def test_filter_input_non_text_lookups_for_integer_field(self):
+        """Test that non-text lookups use the original type for IntegerField."""
+        registry = get_global_registry()
+        integer_field = ModelA._meta.get_field("integer_field_required")
+        filter_input = convert_django_field_to_filter_input(
+            "integer_field_required", integer_field, ModelA, registry
+        )
+
+        filter_type = type(filter_input)
+
+        # Integer fields should not have text lookups available
+        # (Django doesn't expose them for integer fields)
+        # But if they did, they should use the original type
+        # Check that exact lookup uses Int type
+        assert hasattr(filter_type, "exact")
+        exact_field = filter_type._meta.fields.get("exact")
+        assert exact_field is not None
+        assert exact_field.type == graphene.Int
 
     def test_model_order_by_input_type(self):
         self.run_test_graphql_type(
