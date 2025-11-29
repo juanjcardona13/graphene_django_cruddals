@@ -1,6 +1,7 @@
 # TODO: Add parameter strict que sea un booleano y por defecto sea True
 # TODO: Fix no se estan poniendo los help text de las relaciones, esoecificamente no me funciono par aun ForeignKey
 # TODO: Revisar como funciona los choices tengo un problema con las mayusculas, minusculas y la busqueda con exact
+# TODO: (OPCIONAL) Usar Enum en lugar de StringFilter para campos con choices en FilterInputs - Para lookups exact, iexact, in, range usar Enum (type safety + validación automática + consistencia con outputs/mutations). Mantener String para lookups de texto parcial (contains, startswith, etc). Breaking change, requiere major version bump. Ver análisis completo en conversación del 2025-11-28.
 # TODO: Terminar el soporte para ArrayField
 # hay un problema con los campos por default, si los excluyo campos que son requeridos pero tienen valor por defecto, django form no recibe los valores por defecto
 # TODO: Modificar la funcion de generar los archivos para el cliente a un comando django, y que sean en typescript, adicional mejorar los nombres de las funciones, ya que no son un creat, el traer los campos
