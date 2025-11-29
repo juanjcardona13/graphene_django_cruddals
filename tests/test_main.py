@@ -2547,7 +2547,6 @@ class CruddalsModelSchemaTestResolvers(SchemaTestCase):
             ),
             variables=variables,
         ).json()
-        print(response)
         self.verify_response(
             response,
             expected_response,

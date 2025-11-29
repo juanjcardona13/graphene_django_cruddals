@@ -1,5 +1,7 @@
+from copy import deepcopy
+from enum import Enum
 from itertools import chain
-from typing import Any, List, Literal, Sequence, Type, Union
+from typing import Any, Dict, List, Literal, Sequence, Type, Union
 
 from django.contrib.contenttypes.fields import (
     GenericForeignKey,
@@ -207,73 +209,287 @@ def get_model_fields_for_output(model: DjangoModel, for_object_type: bool = Fals
     return final_fields
 
 
-def nested_get(input_dict, nested_key):
-    internal_dict_value = input_dict
-    for k in nested_key:
-        internal_dict_value = internal_dict_value.get(k, None)
-        if internal_dict_value is None:
-            return None
-    return internal_dict_value
+def is_leaf_value(value: Any) -> bool:
+    """Determine if a value is a leaf (not a dict or a logical operator)."""
+    return not isinstance(value, dict)
 
 
-def get_paths(d):
-    """Breadth-First Search"""
-    queue = [(d, [])]
-    while queue:
-        actual_node, p = queue.pop(0)
-        yield p
-        if isinstance(actual_node, dict):
-            for k, v in actual_node.items():
-                queue.append((v, p + [k]))
+def normalize_field_lookup(field: str) -> str:
+    """
+    Normalize field lookups to Django convention.
+    Converts 'equals' to 'exact'.
+    """
+    return field[:-8] + "__exact" if field.endswith("__equals") else field
 
 
-def get_args(where):
-    args = {}
-    for path in get_paths(where):
-        arg_value = nested_get(where, path)
-        if not isinstance(arg_value, dict):
-            arg_key = "__".join(path)
-            if arg_key.endswith("__equals"):
-                arg_key = arg_key[0:-8] + "__exact"
-            args[arg_key] = arg_value
-    return args
+def extract_leaf_conditions(data: Dict[str, Any], prefix: str = "") -> Dict[str, Any]:
+    """
+    Extract only leaf conditions (field: value) from a nested dict.
+    Builds keys in Django ORM format (field__subfield__lookup).
+
+    Args:
+        data: Dictionary with conditions
+        prefix: Accumulated prefix for nested fields
+
+    Returns:
+        Flat dictionary with only query conditions
+    """
+    conditions = {}
+
+    for key, value in data.items():
+        full_key = f"{prefix}__{key}" if prefix else key
+
+        if is_leaf_value(value):
+            normalized_key = normalize_field_lookup(full_key)
+            conditions[normalized_key] = value
+        else:
+            conditions.update(extract_leaf_conditions(value, full_key))
+
+    return conditions
 
 
-def where_input_to_Q(where):
-    AND = Q()
-    OR = Q(_connector=Q.OR)
-    NOT = Q()
+def build_q_from_operator(operator: str, conditions: List[Dict[str, Any]]) -> Q:
+    """
+    Build a Q object from a logical operator and its conditions.
 
-    if "OR" in where.keys():
-        for w in where.pop("OR"):
-            OR = OR | Q(where_input_to_Q(w))
+    Args:
+        operator: 'AND', 'OR', or 'NOT'
+        conditions: List of conditions (for AND/OR) or single condition (for NOT)
 
-    if "AND" in where.keys():
-        for w in where.pop("AND"):
-            AND = AND & Q(where_input_to_Q(w), _connector=Q.OR)
+    Returns:
+        Combined Q object according to the operator
+    """
+    if operator == "NOT":
+        return ~where_input_to_Q(conditions)
 
-    if "NOT" in where.keys():
-        NOT = NOT & ~Q(where_input_to_Q(where.pop("NOT")))
+    q = Q()
 
-    f = (Q(**get_args(where)) | OR) & AND & NOT
-    return f
+    for condition in conditions:
+        condition_q = where_input_to_Q(condition)
+
+        if operator == "AND":
+            q &= condition_q
+        else:
+            q |= condition_q
+
+    return q
 
 
-def order_by_input_to_args(order_by):
-    args = []
+def prefix_q_fields(q: Q, prefix: str) -> Q:
+    """
+    Add a prefix to all fields in a Q object.
+    Useful for queries in nested relations.
+
+    Args:
+        q: Q object to modify
+        prefix: Prefix to add (e.g., 'author' -> 'author__name')
+
+    Returns:
+        New Q object with prefixed fields
+    """
+    if not q.children:
+        return Q()
+
+    new_children = []
+
+    for child in q.children:
+        if isinstance(child, Q):
+            new_children.append(prefix_q_fields(child, prefix))
+        elif isinstance(child, tuple) and len(child) == 2:
+            field, value = child
+            new_children.append((f"{prefix}__{field}", value))
+        else:
+            new_children.append(child)
+
+    new_q = Q(*new_children)
+    new_q.connector = q.connector
+    new_q.negated = q.negated
+
+    return new_q
+
+
+def where_input_to_Q(where: Dict[str, Any]) -> Q:
+    """
+    Convert a dictionary with filtering conditions into a Django Q object.
+
+    Supports:
+    - Simple conditions: {"field__lookup": value}
+    - Nested conditions: {"relation": {"field": {"equals": value}}}
+    - Logical operators: AND, OR, NOT
+    - Nested operators in relations: {"relation": {"AND": [...]}}
+
+    Args:
+        where: Dictionary with condition structure
+
+    Returns:
+        Combined Q object with all conditions
+
+    Example:
+        >>> where = {
+        ...     "name__equals": "John",
+        ...     "age__gte": 18,
+        ...     "OR": [{"status": "active"}, {"verified": True}],
+        ...     "NOT": {"banned": True}
+        ... }
+        >>> q = where_input_to_Q(where)
+    """
+    where = deepcopy(where)
+
+    logical_operators = {}
+    field_conditions = {}
+    nested_operator_fields = {}
+
+    for key, value in where.items():
+        if key in ("AND", "OR", "NOT"):
+            logical_operators[key] = value
+        elif isinstance(value, dict) and any(
+            op in value for op in ("AND", "OR", "NOT")
+        ):
+            nested_operator_fields[key] = value
+        else:
+            field_conditions[key] = value
+
+    leaf_conditions = extract_leaf_conditions(field_conditions)
+    base_q = Q(**leaf_conditions) if leaf_conditions else Q()
+
+    for operator, conditions in logical_operators.items():
+        operator_q = build_q_from_operator(operator, conditions)
+
+        if operator == "OR":
+            base_q |= operator_q
+        else:
+            base_q &= operator_q
+
+    for field, nested_conditions in nested_operator_fields.items():
+        nested_q = where_input_to_Q(nested_conditions)
+        prefixed_q = prefix_q_fields(nested_q, field)
+        base_q &= prefixed_q
+
+    return base_q
+
+
+ORDER_OPERATORS = {"ASC", "DESC", "IASC", "IDESC"}
+
+
+def normalize_order_value(value: Any) -> str:
+    """
+    Normalize order value to string.
+    Handles both strings and Enums.
+
+    Args:
+        value: Value that can be str, Enum, or any type
+
+    Returns:
+        String with normalized value, or None if not valid
+
+    Example:
+        >>> normalize_order_value("ASC")
+        "ASC"
+        >>> normalize_order_value(SortOrder.DESC)  # Enum
+        "DESC"
+    """
+    if isinstance(value, str):
+        return value
+    elif isinstance(value, Enum):
+        return value.value
+    return None
+
+
+def extract_order_fields(rule: Dict[str, Any], prefix: str = "") -> List[tuple]:
+    """
+    Extract order fields from a nested dict.
+    Similar to extract_leaf_conditions but for order_by.
+
+    Args:
+        rule: Dictionary with order rules
+        prefix: Accumulated prefix for nested fields
+
+    Returns:
+        List of tuples (field_path, order_operator)
+
+    Example:
+        >>> extract_order_fields({"user": {"name": "ASC"}})
+        [("user__name", "ASC")]
+        >>> extract_order_fields({"user": {"name": SortOrder.DESC}})
+        [("user__name", "DESC")]
+    """
+    order_fields = []
+
+    for key, value in rule.items():
+        full_key = f"{prefix}__{key}" if prefix else key
+
+        normalized_value = normalize_order_value(value)
+
+        if normalized_value and normalized_value in ORDER_OPERATORS:
+            order_fields.append((full_key, normalized_value))
+        elif isinstance(value, dict):
+            order_fields.extend(extract_order_fields(value, full_key))
+
+    return order_fields
+
+
+def build_order_expression(field: str, operator: str) -> Union[str, Lower]:
+    """
+    Build a Django order expression from a field and operator.
+
+    Args:
+        field: Field path (e.g., "user__name")
+        operator: "ASC", "DESC", "IASC" (case-insensitive asc), "IDESC"
+
+    Returns:
+        String for simple ordering or Lower() expression for case-insensitive
+    """
+    if operator == "ASC":
+        return field
+    elif operator == "DESC":
+        return f"-{field}"
+    elif operator == "IASC":
+        return Lower(field).asc()
+    elif operator == "IDESC":
+        return Lower(field).desc()
+    else:
+        raise ValueError(f"Invalid order operator: {operator}")
+
+
+def order_by_input_to_args(order_by: List[Dict[str, Any]]) -> List[Union[str, Lower]]:
+    """
+    Convert a list of order rules into arguments for QuerySet.order_by().
+
+    Supports:
+    - Simple ordering: [{"field": "ASC"}]
+    - Nested ordering: [{"relation": {"field": "DESC"}}]
+    - Case-insensitive: [{"field": "IASC"}] or [{"field": "IDESC"}]
+
+    Args:
+        order_by: List of dictionaries with order rules
+
+    Returns:
+        List of order expressions for Django ORM
+
+    Example:
+        >>> order_by_input_to_args([
+        ...     {"name": "ASC"},
+        ...     {"created_at": "DESC"},
+        ...     {"user": {"email": "IASC"}}
+        ... ])
+        ["name", "-created_at", Lower("user__email").asc()]
+    """
+    if not order_by:
+        return []
+
+    order_expressions = []
+
     for rule in order_by:
-        for path in get_paths(rule):
-            v = nested_get(rule, path)
-            if not isinstance(v, dict):
-                if v == "ASC":
-                    args.append("__".join(path))
-                elif v == "DESC":
-                    args.append("-" + "__".join(path))
-                elif v == "IASC":
-                    args.append(Lower("__".join(path)).asc())
-                elif v == "IDESC":
-                    args.append(Lower("__".join(path)).desc())
-    return args
+        order_fields = extract_order_fields(rule)
+
+        for field, operator in order_fields:
+            try:
+                expression = build_order_expression(field, operator)
+                order_expressions.append(expression)
+            except ValueError:
+                continue
+
+    return order_expressions
 
 
 def exists_conversion_for_field(

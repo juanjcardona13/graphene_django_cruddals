@@ -84,7 +84,6 @@ from .utils.main import (
     create_relation_model_objects,
     create_reverse_relation_model_objects,
     exists_conversion_for_field,
-    get_args,
     get_converted_field,
     get_data_for_generic_foreign_key,
     get_field_name,
@@ -92,12 +91,10 @@ from .utils.main import (
     get_list_input_object_type,
     get_model_fields_for_input,
     get_model_fields_for_output,
-    get_paths,
     get_relation_field_details,
     get_resolvers_for_field,
     handle_disconnect_objs_related,
     is_list_of_same_type,
-    nested_get,
     obj_to_modify_have_generic_foreign_key_input,
     order_by_input_to_args,
     paginate_queryset,
@@ -108,7 +105,7 @@ from .utils.main import (
 )
 from .views.cruddals_views import CRUDDALSView
 
-__version__ = "0.1.26"
+__version__ = "0.1.27"
 
 __all__ = [
     "__version__",
@@ -167,9 +164,6 @@ __all__ = [
     "get_field_name",
     "get_model_fields_for_input",
     "get_model_fields_for_output",
-    "nested_get",
-    "get_paths",
-    "get_args",
     "where_input_to_Q",
     "order_by_input_to_args",
     "exists_conversion_for_field",
