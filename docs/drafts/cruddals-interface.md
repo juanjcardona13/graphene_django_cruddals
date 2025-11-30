@@ -259,7 +259,8 @@ class ExampleModelInterface:
 
         - Arguments: Automatically have 1 argument called `input` that is a List of InputObjectType with the name `Create{ModelName}Input`
           `Create{ModelName}Input` is a InputObjectType that will be created automatically by CRUDDALS, where the input fields are the fields of the model
-          The `input` argument cannot be modified, but the type for the `Create{ModelName}Input` can be modified through the `CreateInputObjectType` class
+          The `input` argument can be modified through the `modify_input_argument` attribute of the `Meta` class in the `ModelCreateField` class
+          The type for the `Create{ModelName}Input` can be modified through the `CreateInputObjectType` class
           additional arguments can be added through the `extra_arguments` attribute of the `Meta` class in the `ModelCreateField` class
 
         - Resolver: The resolver will be created automatically by CRUDDALS, and it will receive 3 arguments (root, info, input), and it will return a dict with the keys `objects` and `errorsReport`
@@ -274,7 +275,15 @@ class ExampleModelInterface:
       """
 
         class Meta:
-            # For modify the input argument, only can modify the InputObjectType through the CreateInputObjectType
+            modify_input_argument = {
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "input",  # Optional: Change the name of the argument (default: "input")
+                "required": True,  # Optional: Make the argument required or optional (default: True)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
+            }
             extra_arguments = {
               # "key": str (used how name), "value": graphene.Argument
             } # This dict add new arguments to the mutation
@@ -303,7 +312,8 @@ class ExampleModelInterface:
 
         - Arguments: Automatically have 1 argument called `where` that is a InputObjectType with the name `Filter{ModelName}Input`
           `Filter{ModelName}Input` is a InputObjectType that will be created automatically by CRUDDALS, where the input fields are the fields of the model converted to filters
-          The `where` argument cannot be modified, but the type for the `Filter{ModelName}Input` can be modified through the `FilterInputObjectType` class
+          The `where` argument can be modified through the `modify_where_argument` attribute of the `Meta` class in the `ModelReadField` class
+          The type for the `Filter{ModelName}Input` can be modified through the `FilterInputObjectType` class
           additional arguments can be added through the `extra_arguments` attribute of the `Meta` class in the `ModelReadField` class
 
         - Resolver: The resolver will be created automatically by CRUDDALS, and it will receive 3 arguments (root, info, where), and it will return the object
@@ -318,6 +328,15 @@ class ExampleModelInterface:
       """
 
         class Meta:
+            modify_where_argument = {
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "where",  # Optional: Change the name of the argument (default: "where")
+                "required": True,  # Optional: Make the argument required or optional (default: True)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
+            }
             extra_arguments = {}
 
         def pre_resolver(*args, **kwargs):
@@ -346,8 +365,9 @@ class ExampleModelInterface:
 
         - Arguments: Automatically have 1 argument called `input` that is a List of InputObjectType with the name `Update{ModelName}Input`
           `Update{ModelName}Input` is a InputObjectType that will be created automatically by CRUDDALS, where the input fields are the fields of the model
-          The `input` argument cannot be modified, but the type for the `Update{ModelName}Input` can be modified through the `CreateInputObjectType` class
-          additional arguments can be added through the `extra_arguments` attribute of the `Meta` class in the `ModelCreateField` class
+          The `input` argument can be modified through the `modify_input_argument` attribute of the `Meta` class in the `ModelUpdateField` class
+          The type for the `Update{ModelName}Input` can be modified through the `UpdateInputObjectType` class
+          additional arguments can be added through the `extra_arguments` attribute of the `Meta` class in the `ModelUpdateField` class
 
         - Resolver: The resolver will be created automatically by CRUDDALS, and it will receive 3 arguments (root, info, input), and it will return a dict with the keys `objects` and `errorsReport`
           The `default_resolver` can be modified totally add a new resolver with the name `override_total_mutate` how class method in the `ModelCreateField` class,
@@ -361,7 +381,15 @@ class ExampleModelInterface:
       """
 
         class Meta:
-            # For modify the input argument, only can modify the InputObjectType through the CreateInputObjectType
+            modify_input_argument = {
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "input",  # Optional: Change the name of the argument (default: "input")
+                "required": True,  # Optional: Make the argument required or optional (default: True)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
+            }
             extra_arguments = {
               # "key": str (used how name), "value": graphene.Argument
             } # This dict add new arguments to the mutation
@@ -393,7 +421,8 @@ class ExampleModelInterface:
 
         - Arguments: Automatically have 1 argument called `where` that is a InputObjectType with the name `Filter{ModelName}Input`
           `Filter{ModelName}Input` is a InputObjectType that will be created automatically by CRUDDALS, where the input fields are the fields of the model converted to filters
-          The `where` argument cannot be modified, but the type for the `Filter{ModelName}Input` can be modified through the `FilterInputObjectType` class
+          The `where` argument can be modified through the `modify_where_argument` attribute of the `Meta` class in the `ModelDeleteField` class
+          The type for the `Filter{ModelName}Input` can be modified through the `FilterInputObjectType` class
           additional arguments can be added through the `extra_arguments` attribute of the `Meta` class in the `ModelDeleteField` class
 
         - Resolver: The resolver will be created automatically by CRUDDALS, and it will receive 3 arguments (root, info, where), and it will return a dict with the keys `objects`, `errorsReport` and `success`
@@ -408,6 +437,15 @@ class ExampleModelInterface:
       """
 
         class Meta:
+            modify_where_argument = {
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "where",  # Optional: Change the name of the argument (default: "where")
+                "required": True,  # Optional: Make the argument required or optional (default: True)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
+            }
             extra_arguments = {}
 
         def pre_mutate(*args, **kwargs):
@@ -437,7 +475,8 @@ class ExampleModelInterface:
 
         - Arguments: Automatically have 1 argument called `where` that is a InputObjectType with the name `Filter{ModelName}Input`
           `Filter{ModelName}Input` is a InputObjectType that will be created automatically by CRUDDALS, where the input fields are the fields of the model converted to filters
-          The `where` argument cannot be modified, but the type for the `Filter{ModelName}Input` can be modified through the `FilterInputObjectType` class
+          The `where` argument can be modified through the `modify_where_argument` attribute of the `Meta` class in the `ModelDeactivateField` class
+          The type for the `Filter{ModelName}Input` can be modified through the `FilterInputObjectType` class
           additional arguments can be added through the `extra_arguments` attribute of the `Meta` class in the `ModelDeactivateField` class
 
         - Resolver: The resolver will be created automatically by CRUDDALS, and it will receive 3 arguments (root, info, where), and it will return a dict with the keys `objects`, `errorsReport` and `success`
@@ -452,6 +491,15 @@ class ExampleModelInterface:
       """
 
         class Meta:
+            modify_where_argument = {
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "where",  # Optional: Change the name of the argument (default: "where")
+                "required": True,  # Optional: Make the argument required or optional (default: True)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
+            }
             extra_arguments = {}
 
         def pre_mutate(*args, **kwargs):
@@ -481,7 +529,8 @@ class ExampleModelInterface:
 
         - Arguments: Automatically have 1 argument called `where` that is a InputObjectType with the name `Filter{ModelName}Input`
           `Filter{ModelName}Input` is a InputObjectType that will be created automatically by CRUDDALS, where the input fields are the fields of the model converted to filters
-          The `where` argument cannot be modified, but the type for the `Filter{ModelName}Input` can be modified through the `FilterInputObjectType` class
+          The `where` argument can be modified through the `modify_where_argument` attribute of the `Meta` class in the `ModelActivateField` class
+          The type for the `Filter{ModelName}Input` can be modified through the `FilterInputObjectType` class
           additional arguments can be added through the `extra_arguments` attribute of the `Meta` class in the `ModelActivateField` class
 
         - Resolver: The resolver will be created automatically by CRUDDALS, and it will receive 3 arguments (root, info, where), and it will return a dict with the keys `objects`, `errorsReport` and `success`
@@ -495,6 +544,15 @@ class ExampleModelInterface:
         - Default Value: Not used and for the moment cannot be overwritten - TODO
       """
         class Meta:
+            modify_where_argument = {
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "where",  # Optional: Change the name of the argument (default: "where")
+                "required": True,  # Optional: Make the argument required or optional (default: True)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
+            }
             extra_arguments = {}
 
         def pre_mutate(*args, **kwargs):
@@ -579,7 +637,8 @@ class ExampleModelInterface:
           `Filter{ModelName}Input` is a InputObjectType that will be created automatically by CRUDDALS, where the input fields are the fields of the model converted to filters
           `OrderBy{ModelName}Input` is a InputObjectType that will be created automatically by CRUDDALS, where the input fields are the fields of the model converted to order by
           `PaginationConfigInput` is a InputObjectType that will be created automatically by CRUDDALS, where have 2 input fields `page` and `itemsPerPage`
-          The `where`, `orderBy` and `paginated` arguments cannot be modified, but the type for the `Filter{ModelName}Input`, `OrderBy{ModelName}Input` can be modified through the `FilterInputObjectType` and `OrderByInputObjectType` classes
+          The `where`, `orderBy` and `paginationConfig` arguments can be modified through the `modify_where_argument`, `modify_order_by_argument` and `modify_pagination_config_argument` attributes of the `Meta` class in the `ModelSearchField` class
+          The type for the `Filter{ModelName}Input`, `OrderBy{ModelName}Input` can be modified through the `FilterInputObjectType` and `OrderByInputObjectType` classes
           additional arguments can be added through the `extra_arguments` attribute of the `Meta` class in the `ModelSearchField` class
 
         - Resolver: The resolver will be created automatically by CRUDDALS, and it will receive 3 arguments (root, info, where, orderBy, paginationConfig), and it will return a dict with the keys `objects`, `total`, `page`, `pages`, `hasNext`, `hasPrev`, `indexStart` and `indexEnd`
@@ -594,17 +653,32 @@ class ExampleModelInterface:
       """
 
         class Meta:
+            modify_where_argument = {
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "where",  # Optional: Change the name of the argument (default: "where")
+                "required": False,  # Optional: Make the argument required or optional (default: False)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
+            }
             modify_order_by_argument = {
-                "name": "orderBy",
-                "required": False,
-                "description": "",
-                "hidden": False,
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "orderBy",  # Optional: Change the name of the argument (default: "orderBy")
+                "required": False,  # Optional: Make the argument required or optional (default: False)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
             }
             modify_pagination_config_argument = {
-                "name": "paginated",
-                "required": False,
-                "description": "",
-                "hidden": False,
+                "type_": None,  # Optional: Override the GraphQL type of the argument
+                "name": "paginationConfig",  # Optional: Change the name of the argument (default: "paginationConfig")
+                "required": False,  # Optional: Make the argument required or optional (default: False)
+                "description": "",  # Optional: Add a description to the argument
+                "default_value": None,  # Optional: Set a default value for the argument
+                "deprecation_reason": None,  # Optional: Mark the argument as deprecated
+                "hidden": False,  # Optional: Hide the argument completely (default: False)
             }
             extra_arguments = {}
 
@@ -621,3 +695,18 @@ class ExampleModelInterface:
             return "paginated_objects"
 
 ```
+
+## Nota Importante sobre Cambio de Nombres de Argumentos
+
+**Nota Importante sobre Cambio de Nombres de Argumentos:**
+
+Si cambias el nombre de un argumento (por ejemplo, de `where` a `filter`), los resolvers por defecto de `graphene-django-cruddals` seguirán buscando el nombre original del argumento. En este caso, necesitarás:
+
+1. Usar un resolver personalizado que acceda al argumento con el nuevo nombre, o
+2. Mantener el nombre original del argumento y solo modificar otras propiedades (required, description, etc.)
+
+Los resolvers por defecto acceden a los argumentos de la siguiente manera:
+- `args["input"]` para create/update
+- `args["where"]` para read/delete/activate/deactivate
+- `args["where"]`, `args["orderBy"]` o `args["order_by"]`, `args["paginationConfig"]` o `args["pagination_config"]` para search
+

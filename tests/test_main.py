@@ -420,8 +420,7 @@ class TestGetObjectsReceivesArguments(SchemaTestCase):
             # Verify that get_objects was called with the correct arguments
             self.assertIn("kwargs", captured_args)
             self.assertIn("where", captured_args["kwargs"])
-            # Note: orderBy is normalized to order_by in the arguments
-            self.assertIn("order_by", captured_args["kwargs"])
+            self.assertIn("orderBy", captured_args["kwargs"])
 
             # Verify where argument structure
             where_arg = captured_args["kwargs"]["where"]
@@ -430,7 +429,7 @@ class TestGetObjectsReceivesArguments(SchemaTestCase):
             self.assertEqual(where_arg["name"]["icontains"], "Test")
 
             # Verify order_by argument (normalized from orderBy)
-            order_by_arg = captured_args["kwargs"]["order_by"]
+            order_by_arg = captured_args["kwargs"]["orderBy"]
             self.assertIn("name", order_by_arg)
             # The value might be an Enum, so we check the string representation
             order_by_value = str(order_by_arg["name"])

@@ -5,5 +5,5 @@
   ],
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
-  "workbench.colorTheme": "PyCharm Dark+ Theme"
+  "workbench.colorTheme": "Default Dark+"
 }
