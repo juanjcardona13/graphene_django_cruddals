@@ -734,6 +734,9 @@ def default_list_field_resolver(
     info,
     **args,
 ):
+    registries_for_model = registry.get_registry_for_model(model)
+    django_object_type: ModelObjectType = registries_for_model["object_type"]
+
     queryset = _queryset_factory(
         model=model,
         registry=registry,
@@ -742,6 +745,18 @@ def default_list_field_resolver(
         is_connection=False,
         **args,
     )
+
+    queryset = apply_get_objects_hook(
+        queryset=queryset,
+        django_object_type=django_object_type,
+        info=info,
+        **args,
+    )
+
+    if queryset is None:
+        raise ValueError(
+            "The queryset is None. Ensure that the default manager returns a valid queryset."
+        )
     return queryset
 
 
