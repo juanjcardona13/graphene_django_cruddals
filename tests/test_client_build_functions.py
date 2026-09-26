@@ -51,15 +51,20 @@ class TestClientBuildFunctions(unittest.TestCase):
     def test_build_schema_introspect_gql(self):
         # Select the expected file based on graphql-core version
         # Version 3.2.6 and below: use schema-introspect-3-2-6.gql
-        # Version 3.2.7 and above: use schema-introspect-3-2-7.gql
+        # Version 3.2.7 through 3.2.10: use schema-introspect-3-2-7.gql
+        # Version 3.2.11 and above: directive deprecation in the introspection schema
         current_version = (version_info.major, version_info.minor, version_info.micro)
         if current_version <= (3, 2, 6):
             expected_file_path = (
                 "tests/schema_client_js/schema_cruddals/schema-introspect-3-2-6.gql"
             )
-        else:
+        elif current_version < (3, 2, 11):
             expected_file_path = (
                 "tests/schema_client_js/schema_cruddals/schema-introspect-3-2-7.gql"
+            )
+        else:
+            expected_file_path = (
+                "tests/schema_client_js/schema_cruddals/schema-introspect-3-2-11.gql"
             )
 
         with open(f"{PATH_CLIENT}/schema-introspect.gql", encoding="utf-8") as file:
